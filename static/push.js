@@ -14,7 +14,16 @@ async function activerNotifications() {
         return false;
     }
 
+    if (!("PushManager" in window)) {
+        console.log("Push non supporté.");
+        return false;
+    }
+
     try {
+
+        // -------------------------------------------------
+        // DEMANDER LA PERMISSION
+        // -------------------------------------------------
 
         const permission =
             await Notification.requestPermission();
@@ -24,32 +33,69 @@ async function activerNotifications() {
             return false;
         }
 
+
+        // -------------------------------------------------
+        // SERVICE WORKER
+        // -------------------------------------------------
+
         const registration =
             await navigator.serviceWorker.register(
                 "/static/service-worker.js"
             );
 
+
+        await navigator.serviceWorker.ready;
+
+
+        // -------------------------------------------------
+        // CLÉ VAPID
+        // -------------------------------------------------
+
         const publicKey =
             window.VAPID_PUBLIC_KEY;
 
         if (!publicKey) {
+
             console.error(
                 "VAPID_PUBLIC_KEY manquante."
             );
+
             return false;
         }
 
-        const subscription =
-            await registration.pushManager.subscribe({
 
-                userVisibleOnly: true,
+        // -------------------------------------------------
+        // VÉRIFIER UNE SOUSCRIPTION EXISTANTE
+        // -------------------------------------------------
 
-                applicationServerKey:
-                    urlBase64ToUint8Array(
-                        publicKey
-                    )
+        let subscription =
+            await registration.pushManager.getSubscription();
 
-            });
+
+        // -------------------------------------------------
+        // CRÉER LA SOUSCRIPTION
+        // -------------------------------------------------
+
+        if (!subscription) {
+
+            subscription =
+                await registration.pushManager.subscribe({
+
+                    userVisibleOnly: true,
+
+                    applicationServerKey:
+                        urlBase64ToUint8Array(
+                            publicKey
+                        )
+
+                });
+
+        }
+
+
+        // -------------------------------------------------
+        // ENVOYER AU SERVEUR FLASK
+        // -------------------------------------------------
 
         const response =
             await fetch(
@@ -62,6 +108,8 @@ async function activerNotifications() {
                             "application/json"
                     },
 
+                    credentials: "same-origin",
+
                     body: JSON.stringify({
                         subscription:
                             subscription.toJSON()
@@ -69,19 +117,39 @@ async function activerNotifications() {
                 }
             );
 
-        const result =
-            await response.json();
 
-        if (!result.ok) {
-            console.error(result.message);
+        if (!response.ok) {
+
+            console.error(
+                "Erreur serveur :",
+                response.status
+            );
+
             return false;
         }
 
+
+        const result =
+            await response.json();
+
+
+        if (!result.ok) {
+
+            console.error(
+                result.message ||
+                "Erreur d'abonnement."
+            );
+
+            return false;
+        }
+
+
         console.log(
-            "Notifications activées."
+            "🔔 Notifications activées."
         );
 
         return true;
+
 
     } catch (error) {
 
@@ -96,7 +164,7 @@ async function activerNotifications() {
 
 
 // =====================================================
-// CONVERSION VAPID
+// CONVERSION CLÉ VAPID
 // =====================================================
 
 function urlBase64ToUint8Array(base64String) {
@@ -108,18 +176,20 @@ function urlBase64ToUint8Array(base64String) {
 
     const base64 =
         (
-            base64String
-            + padding
+            base64String + padding
         )
         .replace(/-/g, "+")
         .replace(/_/g, "/");
 
+
     const rawData =
         window.atob(base64);
 
+
     return Uint8Array.from(
         [...rawData].map(
-            char => char.charCodeAt(0)
+            char =>
+                char.charCodeAt(0)
         )
     );
 }
@@ -134,9 +204,13 @@ async function demanderNotifications() {
     const active =
         await activerNotifications();
 
+
     if (active) {
 
-        if (typeof afficherNotification === "function") {
+        if (
+            typeof afficherNotification ===
+            "function"
+        ) {
 
             afficherNotification(
                 "🔔 Notifications activées."
@@ -150,37 +224,18 @@ async function demanderNotifications() {
 
         }
 
-    }
-
-}
-
-
-// =====================================================
-// INITIALISATION
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+    } else {
 
         if (
-            "serviceWorker"
-            in navigator
+            typeof afficherNotification ===
+            "function"
         ) {
 
-            navigator.serviceWorker.register(
-                "/static/service-worker.js"
-            )
-            .catch(error => {
-
-                console.error(
-                    "Service Worker :",
-                    error
-                );
-
-            });
+            afficherNotification(
+                "❌ Impossible d'activer les notifications."
+            );
 
         }
 
     }
-);
+                    }
