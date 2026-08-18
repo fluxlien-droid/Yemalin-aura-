@@ -1,173 +1,17 @@
-// =====================================================
-// YEMALIN AURA — NOTIFICATIONS PUSH
-// =====================================================
+"use strict";
 
-async function activerNotifications() {
-
-    if (!("Notification" in window)) {
-        console.log("Notifications non supportées.");
-        return false;
-    }
-
-    if (!("serviceWorker" in navigator)) {
-        console.log("Service Worker non supporté.");
-        return false;
-    }
-
-    if (!("PushManager" in window)) {
-        console.log("Push non supporté.");
-        return false;
-    }
-
-    try {
-
-        // -------------------------------------------------
-        // DEMANDER LA PERMISSION
-        // -------------------------------------------------
-
-        const permission =
-            await Notification.requestPermission();
-
-        if (permission !== "granted") {
-            console.log("Permission refusée.");
-            return false;
-        }
+/*
+=========================================================
+ YEMALIN AURA — NOTIFICATIONS PUSH
+=========================================================
+*/
 
 
-        // -------------------------------------------------
-        // SERVICE WORKER
-        // -------------------------------------------------
+/* =====================================================
+   CONVERTIR LA CLÉ VAPID
+===================================================== */
 
-        const registration =
-            await navigator.serviceWorker.register(
-                "/static/service-worker.js"
-            );
-
-
-        await navigator.serviceWorker.ready;
-
-
-        // -------------------------------------------------
-        // CLÉ VAPID
-        // -------------------------------------------------
-
-        const publicKey =
-            window.VAPID_PUBLIC_KEY;
-
-        if (!publicKey) {
-
-            console.error(
-                "VAPID_PUBLIC_KEY manquante."
-            );
-
-            return false;
-        }
-
-
-        // -------------------------------------------------
-        // VÉRIFIER UNE SOUSCRIPTION EXISTANTE
-        // -------------------------------------------------
-
-        let subscription =
-            await registration.pushManager.getSubscription();
-
-
-        // -------------------------------------------------
-        // CRÉER LA SOUSCRIPTION
-        // -------------------------------------------------
-
-        if (!subscription) {
-
-            subscription =
-                await registration.pushManager.subscribe({
-
-                    userVisibleOnly: true,
-
-                    applicationServerKey:
-                        urlBase64ToUint8Array(
-                            publicKey
-                        )
-
-                });
-
-        }
-
-
-        // -------------------------------------------------
-        // ENVOYER AU SERVEUR FLASK
-        // -------------------------------------------------
-
-        const response =
-            await fetch(
-                "/api/push/subscribe",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    credentials: "same-origin",
-
-                    body: JSON.stringify({
-                        subscription:
-                            subscription.toJSON()
-                    })
-                }
-            );
-
-
-        if (!response.ok) {
-
-            console.error(
-                "Erreur serveur :",
-                response.status
-            );
-
-            return false;
-        }
-
-
-        const result =
-            await response.json();
-
-
-        if (!result.ok) {
-
-            console.error(
-                result.message ||
-                "Erreur d'abonnement."
-            );
-
-            return false;
-        }
-
-
-        console.log(
-            "🔔 Notifications activées."
-        );
-
-        return true;
-
-
-    } catch (error) {
-
-        console.error(
-            "Erreur notifications :",
-            error
-        );
-
-        return false;
-    }
-}
-
-
-// =====================================================
-// CONVERSION CLÉ VAPID
-// =====================================================
-
-function urlBase64ToUint8Array(base64String) {
+function base64ToUint8Array(base64String) {
 
     const padding =
         "=".repeat(
@@ -176,7 +20,8 @@ function urlBase64ToUint8Array(base64String) {
 
     const base64 =
         (
-            base64String + padding
+            base64String +
+            padding
         )
         .replace(/-/g, "+")
         .replace(/_/g, "/");
@@ -188,54 +33,270 @@ function urlBase64ToUint8Array(base64String) {
 
     return Uint8Array.from(
         [...rawData].map(
-            char =>
-                char.charCodeAt(0)
+            char => char.charCodeAt(0)
         )
     );
 }
 
 
-// =====================================================
-// BOUTON NOTIFICATIONS
-// =====================================================
+/* =====================================================
+   ENREGISTRER LE SERVICE WORKER
+===================================================== */
 
-async function demanderNotifications() {
+async function enregistrerServiceWorker() {
 
-    const active =
-        await activerNotifications();
+    if (!("serviceWorker" in navigator)) {
+
+        throw new Error(
+            "Les Service Workers ne sont pas supportés."
+        );
+    }
 
 
-    if (active) {
+    return await navigator.serviceWorker.register(
+        "/static/service-worker.js"
+    );
+}
+
+
+/* =====================================================
+   OBTENIR LA SOUSCRIPTION
+===================================================== */
+
+async function obtenirSubscription(
+    registration
+) {
+
+    if (!("PushManager" in window)) {
+
+        throw new Error(
+            "Les notifications Push ne sont pas supportées."
+        );
+    }
+
+
+    const vapidKey =
+        window.VAPID_PUBLIC_KEY;
+
+
+    if (!vapidKey) {
+
+        throw new Error(
+            "Clé VAPID publique absente."
+        );
+    }
+
+
+    let subscription =
+        await registration.pushManager
+            .getSubscription();
+
+
+    if (subscription) {
+
+        return subscription;
+    }
+
+
+    subscription =
+        await registration.pushManager.subscribe({
+
+            userVisibleOnly: true,
+
+            applicationServerKey:
+                base64ToUint8Array(
+                    vapidKey
+                )
+        });
+
+
+    return subscription;
+}
+
+
+/* =====================================================
+   ENVOYER LA SOUSCRIPTION AU SERVEUR
+===================================================== */
+
+async function envoyerSubscription(
+    subscription
+) {
+
+    const response =
+        await fetch(
+            "/api/push/abonner",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                credentials:
+                    "same-origin",
+
+                body: JSON.stringify(
+                    subscription
+                )
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (!response.ok || !data.ok) {
+
+        throw new Error(
+            data.message ||
+            "Impossible d'enregistrer les notifications."
+        );
+    }
+
+
+    return data;
+}
+
+
+/* =====================================================
+   ACTIVER LES NOTIFICATIONS
+===================================================== */
+
+async function activerPush(
+    registration = null
+) {
+
+    try {
 
         if (
-            typeof afficherNotification ===
-            "function"
+            !("Notification" in window)
         ) {
 
-            afficherNotification(
-                "🔔 Notifications activées."
+            throw new Error(
+                "Les notifications ne sont pas disponibles."
             );
-
-        } else {
-
-            alert(
-                "🔔 Notifications activées."
-            );
-
         }
 
-    } else {
 
         if (
-            typeof afficherNotification ===
+            Notification.permission !==
+            "granted"
+        ) {
+
+            const permission =
+                await Notification.requestPermission();
+
+
+            if (
+                permission !==
+                "granted"
+            ) {
+
+                throw new Error(
+                    "Permission de notification refusée."
+                );
+            }
+        }
+
+
+        if (!registration) {
+
+            registration =
+                await enregistrerServiceWorker();
+        }
+
+
+        const subscription =
+            await obtenirSubscription(
+                registration
+            );
+
+
+        await envoyerSubscription(
+            subscription
+        );
+
+
+        if (
+            typeof notify ===
             "function"
         ) {
 
-            afficherNotification(
-                "❌ Impossible d'activer les notifications."
+            notify(
+                "🔔 Notifications activées avec succès."
             );
+        }
 
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Push:",
+            error
+        );
+
+
+        if (
+            typeof notify ===
+            "function"
+        ) {
+
+            notify(
+                "❌ " +
+                (
+                    error.message ||
+                    "Impossible d'activer les notifications."
+                )
+            );
+        }
+
+
+        return false;
+    }
+}
+
+
+/* =====================================================
+   EXPOSER LA FONCTION
+===================================================== */
+
+window.activerPush =
+    activerPush;
+
+
+/* =====================================================
+   INITIALISATION
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        if (
+            !("serviceWorker" in navigator) ||
+            !("PushManager" in window)
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            await enregistrerServiceWorker();
+
+        } catch (error) {
+
+            console.error(
+                "Service Worker:",
+                error
+            );
         }
 
     }
-                    }
+);
