@@ -1862,3 +1862,26 @@ select:focus-visible {
         transition-duration: 0.01ms !important;
     }
 }
+<!-- =====================================================
+     CORRECTION TAILLE DU LOGO ADMIN
+====================================================== -->
+
+<style>
+    .site-header .logo,
+    .admin-logo,
+    header img.logo {
+        width: 55px !important;
+        height: 55px !important;
+        max-width: 55px !important;
+        max-height: 55px !important;
+        object-fit: contain !important;
+    }
+
+    .brand img {
+        width: 55px !important;
+        height: 55px !important;
+        max-width: 55px !important;
+        max-height: 55px !important;
+        object-fit: contain !important;
+    }
+</style>
