@@ -1332,6 +1332,46 @@ textarea:focus-visible {
     outline: 3px solid rgba(139, 107, 69, 0.35);
 
     outline-offset: 2px;
+   .contact-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.contact-buttons .btn {
+    min-width: 150px;
+    text-decoration: none;
+}
+
+.contact-call {
+    background: var(--principal);
+}
+
+.contact-whatsapp {
+    background: #25D366;
+}
+
+.contact-note {
+    margin-top: 15px;
+    color: var(--texte-secondaire);
+    font-size: 0.8rem;
+}
+
+@media (max-width: 500px) {
+
+    .contact-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .contact-buttons .btn {
+        width: 100%;
+        max-width: 330px;
+    }
+       }
 }
 
 /* =========================================================
@@ -1351,3 +1391,4 @@ textarea:focus-visible {
         transition-duration: 0.01ms !important;
     }
    }
+
