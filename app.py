@@ -1,12 +1,6 @@
-# =========================================================
-# YEMALIN AURA
-# app.py — PARTIE 1/2
-# =========================================================
-
 import os
 import sqlite3
 import secrets
-
 from functools import wraps
 from datetime import datetime
 
@@ -30,22 +24,34 @@ import cloudinary.uploader
 
 app = Flask(__name__)
 
-
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     secrets.token_hex(32)
 )
-
 
 DB = os.environ.get(
     "DATABASE_PATH",
     "commandes.db"
 )
 
-
 ADMIN_CODE = os.environ.get(
     "ADMIN_CODE",
     "CHANGE-MOI"
+)
+
+VAPID_PUBLIC_KEY = os.environ.get(
+    "VAPID_PUBLIC_KEY",
+    ""
+)
+
+VAPID_PRIVATE_KEY = os.environ.get(
+    "VAPID_PRIVATE_KEY",
+    ""
+)
+
+VAPID_EMAIL = os.environ.get(
+    "VAPID_EMAIL",
+    "mailto:admin@example.com"
 )
 
 
@@ -54,21 +60,16 @@ ADMIN_CODE = os.environ.get(
 # =========================================================
 
 cloudinary.config(
-
     cloud_name=os.environ.get(
         "CLOUDINARY_CLOUD_NAME"
     ),
-
     api_key=os.environ.get(
         "CLOUDINARY_API_KEY"
     ),
-
     api_secret=os.environ.get(
         "CLOUDINARY_API_SECRET"
     ),
-
     secure=True
-
 )
 
 
@@ -98,161 +99,124 @@ def init_db():
 
     c = conn.cursor()
 
-
-    # =====================================================
+    # -----------------------------------------------------
     # PRODUITS
-    # =====================================================
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS produits (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             nom TEXT NOT NULL,
-
             description TEXT,
-
             prix REAL NOT NULL,
-
             image TEXT,
-
+            video TEXT,
+            media_type TEXT,
             date TEXT NOT NULL
-
         )
     """)
 
-
-    # =====================================================
+    # -----------------------------------------------------
     # COMMANDES
-    # =====================================================
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS commandes (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             client_nom TEXT NOT NULL,
-
             telephone TEXT NOT NULL,
-
             adresse TEXT,
-
             total REAL NOT NULL,
-
             statut TEXT DEFAULT 'Nouvelle',
-
             client_token TEXT UNIQUE NOT NULL,
-
             date TEXT NOT NULL
-
         )
     """)
 
-
-    # =====================================================
-    # PRODUITS COMMANDÉS
-    # =====================================================
+    # -----------------------------------------------------
+    # PRODUITS DES COMMANDES
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS commande_produits (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             commande_id INTEGER NOT NULL,
-
             produit_id INTEGER,
-
             nom TEXT,
-
             prix REAL,
-
             quantite INTEGER
-
         )
     """)
 
-
-    # =====================================================
-    # CHAT DES COMMANDES
-    # =====================================================
+    # -----------------------------------------------------
+    # MESSAGES PRIVÉS
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS messages (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             commande_id INTEGER NOT NULL,
-
             client_token TEXT NOT NULL,
-
             client_nom TEXT,
-
             auteur TEXT NOT NULL,
-
             message TEXT NOT NULL,
-
             date TEXT NOT NULL
-
         )
     """)
 
-
-    # =====================================================
+    # -----------------------------------------------------
     # MESSAGES GÉNÉRAUX
-    # =====================================================
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS messages_generaux (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             client_token TEXT NOT NULL,
-
             client_nom TEXT NOT NULL,
-
             message TEXT NOT NULL,
-
             reponse TEXT,
-
             date TEXT NOT NULL,
-
             date_reponse TEXT
-
         )
     """)
 
-
-    # =====================================================
-    # PUBLICITÉ
-    #
-    # Une seule publicité sera utilisée.
-    # position = 1
-    # =====================================================
+    # -----------------------------------------------------
+    # PUBLICITÉS
+    # -----------------------------------------------------
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS publicites (
-
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
             position INTEGER UNIQUE NOT NULL,
-
             titre TEXT,
-
             media_url TEXT,
-
             media_type TEXT,
-
             lien TEXT,
-
             texte TEXT
-
         )
     """)
 
+    # -----------------------------------------------------
+    # PUSH
+    # -----------------------------------------------------
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS push_subscriptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_token TEXT,
+            endpoint TEXT UNIQUE NOT NULL,
+            p256dh TEXT NOT NULL,
+            auth TEXT NOT NULL,
+            date TEXT NOT NULL
+        )
+    """)
+
+    # -----------------------------------------------------
+    # PUB 1
+    # -----------------------------------------------------
 
     c.execute("""
         INSERT OR IGNORE INTO publicites
-
         (
             position,
             titre,
@@ -261,9 +225,7 @@ def init_db():
             lien,
             texte
         )
-
-        VALUES
-        (
+        VALUES (
             1,
             '',
             '',
@@ -273,124 +235,28 @@ def init_db():
         )
     """)
 
-
-    # =====================================================
-    # ABONNEMENTS PUSH
-    # =====================================================
-
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS push_subscriptions (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            client_token TEXT,
-
-            endpoint TEXT UNIQUE NOT NULL,
-
-            p256dh TEXT NOT NULL,
-
-            auth TEXT NOT NULL,
-
-            user_type TEXT DEFAULT 'client',
-
-            date TEXT NOT NULL
-
-        )
-    """)
-
-
-    # =====================================================
-    # NOTIFICATIONS
-    # =====================================================
-
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS notifications (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            client_token TEXT,
-
-            commande_id INTEGER,
-
-            titre TEXT NOT NULL,
-
-            message TEXT NOT NULL,
-
-            lu INTEGER DEFAULT 0,
-
-            date TEXT NOT NULL
-
-        )
-    """)
-
-
-    # =====================================================
-    # PRODUITS DE DÉMONSTRATION
-    # =====================================================
-
-    nombre_produits = c.execute("""
-        SELECT COUNT(*)
-        FROM produits
-    """).fetchone()[0]
-
-
-    if nombre_produits == 0:
-
-        c.execute("""
-            INSERT INTO produits
-            (
-                nom,
-                description,
-                prix,
-                image,
-                date
-            )
-
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-
-            "Produit exemple",
-
-            "Découvrez notre produit.",
-
-            5000,
-
-            "",
-
-            maintenant()
-
-        ))
-
-
-        c.execute("""
-            INSERT INTO produits
-            (
-                nom,
-                description,
-                prix,
-                image,
-                date
-            )
-
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-
-            "Deuxième produit",
-
-            "Un autre produit Yemalin Aura.",
-
-            7500,
-
-            "",
-
-            maintenant()
-
-        ))
-
-
     conn.commit()
 
     conn.close()
+
+
+# =========================================================
+# INITIALISATION
+# =========================================================
+
+init_db()
+
+
+# =========================================================
+# CONTEXTE TEMPLATE
+# =========================================================
+
+@app.context_processor
+def inject_variables():
+
+    return {
+        "vapid_public_key": VAPID_PUBLIC_KEY
+    }
 
 
 # =========================================================
@@ -400,30 +266,19 @@ def init_db():
 def admin_required(f):
 
     @wraps(f)
-
     def wrapper(*args, **kwargs):
 
         if not session.get("admin"):
 
             return jsonify({
-
                 "ok": False,
-
-                "message":
-                    "Accès administrateur requis."
-
+                "message": "Accès administrateur requis."
             }), 401
-
 
         return f(*args, **kwargs)
 
-
     return wrapper
 
-
-# =========================================================
-# CONNEXION ADMIN
-# =========================================================
 
 @app.route(
     "/admin/login",
@@ -437,21 +292,17 @@ def admin_login():
             "login.html"
         )
 
-
     data = request.get_json(
         silent=True
     )
-
 
     if not data:
 
         data = request.form
 
-
     code = str(
         data.get("code", "")
     ).strip()
-
 
     if not secrets.compare_digest(
         code,
@@ -459,30 +310,18 @@ def admin_login():
     ):
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Code administrateur incorrect."
-
+            "message": "Code incorrect."
         }), 401
-
 
     session.clear()
 
     session["admin"] = True
 
-
     return jsonify({
-
         "ok": True
-
     })
 
-
-# =========================================================
-# DÉCONNEXION ADMIN
-# =========================================================
 
 @app.route("/admin/logout")
 def admin_logout():
@@ -492,15 +331,10 @@ def admin_logout():
         None
     )
 
-
     return redirect(
         url_for("admin_login")
     )
 
-
-# =========================================================
-# PAGE ADMIN
-# =========================================================
 
 @app.route("/admin")
 def admin():
@@ -511,14 +345,13 @@ def admin():
             url_for("admin_login")
         )
 
-
     return render_template(
         "admin.html"
     )
 
 
 # =========================================================
-# PAGE CLIENT
+# ACCUEIL
 # =========================================================
 
 @app.route("/")
@@ -526,54 +359,36 @@ def index():
 
     conn = db()
 
-
     produits = conn.execute("""
         SELECT *
         FROM produits
         ORDER BY id DESC
     """).fetchall()
 
-
-    # Une seule publicité
-    pub = conn.execute("""
+    pubs = conn.execute("""
         SELECT *
         FROM publicites
-        WHERE position = 1
-        LIMIT 1
-    """).fetchone()
-
+        ORDER BY position
+    """).fetchall()
 
     conn.close()
 
-
-    pubs = []
-
-
-    if pub:
-
-        pubs.append(pub)
-
-
     return render_template(
-
         "index.html",
-
         produits=produits,
-
-        pubs=pubs
-
+        pubs=pubs,
+        vapid_public_key=VAPID_PUBLIC_KEY
     )
 
 
 # =========================================================
-# API PRODUITS
+# PRODUITS
 # =========================================================
 
 @app.route("/api/produits")
-def produits():
+def api_produits():
 
     conn = db()
-
 
     rows = conn.execute("""
         SELECT *
@@ -581,21 +396,17 @@ def produits():
         ORDER BY id DESC
     """).fetchall()
 
-
     conn.close()
 
-
     return jsonify([
-
         dict(row)
-
         for row in rows
-
     ])
 
 
 # =========================================================
-# ADMIN — AJOUTER PRODUIT
+# ADMIN — AJOUT PRODUIT
+# IMAGE OU VIDÉO
 # =========================================================
 
 @app.route(
@@ -610,29 +421,21 @@ def ajouter_produit():
         or ""
     ).strip()
 
-
     description = (
         request.form.get("description")
         or ""
     ).strip()
 
-
     prix = request.form.get(
         "prix"
     )
 
-
     if not nom or not prix:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Nom et prix obligatoires."
-
+            "message": "Nom et prix obligatoires."
         }), 400
-
 
     try:
 
@@ -641,116 +444,134 @@ def ajouter_produit():
     except ValueError:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Prix invalide."
-
+            "message": "Prix invalide."
         }), 400
-
 
     image_url = ""
 
+    video_url = ""
 
-    fichier = request.files.get(
+    media_type = ""
+
+    # -----------------------------------------------------
+    # IMAGE
+    # -----------------------------------------------------
+
+    image = request.files.get(
         "image"
     )
 
-
-    # =====================================================
-    # CLOUDINARY IMAGE PRODUIT
-    # =====================================================
-
-    if fichier and fichier.filename:
+    if image and image.filename:
 
         try:
 
-            resultat = (
-                cloudinary
-                .uploader
-                .upload(
-
-                    fichier,
-
-                    folder=
-                        "yemalin-aura/produits",
-
-                    resource_type=
-                        "image"
-
-                )
+            resultat = cloudinary.uploader.upload(
+                image,
+                folder="yemalin-aura/produits",
+                resource_type="image"
             )
 
-
-            image_url = (
-                resultat.get(
-                    "secure_url",
-                    ""
-                )
+            image_url = resultat.get(
+                "secure_url",
+                ""
             )
 
+            media_type = "image"
 
-        except Exception:
+        except Exception as e:
 
             return jsonify({
-
                 "ok": False,
-
-                "message":
-                    "Impossible d'envoyer l'image."
-
+                "message": "Erreur Cloudinary image.",
+                "error": str(e)
             }), 500
 
+    # -----------------------------------------------------
+    # VIDÉO
+    # -----------------------------------------------------
+
+    video = request.files.get(
+        "video"
+    )
+
+    if video and video.filename:
+
+        try:
+
+            resultat = cloudinary.uploader.upload(
+                video,
+                folder="yemalin-aura/produits",
+                resource_type="video"
+            )
+
+            video_url = resultat.get(
+                "secure_url",
+                ""
+            )
+
+            media_type = "video"
+
+        except Exception as e:
+
+            return jsonify({
+                "ok": False,
+                "message": "Erreur Cloudinary vidéo.",
+                "error": str(e)
+            }), 500
+
+    date = maintenant()
 
     conn = db()
 
+    cursor = conn.cursor()
 
-    conn.execute("""
+    cursor.execute("""
         INSERT INTO produits
-
         (
             nom,
             description,
             prix,
             image,
+            video,
+            media_type,
             date
         )
-
-        VALUES (?, ?, ?, ?, ?)
-
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     """, (
-
         nom,
-
         description,
-
         prix,
-
         image_url,
-
-        maintenant()
-
+        video_url,
+        media_type,
+        date
     ))
 
+    produit_id = cursor.lastrowid
 
     conn.commit()
 
     conn.close()
 
+    # -----------------------------------------------------
+    # NOTIFICATION NOUVEAU PRODUIT
+    # -----------------------------------------------------
+
+    envoyer_notification_tous(
+        "Nouveau produit 🛍️",
+        f"{nom} vient d'être ajouté sur Yemalin Aura."
+    )
 
     return jsonify({
-
         "ok": True,
-
-        "message":
-            "Produit ajouté avec succès."
-
+        "message": "Produit ajouté.",
+        "id": produit_id
     })
 
 
 # =========================================================
-# ADMIN — SUPPRIMER PRODUIT
+# SUPPRIMER PRODUIT
 # =========================================================
 
 @app.route(
@@ -764,7 +585,6 @@ def supprimer_produit(
 
     conn = db()
 
-
     conn.execute("""
         DELETE FROM produits
         WHERE id = ?
@@ -772,24 +592,18 @@ def supprimer_produit(
         produit_id,
     ))
 
-
     conn.commit()
 
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
-        "message":
-            "Produit supprimé."
-
+        "message": "Produit supprimé."
     })
 
 
 # =========================================================
-# CRÉER UNE COMMANDE
+# COMMANDES
 # =========================================================
 
 @app.route(
@@ -802,159 +616,67 @@ def creer_commande():
         silent=True
     ) or {}
 
-
     client_nom = (
         data.get("client_nom")
         or ""
     ).strip()
-
 
     telephone = (
         data.get("telephone")
         or ""
     ).strip()
 
-
     adresse = (
         data.get("adresse")
         or ""
     ).strip()
 
-
-    panier = (
-        data.get("panier")
-        or []
-    )
-
+    panier = data.get(
+        "panier"
+    ) or []
 
     if not client_nom or not telephone:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Nom et téléphone obligatoires."
-
+            "message": "Nom et téléphone obligatoires."
         }), 400
-
 
     if not panier:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Votre panier est vide."
-
+            "message": "Votre panier est vide."
         }), 400
-
-
-    # =====================================================
-    # CALCUL DU TOTAL CÔTÉ SERVEUR
-    # On ne fait pas confiance au prix envoyé par le navigateur.
-    # =====================================================
-
-    conn = db()
-
-
-    total = 0
-
-    produits_valides = []
-
 
     try:
 
-        for produit in panier:
-
-            produit_id = int(
-                produit.get("id")
-            )
-
-
-            quantite = int(
-                produit.get("quantite")
-            )
-
-
-            if quantite <= 0:
-
-                raise ValueError()
-
-
-            ligne = conn.execute("""
-                SELECT id, nom, prix
-                FROM produits
-                WHERE id = ?
-            """, (
-                produit_id,
-            )).fetchone()
-
-
-            if not ligne:
-
-                raise ValueError()
-
-
-            prix = float(
-                ligne["prix"]
-            )
-
-
-            total += (
-                prix *
-                quantite
-            )
-
-
-            produits_valides.append({
-
-                "id":
-                    ligne["id"],
-
-                "nom":
-                    ligne["nom"],
-
-                "prix":
-                    prix,
-
-                "quantite":
-                    quantite
-
-            })
-
+        total = sum(
+            float(p.get("prix", 0))
+            *
+            int(p.get("quantite", 0))
+            for p in panier
+        )
 
     except Exception:
 
-        conn.close()
-
-
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Un produit du panier est invalide."
-
+            "message": "Panier invalide."
         }), 400
-
-
-    # =====================================================
-    # TOKEN PRIVÉ DU CLIENT
-    # =====================================================
 
     client_token = secrets.token_urlsafe(
         32
     )
 
+    date = maintenant()
 
-    c = conn.cursor()
+    conn = db()
 
+    cursor = conn.cursor()
 
-    c.execute("""
+    cursor.execute("""
         INSERT INTO commandes
-
         (
             client_nom,
             telephone,
@@ -964,40 +686,23 @@ def creer_commande():
             client_token,
             date
         )
-
         VALUES (?, ?, ?, ?, ?, ?, ?)
-
     """, (
-
         client_nom,
-
         telephone,
-
         adresse,
-
         total,
-
         "Nouvelle",
-
         client_token,
-
-        maintenant()
-
+        date
     ))
 
+    commande_id = cursor.lastrowid
 
-    commande_id = c.lastrowid
+    for produit in panier:
 
-
-    # =====================================================
-    # PRODUITS DE LA COMMANDE
-    # =====================================================
-
-    for produit in produits_valides:
-
-        c.execute("""
+        cursor.execute("""
             INSERT INTO commande_produits
-
             (
                 commande_id,
                 produit_id,
@@ -1005,72 +710,28 @@ def creer_commande():
                 prix,
                 quantite
             )
-
             VALUES (?, ?, ?, ?, ?)
-
         """, (
-
             commande_id,
-
-            produit["id"],
-
-            produit["nom"],
-
-            produit["prix"],
-
-            produit["quantite"]
-
+            produit.get("id"),
+            produit.get("nom"),
+            produit.get("prix"),
+            produit.get("quantite")
         ))
-
-
-    # =====================================================
-    # NOTIFICATION POUR L'ADMIN
-    # =====================================================
-
-    c.execute("""
-        INSERT INTO notifications
-
-        (
-            client_token,
-            commande_id,
-            titre,
-            message,
-            date
-        )
-
-        VALUES (?, ?, ?, ?, ?)
-
-    """, (
-
-        None,
-
-        commande_id,
-
-        "Nouvelle commande",
-
-        f"Nouvelle commande #{commande_id} de {client_nom}.",
-
-        maintenant()
-
-    ))
-
 
     conn.commit()
 
     conn.close()
 
-
-    # Le token reste uniquement dans la session
     session["client_token"] = client_token
 
+    # Notification admin : les notifications push
+    # de l'admin peuvent être ajoutées ici plus tard.
 
     return jsonify({
-
         "ok": True,
-
-        "commande_id":
-            commande_id
-
+        "commande_id": commande_id,
+        "client_token": client_token
     })
 
 
@@ -1081,89 +742,55 @@ def creer_commande():
 @app.route("/api/mes-commandes")
 def mes_commandes():
 
-    client_token = session.get(
+    token = session.get(
         "client_token"
     )
 
-
-    if not client_token:
+    if not token:
 
         return jsonify({
-
             "ok": True,
-
             "commandes": []
-
         })
-
 
     conn = db()
 
-
     rows = conn.execute("""
         SELECT *
-
         FROM commandes
-
         WHERE client_token = ?
-
         ORDER BY id DESC
-
     """, (
-
-        client_token,
-
+        token,
     )).fetchall()
-
 
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
         "commandes": [
-
             dict(row)
-
             for row in rows
-
         ]
-
     })
 
 
 # =========================================================
-# INITIALISATION
-# =========================================================
-
-with app.app_context():
-
-    init_db()
-
-# =========================================================
-# YEMALIN AURA
-# app.py — PARTIE 2/2
-# =========================================================
-
-
-# =========================================================
-# DÉTAIL D'UNE COMMANDE
+# DÉTAIL COMMANDE
 # =========================================================
 
 @app.route(
     "/api/commande/<int:commande_id>"
 )
-def detail_commande(commande_id):
+def detail_commande(
+    commande_id
+):
 
-    client_token = session.get(
+    token = session.get(
         "client_token"
     )
 
-
     conn = db()
-
 
     commande = conn.execute("""
         SELECT *
@@ -1173,57 +800,34 @@ def detail_commande(commande_id):
         commande_id,
     )).fetchone()
 
-
     if not commande:
 
         conn.close()
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Commande introuvable."
-
+            "message": "Commande introuvable."
         }), 404
-
-
-    # -----------------------------------------------------
-    # Sécurité :
-    # l'admin peut voir toutes les commandes,
-    # le client uniquement sa propre commande.
-    # -----------------------------------------------------
 
     if not session.get("admin"):
 
-        if (
-            not client_token
-            or
-            commande["client_token"]
-            != client_token
-        ):
+        if commande["client_token"] != token:
 
             conn.close()
 
             return jsonify({
-
                 "ok": False,
-
-                "message":
-                    "Accès refusé."
-
+                "message": "Accès refusé."
             }), 403
-
 
     produits = conn.execute("""
         SELECT *
         FROM commande_produits
         WHERE commande_id = ?
-        ORDER BY id ASC
+        ORDER BY id
     """, (
         commande_id,
     )).fetchall()
-
 
     messages = conn.execute("""
         SELECT
@@ -1240,27 +844,19 @@ def detail_commande(commande_id):
         commande_id,
     )).fetchall()
 
-
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
-        "commande":
-            dict(commande),
-
+        "commande": dict(commande),
         "produits": [
             dict(x)
             for x in produits
         ],
-
         "messages": [
             dict(x)
             for x in messages
         ]
-
     })
 
 
@@ -1272,38 +868,31 @@ def detail_commande(commande_id):
     "/api/chat/<int:commande_id>",
     methods=["POST"]
 )
-def envoyer_chat(commande_id):
+def envoyer_chat(
+    commande_id
+):
 
     data = request.get_json(
         silent=True
     ) or {}
-
 
     message = (
         data.get("message")
         or ""
     ).strip()
 
-
     if not message:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Message vide."
-
+            "message": "Message vide."
         }), 400
 
-
-    client_token = session.get(
+    token = session.get(
         "client_token"
     )
 
-
     conn = db()
-
 
     commande = conn.execute("""
         SELECT *
@@ -1313,48 +902,26 @@ def envoyer_chat(commande_id):
         commande_id,
     )).fetchone()
 
-
     if not commande:
 
         conn.close()
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Commande introuvable."
-
+            "message": "Commande introuvable."
         }), 404
 
-
-    # -----------------------------------------------------
-    # CLIENT :
-    # il doit être propriétaire de la commande.
-    # ADMIN :
-    # il peut répondre à toutes les commandes.
-    # -----------------------------------------------------
-
+    # Client = uniquement sa commande
     if not session.get("admin"):
 
-        if (
-            not client_token
-            or
-            commande["client_token"]
-            != client_token
-        ):
+        if commande["client_token"] != token:
 
             conn.close()
 
             return jsonify({
-
                 "ok": False,
-
-                "message":
-                    "Accès refusé."
-
+                "message": "Accès refusé."
             }), 403
-
 
     auteur = (
         "Admin"
@@ -1362,13 +929,8 @@ def envoyer_chat(commande_id):
         else "Client"
     )
 
-
-    maintenant_date = maintenant()
-
-
     conn.execute("""
         INSERT INTO messages
-
         (
             commande_id,
             client_token,
@@ -1377,102 +939,46 @@ def envoyer_chat(commande_id):
             message,
             date
         )
-
         VALUES (?, ?, ?, ?, ?, ?)
-
     """, (
-
         commande_id,
-
         commande["client_token"],
-
         commande["client_nom"],
-
         auteur,
-
         message,
-
-        maintenant_date
-
+        maintenant()
     ))
-
-
-    # -----------------------------------------------------
-    # NOTIFICATION
-    # -----------------------------------------------------
-
-    if session.get("admin"):
-
-        titre = "Réponse de Yemalin Aura"
-
-        texte = (
-            f"Vous avez reçu une réponse "
-            f"pour la commande #{commande_id}."
-        )
-
-    else:
-
-        titre = "Nouveau message"
-
-        texte = (
-            f"{commande['client_nom']} "
-            f"a envoyé un message pour "
-            f"la commande #{commande_id}."
-        )
-
-
-    conn.execute("""
-        INSERT INTO notifications
-
-        (
-            client_token,
-            commande_id,
-            titre,
-            message,
-            date
-        )
-
-        VALUES (?, ?, ?, ?, ?)
-
-    """, (
-
-        commande["client_token"],
-
-        commande_id,
-
-        titre,
-
-        texte,
-
-        maintenant_date
-
-    ))
-
 
     conn.commit()
 
     conn.close()
 
+    # -----------------------------------------------------
+    # NOTIFICATION AU CLIENT SI ADMIN RÉPOND
+    # -----------------------------------------------------
+
+    if session.get("admin"):
+
+        envoyer_notification_client(
+            commande["client_token"],
+            "Nouvelle réponse 💬",
+            "L'administrateur a répondu à votre message."
+        )
 
     return jsonify({
-
         "ok": True
-
     })
 
 
 # =========================================================
-# ADMIN — TOUTES LES COMMANDES
+# ADMIN — COMMANDES
 # =========================================================
 
-@app.route(
-    "/api/admin/commandes"
-)
+@app.route("/api/admin/commandes")
 @admin_required
 def admin_commandes():
 
     conn = db()
-
 
     rows = conn.execute("""
         SELECT *
@@ -1480,31 +986,27 @@ def admin_commandes():
         ORDER BY id DESC
     """).fetchall()
 
-
     conn.close()
 
-
     return jsonify([
-
-        dict(row)
-
-        for row in rows
-
+        dict(x)
+        for x in rows
     ])
 
 
 # =========================================================
-# ADMIN — DÉTAIL + CHAT
+# ADMIN — CHAT
 # =========================================================
 
 @app.route(
     "/api/admin/chat/<int:commande_id>"
 )
 @admin_required
-def admin_chat(commande_id):
+def admin_chat(
+    commande_id
+):
 
     conn = db()
-
 
     commande = conn.execute("""
         SELECT *
@@ -1514,22 +1016,16 @@ def admin_chat(commande_id):
         commande_id,
     )).fetchone()
 
-
     if not commande:
 
         conn.close()
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Commande introuvable."
-
+            "message": "Commande introuvable."
         }), 404
 
-
-    messages = conn.execute("""
+messages = conn.execute("""
         SELECT *
         FROM messages
         WHERE commande_id = ?
@@ -1538,48 +1034,18 @@ def admin_chat(commande_id):
         commande_id,
     )).fetchall()
 
-
-    produits = conn.execute("""
-        SELECT *
-        FROM commande_produits
-        WHERE commande_id = ?
-        ORDER BY id ASC
-    """, (
-        commande_id,
-    )).fetchall()
-
-
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
-        "commande":
-            dict(commande),
-
-        "produits": [
-
-            dict(x)
-
-            for x in produits
-
-        ],
-
+        "commande": dict(commande),
         "messages": [
-
             dict(x)
-
             for x in messages
-
         ]
-
     })
-
-
 # =========================================================
-# ADMIN — CHANGER LE STATUT
+# ADMIN — STATUT COMMANDE
 # =========================================================
 
 @app.route(
@@ -1587,137 +1053,79 @@ def admin_chat(commande_id):
     methods=["POST"]
 )
 @admin_required
-def changer_statut(commande_id):
+def changer_statut(
+    commande_id
+):
 
     data = request.get_json(
         silent=True
     ) or {}
-
 
     statut = (
         data.get("statut")
         or ""
     ).strip()
 
-
     statuts = [
-
         "Nouvelle",
-
         "Confirmée",
-
         "En livraison",
-
         "Terminée",
-
         "Annulée"
-
     ]
-
 
     if statut not in statuts:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Statut invalide."
-
+            "message": "Statut invalide."
         }), 400
-
 
     conn = db()
 
-
     commande = conn.execute("""
-        SELECT *
+        SELECT client_token
         FROM commandes
         WHERE id = ?
     """, (
         commande_id,
     )).fetchone()
 
-
     if not commande:
 
         conn.close()
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Commande introuvable."
-
+            "message": "Commande introuvable."
         }), 404
-
 
     conn.execute("""
         UPDATE commandes
-
         SET statut = ?
-
         WHERE id = ?
-
     """, (
-
         statut,
-
         commande_id
-
     ))
-
-
-    # -----------------------------------------------------
-    # Notification pour le client
-    # -----------------------------------------------------
-
-    conn.execute("""
-        INSERT INTO notifications
-
-        (
-            client_token,
-            commande_id,
-            titre,
-            message,
-            date
-        )
-
-        VALUES (?, ?, ?, ?, ?)
-
-    """, (
-
-        commande["client_token"],
-
-        commande_id,
-
-        "Commande mise à jour",
-
-        f"Votre commande #{commande_id} est maintenant : {statut}.",
-
-        maintenant()
-
-    ))
-
 
     conn.commit()
 
     conn.close()
 
+    envoyer_notification_client(
+        commande["client_token"],
+        "Commande mise à jour 📦",
+        f"Votre commande est maintenant : {statut}"
+    )
 
     return jsonify({
-
-        "ok": True,
-
-        "message":
-            "Statut mis à jour."
-
+        "ok": True
     })
 
 
 # =========================================================
-# ADMIN — STATISTIQUES
+# ADMIN — DASHBOARD
 # =========================================================
 
 @app.route(
@@ -1728,97 +1136,179 @@ def dashboard():
 
     conn = db()
 
-
     commandes = conn.execute("""
         SELECT COUNT(*)
         FROM commandes
     """).fetchone()[0]
-
 
     clients = conn.execute("""
         SELECT COUNT(DISTINCT telephone)
         FROM commandes
     """).fetchone()[0]
 
-
     revenus = conn.execute("""
-        SELECT COALESCE(
-            SUM(total),
-            0
-        )
+        SELECT COALESCE(SUM(total), 0)
         FROM commandes
-
         WHERE statut != 'Annulée'
     """).fetchone()[0]
-
 
     livraisons = conn.execute("""
         SELECT COUNT(*)
         FROM commandes
-
         WHERE statut = 'En livraison'
     """).fetchone()[0]
-
 
     nouvelles = conn.execute("""
         SELECT COUNT(*)
         FROM commandes
-
         WHERE statut = 'Nouvelle'
     """).fetchone()[0]
-
 
     messages = conn.execute("""
         SELECT COUNT(*)
         FROM messages
-
         WHERE auteur = 'Client'
     """).fetchone()[0]
 
-
-    produits = conn.execute("""
-        SELECT COUNT(*)
-        FROM produits
-    """).fetchone()[0]
-
-
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
         "stats": {
-
-            "commandes":
-                commandes,
-
-            "clients":
-                clients,
-
-            "revenus":
-                revenus,
-
-            "livraisons":
-                livraisons,
-
-            "nouvelles":
-                nouvelles,
-
-            "messages":
-                messages,
-
-            "produits":
-                produits
-
+            "commandes": commandes,
+            "clients": clients,
+            "revenus": revenus,
+            "livraisons": livraisons,
+            "nouvelles": nouvelles,
+            "messages": messages
         }
-
     })
 
 
 # =========================================================
-# ADMIN — LISTE DES MESSAGES GÉNÉRAUX
+# MESSAGES GÉNÉRAUX — CLIENT
+# =========================================================
+
+@app.route(
+    "/api/message-general",
+    methods=["POST"]
+)
+def message_general():
+
+    data = request.get_json(
+        silent=True
+    ) or {}
+
+    nom = (
+        data.get("nom")
+        or ""
+    ).strip()
+
+    message = (
+        data.get("message")
+        or ""
+    ).strip()
+
+    if not nom or not message:
+
+        return jsonify({
+            "ok": False,
+            "message": "Nom et message obligatoires."
+        }), 400
+
+    token = session.get(
+        "client_token"
+    )
+
+    if not token:
+
+        token = secrets.token_urlsafe(
+            32
+        )
+
+        session["client_token"] = token
+
+    conn = db()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO messages_generaux
+        (
+            client_token,
+            client_nom,
+            message,
+            reponse,
+            date,
+            date_reponse
+        )
+        VALUES (?, ?, ?, NULL, ?, NULL)
+    """, (
+        token,
+        nom,
+        message,
+        maintenant()
+    ))
+
+    message_id = cursor.lastrowid
+
+    conn.commit()
+
+    conn.close()
+
+    # Notification à l'admin non envoyée ici :
+    # le tableau admin récupère les nouveaux messages.
+
+    return jsonify({
+        "ok": True,
+        "message_id": message_id
+    })
+
+
+# =========================================================
+# MESSAGES DU CLIENT
+# =========================================================
+
+@app.route(
+    "/api/mes-messages"
+)
+def mes_messages():
+
+    token = session.get(
+        "client_token"
+    )
+
+    if not token:
+
+        return jsonify({
+            "ok": True,
+            "messages": []
+        })
+
+    conn = db()
+
+    rows = conn.execute("""
+        SELECT *
+        FROM messages_generaux
+        WHERE client_token = ?
+        ORDER BY id DESC
+    """, (
+        token,
+    )).fetchall()
+
+    conn.close()
+
+    return jsonify({
+        "ok": True,
+        "messages": [
+            dict(x)
+            for x in rows
+        ]
+    })
+
+
+# =========================================================
+# ADMIN — MESSAGES GÉNÉRAUX
 # =========================================================
 
 @app.route(
@@ -1829,122 +1319,18 @@ def admin_messages():
 
     conn = db()
 
-
     rows = conn.execute("""
         SELECT *
         FROM messages_generaux
         ORDER BY id DESC
     """).fetchall()
 
-
     conn.close()
-
 
     return jsonify([
-
         dict(x)
-
         for x in rows
-
     ])
-
-
-# =========================================================
-# CLIENT — ENVOYER UN MESSAGE GÉNÉRAL
-# =========================================================
-
-@app.route(
-    "/api/message",
-    methods=["POST"]
-)
-def message_general():
-
-    data = request.get_json(
-        silent=True
-    ) or {}
-
-
-    nom = (
-        data.get("client_nom")
-        or ""
-    ).strip()
-
-
-    message = (
-        data.get("message")
-        or ""
-    ).strip()
-
-
-    if not nom or not message:
-
-        return jsonify({
-
-            "ok": False,
-
-            "message":
-                "Veuillez remplir les champs."
-
-        }), 400
-
-
-    client_token = session.get(
-        "client_token"
-    )
-
-
-    if not client_token:
-
-        client_token = secrets.token_urlsafe(
-            32
-        )
-
-        session["client_token"] = (
-            client_token
-        )
-
-
-    conn = db()
-
-
-    conn.execute("""
-        INSERT INTO messages_generaux
-
-        (
-            client_token,
-            client_nom,
-            message,
-            date
-        )
-
-        VALUES (?, ?, ?, ?)
-
-    """, (
-
-        client_token,
-
-        nom,
-
-        message,
-
-        maintenant()
-
-    ))
-
-
-    conn.commit()
-
-    conn.close()
-
-
-    return jsonify({
-
-        "ok": True,
-
-        "message":
-            "Message envoyé."
-
-    })
 
 
 # =========================================================
@@ -1952,7 +1338,7 @@ def message_general():
 # =========================================================
 
 @app.route(
-    "/api/admin/message/<int:message_id>/repondre",
+    "/api/admin/message-general/<int:message_id>/repondre",
     methods=["POST"]
 )
 @admin_required
@@ -1964,117 +1350,67 @@ def repondre_message_general(
         silent=True
     ) or {}
 
-
     reponse = (
         data.get("reponse")
         or ""
     ).strip()
 
-
     if not reponse:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Réponse vide."
-
+            "message": "Réponse vide."
         }), 400
 
-
     conn = db()
-
 
     message = conn.execute("""
         SELECT *
         FROM messages_generaux
-
         WHERE id = ?
     """, (
         message_id,
     )).fetchone()
-
 
     if not message:
 
         conn.close()
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Message introuvable."
-
+            "message": "Message introuvable."
         }), 404
-
 
     conn.execute("""
         UPDATE messages_generaux
-
         SET
             reponse = ?,
             date_reponse = ?
-
         WHERE id = ?
-
     """, (
-
         reponse,
-
         maintenant(),
-
         message_id
-
     ))
-
-
-    conn.execute("""
-        INSERT INTO notifications
-
-        (
-            client_token,
-            commande_id,
-            titre,
-            message,
-            date
-        )
-
-        VALUES (?, ?, ?, ?, ?)
-
-    """, (
-
-        message["client_token"],
-
-        0,
-
-        "Réponse de Yemalin Aura",
-
-        reponse,
-
-        maintenant()
-
-    ))
-
 
     conn.commit()
 
     conn.close()
 
+    # Notification push au client
+    envoyer_notification_client(
+        message["client_token"],
+        "Nouvelle réponse 💬",
+        "L'administrateur a répondu à votre message."
+    )
 
     return jsonify({
-
-        "ok": True,
-
-        "message":
-            "Réponse envoyée."
-
+        "ok": True
     })
 
 
 # =========================================================
-# PUBLICITÉ — CLIENT
+# PUBLICITÉS
 # =========================================================
 
 @app.route(
@@ -2084,31 +1420,22 @@ def publicites():
 
     conn = db()
 
-
     rows = conn.execute("""
         SELECT *
         FROM publicites
-
-        WHERE position = 1
-
-        LIMIT 1
+        ORDER BY position
     """).fetchall()
-
 
     conn.close()
 
-
     return jsonify([
-
         dict(x)
-
         for x in rows
-
     ])
 
 
 # =========================================================
-# PUBLICITÉ — ADMIN
+# ADMIN — PUBLICITÉ
 # =========================================================
 
 @app.route(
@@ -2118,53 +1445,55 @@ def publicites():
 @admin_required
 def modifier_publicite():
 
+    position = request.form.get(
+        "position",
+        type=int
+    )
+
     titre = (
         request.form.get("titre")
         or ""
     ).strip()
-
 
     lien = (
         request.form.get("lien")
         or ""
     ).strip()
 
-
     texte = (
         request.form.get("texte")
         or ""
     ).strip()
 
+    if position != 1:
+
+        return jsonify({
+            "ok": False,
+            "message": "Utilisez l'emplacement 1."
+        }), 400
+
+    media_url = ""
+
+    media_type = ""
 
     fichier = request.files.get(
         "media"
     )
 
-
-    media_url = ""
-
-
-    media_type = ""
-
-
-    # -----------------------------------------------------
-    # UPLOAD CLOUDINARY
-    # -----------------------------------------------------
-
     if fichier and fichier.filename:
 
-        nom = (
-            fichier.filename
-            .lower()
-        )
+        nom = fichier.filename.lower()
 
-
-        if nom.endswith((
+        extensions_video = (
             ".mp4",
             ".webm",
             ".mov",
             ".m4v"
-        )):
+        )
+
+        if nom.endswith(
+            extensions_video
+        ):
 
             resource_type = "video"
 
@@ -2176,119 +1505,84 @@ def modifier_publicite():
 
             media_type = "image"
 
-
         try:
 
-            resultat = (
-                cloudinary
-                .uploader
-                .upload(
-
-                    fichier,
-
-                    folder=
-                        "yemalin-aura/publicites",
-
-                    resource_type=
-                        resource_type
-
-                )
+            resultat = cloudinary.uploader.upload(
+                fichier,
+                folder="yemalin-aura/publicites",
+                resource_type=resource_type
             )
 
-
-            media_url = (
-                resultat.get(
-                    "secure_url",
-                    ""
-                )
+            media_url = resultat.get(
+                "secure_url",
+                ""
             )
 
-
-        except Exception:
+        except Exception as e:
 
             return jsonify({
-
                 "ok": False,
-
-                "message":
-                    "Erreur Cloudinary."
-
+                "message": "Erreur Cloudinary.",
+                "error": str(e)
             }), 500
-
 
     conn = db()
 
+    # Si aucun nouveau fichier n'est envoyé,
+    # on garde l'ancien média.
 
-    # Si aucun nouveau média,
-    # on garde l'ancien.
-    if media_url:
+    ancien = conn.execute("""
+        SELECT media_url, media_type
+        FROM publicites
+        WHERE position = 1
+    """).fetchone()
 
-        conn.execute("""
-            UPDATE publicites
+    if not media_url and ancien:
 
-            SET
-                titre = ?,
-                media_url = ?,
-                media_type = ?,
-                lien = ?,
-                texte = ?
+        media_url = ancien["media_url"] or ""
 
-            WHERE position = 1
+        media_type = ancien["media_type"] or ""
 
-        """, (
-
+    conn.execute("""
+        INSERT INTO publicites
+        (
+            position,
             titre,
-
             media_url,
-
             media_type,
-
             lien,
-
             texte
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
 
-        ))
-
-    else:
-
-        conn.execute("""
-            UPDATE publicites
-
-            SET
-                titre = ?,
-                lien = ?,
-                texte = ?
-
-            WHERE position = 1
-
-        """, (
-
-            titre,
-
-            lien,
-
-            texte
-
-        ))
-
+        ON CONFLICT(position)
+        DO UPDATE SET
+            titre = excluded.titre,
+            media_url = excluded.media_url,
+            media_type = excluded.media_type,
+            lien = excluded.lien,
+            texte = excluded.texte
+    """, (
+        1,
+        titre,
+        media_url,
+        media_type,
+        lien,
+        texte
+    ))
 
     conn.commit()
 
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
-        "message":
-            "Publicité enregistrée."
-
+        "message": "Publicité enregistrée."
     })
 
 
 # =========================================================
-# ADMIN — SUPPRIMER LA PUBLICITÉ
+# SUPPRIMER PUBLICITÉ
 # =========================================================
 
 @app.route(
@@ -2300,362 +1594,311 @@ def supprimer_publicite():
 
     conn = db()
 
-
     conn.execute("""
         UPDATE publicites
-
         SET
             titre = '',
             media_url = '',
             media_type = '',
             lien = '',
             texte = ''
-
         WHERE position = 1
     """)
 
-
     conn.commit()
 
     conn.close()
 
-
     return jsonify({
-
         "ok": True,
-
-        "message":
-            "Publicité supprimée."
-
+        "message": "Publicité supprimée."
     })
 
 
 # =========================================================
-# NOTIFICATIONS — CLIENT
+# PUSH — ENREGISTRER LE NAVIGATEUR
 # =========================================================
 
 @app.route(
-    "/api/notifications"
-)
-def notifications():
-
-    client_token = session.get(
-        "client_token"
-    )
-
-
-    if not client_token:
-
-        return jsonify({
-
-            "ok": True,
-
-            "notifications": []
-
-        })
-
-
-    conn = db()
-
-
-    rows = conn.execute("""
-        SELECT *
-
-        FROM notifications
-
-        WHERE client_token = ?
-
-        ORDER BY id DESC
-
-        LIMIT 50
-    """, (
-
-        client_token,
-
-    )).fetchall()
-
-
-    conn.close()
-
-
-    return jsonify({
-
-        "ok": True,
-
-        "notifications": [
-
-            dict(x)
-
-            for x in rows
-
-        ]
-
-    })
-
-
-# =========================================================
-# NOTIFICATIONS — ADMIN
-# =========================================================
-
-@app.route(
-    "/api/admin/notifications"
-)
-@admin_required
-def admin_notifications():
-
-    conn = db()
-
-
-    rows = conn.execute("""
-        SELECT *
-
-        FROM notifications
-
-        WHERE client_token IS NULL
-
-        ORDER BY id DESC
-
-        LIMIT 50
-    """).fetchall()
-
-
-    conn.close()
-
-
-    return jsonify({
-
-        "ok": True,
-
-        "notifications": [
-
-            dict(x)
-
-            for x in rows
-
-        ]
-
-    })
-
-
-# =========================================================
-# MARQUER UNE NOTIFICATION COMME LUE
-# =========================================================
-
-@app.route(
-    "/api/notifications/<int:notification_id>/lu",
+    "/api/push/abonner",
     methods=["POST"]
 )
-def notification_lue(
-    notification_id
-):
-
-    client_token = session.get(
-        "client_token"
-    )
-
-
-    if not client_token:
-
-        return jsonify({
-
-            "ok": False
-
-        }), 401
-
-
-    conn = db()
-
-
-    conn.execute("""
-        UPDATE notifications
-
-        SET lu = 1
-
-        WHERE id = ?
-
-        AND client_token = ?
-    """, (
-
-        notification_id,
-
-        client_token
-
-    ))
-
-
-    conn.commit()
-
-    conn.close()
-
-
-    return jsonify({
-
-        "ok": True
-
-    })
-
-# =========================================================
-# PUSH — ENREGISTRER L'ABONNEMENT
-# =========================================================
-
-@app.route(
-    "/api/push/subscribe",
-    methods=["POST"]
-)
-def push_subscribe():
+def push_abonner():
 
     data = request.get_json(
         silent=True
     ) or {}
 
-
-    subscription = (
-        data.get("subscription")
-        or {}
-    )
-
-
     endpoint = (
-        subscription.get("endpoint")
+        data.get("endpoint")
         or ""
     ).strip()
 
-
-    keys = (
-        subscription.get("keys")
-        or {}
-    )
-
+    keys = data.get(
+        "keys"
+    ) or {}
 
     p256dh = (
         keys.get("p256dh")
         or ""
     ).strip()
 
-
     auth = (
         keys.get("auth")
         or ""
     ).strip()
 
-
-    if (
-        not endpoint
-        or not p256dh
-        or not auth
-    ):
+    if not endpoint or not p256dh or not auth:
 
         return jsonify({
-
             "ok": False,
-
-            "message":
-                "Abonnement push invalide."
-
+            "message": "Abonnement push invalide."
         }), 400
 
-
-    client_token = session.get(
+    token = session.get(
         "client_token"
     )
 
-
-    user_type = (
-        "admin"
-        if session.get("admin")
-        else "client"
-    )
-
-
     conn = db()
 
-
     conn.execute("""
-        INSERT OR REPLACE INTO
-        push_subscriptions
-
+        INSERT INTO push_subscriptions
         (
             client_token,
             endpoint,
             p256dh,
             auth,
-            user_type,
             date
         )
+        VALUES (?, ?, ?, ?, ?)
 
-        VALUES (?, ?, ?, ?, ?, ?)
-
+        ON CONFLICT(endpoint)
+        DO UPDATE SET
+            client_token = excluded.client_token,
+            p256dh = excluded.p256dh,
+            auth = excluded.auth,
+            date = excluded.date
     """, (
-
-        client_token,
-
+        token,
         endpoint,
-
         p256dh,
-
         auth,
-
-        user_type,
-
         maintenant()
-
     ))
-
 
     conn.commit()
 
     conn.close()
 
-
     return jsonify({
-
-        "ok": True,
-
-        "message":
-            "Notifications activées."
-
+        "ok": True
     })
 
 
 # =========================================================
-# ROUTE DE TEST
+# PUSH — SUPPRIMER UN ABONNEMENT
 # =========================================================
 
 @app.route(
-    "/api/test"
+    "/api/push/desabonner",
+    methods=["POST"]
 )
-def test():
+def push_desabonner():
+
+    data = request.get_json(
+        silent=True
+    ) or {}
+
+    endpoint = (
+        data.get("endpoint")
+        or ""
+    ).strip()
+
+    if not endpoint:
+
+        return jsonify({
+            "ok": False
+        }), 400
+
+    conn = db()
+
+    conn.execute("""
+        DELETE FROM push_subscriptions
+        WHERE endpoint = ?
+    """, (
+        endpoint,
+    ))
+
+    conn.commit()
+
+    conn.close()
 
     return jsonify({
-
-        "ok": True,
-
-        "site":
-            "Yemalin Aura",
-
-        "slogan":
-            "Le raffinement qui nous distingue"
-
+        "ok": True
     })
 
 
 # =========================================================
-# FIN
+# FONCTION PUSH
+# =========================================================
+
+def envoyer_push(
+    subscription,
+    titre,
+    message
+):
+
+    if not VAPID_PRIVATE_KEY:
+
+        print(
+            "VAPID_PRIVATE_KEY absente."
+        )
+
+        return False
+
+    if not VAPID_PUBLIC_KEY:
+
+        print(
+            "VAPID_PUBLIC_KEY absente."
+        )
+
+        return False
+
+    try:
+
+        from pywebpush import (
+            webpush,
+            WebPushException
+        )
+
+        abonnement = {
+            "endpoint": subscription["endpoint"],
+            "keys": {
+                "p256dh": subscription["p256dh"],
+                "auth": subscription["auth"]
+            }
+        }
+
+        webpush(
+            subscription_info=abonnement,
+            data=f"{titre}\n{message}",
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims={
+                "sub": VAPID_EMAIL
+            }
+        )
+
+        return True
+
+    except Exception as e:
+
+        print(
+            "Erreur notification push:",
+            e
+        )
+
+        return False
+
+
+# =========================================================
+# PUSH — CLIENT PARTICULIER
+# =========================================================
+
+def envoyer_notification_client(
+    client_token,
+    titre,
+    message
+):
+
+    if not client_token:
+
+        return
+
+    conn = db()
+
+    subscriptions = conn.execute("""
+        SELECT *
+        FROM push_subscriptions
+        WHERE client_token = ?
+    """, (
+        client_token,
+    )).fetchall()
+
+    conn.close()
+
+    for subscription in subscriptions:
+
+        ok = envoyer_push(
+            subscription,
+            titre,
+            message
+        )
+
+        if not ok:
+
+            # On ne supprime pas immédiatement
+            # l'abonnement pour éviter une suppression
+            # accidentelle lors d'une panne temporaire.
+            pass
+
+
+# =========================================================
+# PUSH — TOUS LES CLIENTS
+# =========================================================
+
+def envoyer_notification_tous(
+    titre,
+    message
+):
+
+    conn = db()
+
+    subscriptions = conn.execute("""
+        SELECT *
+        FROM push_subscriptions
+    """).fetchall()
+
+    conn.close()
+
+    for subscription in subscriptions:
+
+        envoyer_push(
+            subscription,
+            titre,
+            message
+        )
+
+
+# =========================================================
+# SANTÉ
+# =========================================================
+
+@app.route("/health")
+def health():
+
+    return jsonify({
+        "ok": True,
+        "service": "Yemalin Aura"
+    })
+
+
+# =========================================================
+# LANCEMENT
 # =========================================================
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            "8080"
+        )
+    )
+
     app.run(
-
         host="0.0.0.0",
-
-        port=int(
-            os.environ.get(
-                "PORT",
-                5000
-            )
-        ),
-
+        port=port,
         debug=False
+    )
 
-    ) 
+    
