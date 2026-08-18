@@ -2,19 +2,40 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Yemalin Aura — Le raffinement qui nous distingue</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <meta name="description"
-          content="Yemalin Aura — Le raffinement qui nous distingue.">
+    <title>
+        Yemalin Aura — Le raffinement qui nous distingue
+    </title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <meta
+        name="description"
+        content="Yemalin Aura — Le raffinement qui nous distingue."
+    >
+
+    <meta name="theme-color" content="#8b6b45">
+
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='logo.png') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      HEADER
@@ -30,7 +51,7 @@
             class="logo"
         >
 
-        <div class="brand-text">
+        <div>
 
             <div class="brand-name">
                 Yemalin Aura
@@ -44,55 +65,50 @@
 
     </div>
 
+
+    <nav>
+
+        <button
+            type="button"
+            onclick="ouvrirPage('accueil')"
+        >
+            🏠 Accueil
+        </button>
+
+        <button
+            type="button"
+            onclick="ouvrirPage('commandes')"
+        >
+            📦 Commandes
+        </button>
+
+        <button
+            type="button"
+            onclick="ouvrirPage('messages')"
+        >
+            💬 Messages
+        </button>
+
+        <button
+            type="button"
+            onclick="ouvrirPanier()"
+        >
+            🛒 Panier
+
+            <span id="compteur">
+                0
+            </span>
+
+        </button>
+
+    </nav>
+
 </header>
 
 
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
-
-<nav class="main-navigation">
-
-    <button
-        class="nav-button active"
-        onclick="ouvrirPage('accueil')"
-    >
-        🏠
-        <span>Accueil</span>
-    </button>
-
-    <button
-        class="nav-button"
-        onclick="ouvrirPage('commandes')"
-    >
-        📦
-        <span>Commandes</span>
-    </button>
-
-    <button
-        class="nav-button"
-        onclick="ouvrirPage('messages')"
-    >
-        💬
-        <span>Messages</span>
-    </button>
-
-    <button
-        class="nav-button cart-button"
-        onclick="ouvrirPanier()"
-    >
-        🛒
-        <span>Panier</span>
-
-        <b id="compteur">0</b>
-
-    </button>
-
-</nav>
-
 
 <!-- =====================================================
-     CONTENU
+     CONTENU PRINCIPAL
 ===================================================== -->
 
 <main>
@@ -108,19 +124,17 @@
 >
 
 
-    <!-- HERO -->
+    <!-- =================================================
+         HERO
+    ================================================== -->
 
     <section class="hero">
 
-        <div class="hero-logo-container">
-
-            <img
-                src="{{ url_for('static', filename='logo.png') }}"
-                alt="Yemalin Aura"
-                class="hero-logo"
-            >
-
-        </div>
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="Yemalin Aura"
+            class="hero-logo"
+        >
 
 
         <div class="hero-content">
@@ -129,22 +143,26 @@
                 Yemalin Aura
             </div>
 
+
             <h1
                 id="slogan-animation"
                 class="slogan-animation"
             ></h1>
 
+
             <p>
                 Découvrez notre sélection
-                et trouvez ce qui vous correspond.
+                et passez votre commande
+                simplement.
             </p>
 
+
             <button
+                type="button"
                 class="hero-button"
                 onclick="allerProduits()"
             >
                 Découvrir nos produits
-                <span>→</span>
             </button>
 
         </div>
@@ -152,30 +170,16 @@
     </section>
 
 
+
     <!-- =================================================
          PRODUITS
     ================================================== -->
 
-    <section
-        id="section-produits"
-        class="products-section"
-    >
+    <section class="products-section">
 
-        <div class="section-heading">
-
-            <span class="section-kicker">
-                NOTRE SÉLECTION
-            </span>
-
-            <h2 class="section-title">
-                Nos produits
-            </h2>
-
-            <p>
-                Découvrez nos articles disponibles.
-            </p>
-
-        </div>
+        <h2 class="section-title">
+            Nos produits
+        </h2>
 
 
         <div
@@ -187,9 +191,10 @@
 
             <article class="produit">
 
-                <div class="produit-image-container">
 
-                    {% if produit.image %}
+                <!-- IMAGE PRODUIT -->
+
+                {% if produit.image %}
 
                     <img
                         src="{{ produit.image }}"
@@ -198,22 +203,24 @@
                         loading="lazy"
                     >
 
-                    {% else %}
+                {% else %}
 
                     <div class="image-vide">
                         🛍️
                     </div>
 
-                    {% endif %}
+                {% endif %}
 
-                </div>
 
+
+                <!-- INFORMATIONS -->
 
                 <div class="produit-content">
 
                     <h3>
                         {{ produit.nom }}
                     </h3>
+
 
                     {% if produit.description %}
 
@@ -224,50 +231,39 @@
                     {% endif %}
 
 
-                    <div class="produit-bottom">
+                    <div class="prix">
 
-                        <div class="prix">
+                        {{ "%.0f"|format(produit.prix) }}
 
-                            {{ "%.0f"|format(produit.prix) }}
-
-                            <small>FCFA</small>
-
-                        </div>
-
-
-                        <button
-                            class="btn btn-product"
-                            onclick='ajouterPanier({
-                                "id": {{ produit.id }},
-                                "nom": {{ produit.nom|tojson }},
-                                "prix": {{ produit.prix }},
-                                "quantite": 1
-                            })'
-                        >
-                            Ajouter
-                            <span>+</span>
-                        </button>
+                        FCFA
 
                     </div>
+
+
+                    <button
+                        type="button"
+                        class="btn"
+                        onclick='ajouterPanier({
+                            "id": {{ produit.id }},
+                            "nom": {{ produit.nom|tojson }},
+                            "prix": {{ produit.prix }}
+                        })'
+                    >
+                        🛒 Ajouter au panier
+                    </button>
 
                 </div>
 
             </article>
 
+
             {% else %}
 
             <div class="empty-products">
 
-                <div>
-                    🛍️
-                </div>
-
-                <h3>
-                    Aucun produit disponible
-                </h3>
-
                 <p>
-                    De nouveaux produits arriveront bientôt.
+                    Aucun produit disponible
+                    pour le moment.
                 </p>
 
             </div>
@@ -279,43 +275,39 @@
     </section>
 
 
+
     <!-- =================================================
          PANIER RAPIDE
     ================================================== -->
 
     <section class="quick-cart">
 
-        <div class="quick-cart-icon">
-            🛒
-        </div>
+        <h2>
+            🛒 Votre panier
+        </h2>
 
-        <div class="quick-cart-content">
 
-            <h2>
-                Votre panier
-            </h2>
+        <p>
 
-            <p>
+            <span id="compteur-rapide">
+                0
+            </span>
 
-                <strong id="compteur-rapide">
-                    0
-                </strong>
+            article(s) dans votre panier.
 
-                article(s) sélectionné(s).
+        </p>
 
-            </p>
-
-        </div>
 
         <button
+            type="button"
             class="btn"
             onclick="ouvrirPanier()"
         >
-            Voir le panier
-            →
+            Voir mon panier
         </button>
 
     </section>
+
 
 
     <!-- =================================================
@@ -324,120 +316,185 @@
 
     <section class="contact-section">
 
-        <div class="contact-icon">
-            💬
+        <h2>
+            💬 Besoin d'aide ?
+        </h2>
+
+
+        <p>
+            Une question concernant
+            un produit ou une commande ?
+        </p>
+
+
+        <div class="contact-buttons">
+
+
+            <!-- APPEL -->
+
+            <a
+                href="tel:+2290193456835"
+                class="btn contact-call"
+            >
+                📞 Appeler
+            </a>
+
+
+            <!-- WHATSAPP -->
+
+            <a
+                href="https://wa.me/22994236550"
+                class="btn contact-whatsapp"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                💬 WhatsApp
+            </a>
+
         </div>
 
-        <div>
 
-            <h2>
-                Besoin d'aide ?
-            </h2>
+        <p class="contact-note">
 
-            <p>
-                Une question concernant
-                un produit ou une commande ?
-            </p>
+            📞 0193456835
 
-        </div>
+            <br>
+
+            💬 WhatsApp : 94236550
+
+        </p>
+
+    </section>
+
+
+
+    <!-- =================================================
+         NOTIFICATIONS
+    ================================================== -->
+
+    <section class="contact-section">
+
+        <h2>
+            🔔 Notifications
+        </h2>
+
+
+        <p>
+            Activez les notifications pour être
+            informé de vos commandes et des nouveautés.
+        </p>
+
 
         <button
+            type="button"
             class="btn"
-            onclick="ouvrirPage('messages')"
+            onclick="demanderNotifications()"
         >
-            Nous écrire
+            🔔 Activer les notifications
         </button>
 
     </section>
 
 
+
     <!-- =================================================
-         PUBLICITÉ UNIQUE
-         EN BAS
+         PUBLICITÉ UNIQUE — EN BAS
     ================================================== -->
 
-    {% if pubs and pubs[0].media_url %}
+    {% if pubs %}
 
-    <section class="publicite-section">
+        {% set pub = pubs[0] %}
 
-        <div class="publicite-label">
-            PUBLICITÉ
-        </div>
+        {% if pub.media_url %}
 
+        <section class="publicite-section">
 
-        <a
-            class="publicite"
-            href="{{ pubs[0].lien or '#' }}"
-
-            {% if pubs[0].lien %}
-            target="_blank"
-            rel="noopener noreferrer"
-            {% endif %}
-        >
-
-            {% if pubs[0].media_type == "image" %}
-
-            <img
-                src="{{ pubs[0].media_url }}"
-                alt="{{ pubs[0].titre or 'Publicité' }}"
-                loading="lazy"
-            >
-
-            {% elif pubs[0].media_type == "video" %}
-
-            <video
-                src="{{ pubs[0].media_url }}"
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
-            ></video>
-
-            {% endif %}
-
-
-            {% if pubs[0].titre or pubs[0].texte %}
-
-            <div class="publicite-overlay">
-
-                {% if pubs[0].titre %}
-
-                <h3>
-                    {{ pubs[0].titre }}
-                </h3>
-
-                {% endif %}
-
-
-                {% if pubs[0].texte %}
-
-                <p>
-                    {{ pubs[0].texte }}
-                </p>
-
-                {% endif %}
-
-
-                {% if pubs[0].lien %}
-
-                <span>
-                    Découvrir →
-                </span>
-
-                {% endif %}
-
+            <div class="publicite-label">
+                PUBLICITÉ
             </div>
 
-            {% endif %}
 
-        </a>
+            <a
+                class="publicite"
+                href="{{ pub.lien or '#' }}"
 
-    </section>
+                {% if pub.lien %}
+
+                    target="_blank"
+                    rel="noopener noreferrer"
+
+                {% endif %}
+            >
+
+
+                {% if pub.media_type == "image" %}
+
+                    <img
+                        src="{{ pub.media_url }}"
+                        alt="{{ pub.titre or 'Publicité' }}"
+                        loading="lazy"
+                    >
+
+
+                {% elif pub.media_type == "video" %}
+
+                    <video
+                        src="{{ pub.media_url }}"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                    ></video>
+
+                {% endif %}
+
+
+                {% if pub.titre or pub.texte %}
+
+                <div class="publicite-overlay">
+
+                    {% if pub.titre %}
+
+                    <h3>
+                        {{ pub.titre }}
+                    </h3>
+
+                    {% endif %}
+
+
+                    {% if pub.texte %}
+
+                    <p>
+                        {{ pub.texte }}
+                    </p>
+
+                    {% endif %}
+
+
+                    {% if pub.lien %}
+
+                    <span>
+                        Découvrir →
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </a>
+
+        </section>
+
+        {% endif %}
 
     {% endif %}
 
+
 </section>
+
 
 
 <!-- =====================================================
@@ -449,36 +506,21 @@
     class="page"
 >
 
-    <div class="page-heading">
-
-        <span>
-            📦
-        </span>
-
-        <div>
-
-            <h2>
-                Mes commandes
-            </h2>
-
-            <p>
-                Suivez vos commandes ici.
-            </p>
-
-        </div>
-
-    </div>
+    <h2>
+        📦 Mes commandes
+    </h2>
 
 
     <div id="liste-commandes">
 
-        <p class="loading">
+        <p>
             Chargement...
         </p>
 
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -490,62 +532,39 @@
     class="page"
 >
 
-    <div class="page-heading">
-
-        <span>
-            💬
-        </span>
-
-        <div>
-
-            <h2>
-                Nous contacter
-            </h2>
-
-            <p>
-                Votre message reste privé.
-            </p>
-
-        </div>
-
-    </div>
+    <h2>
+        💬 Nous contacter
+    </h2>
 
 
-    <div class="card message-card">
-
-        <label for="message-nom">
-            Votre nom
-        </label>
+    <div class="card">
 
         <input
             id="message-nom"
             type="text"
-            placeholder="Ex. Franck"
-            maxlength="100"
+            placeholder="Votre nom"
+            autocomplete="name"
         >
 
-
-        <label for="message-general">
-            Votre message
-        </label>
 
         <textarea
             id="message-general"
             placeholder="Écrivez votre message..."
-            maxlength="2000"
         ></textarea>
 
 
         <button
-            class="btn full-button"
+            type="button"
+            class="btn"
             onclick="envoyerMessageGeneral()"
         >
-            📤 Envoyer le message
+            Envoyer le message
         </button>
 
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -557,25 +576,9 @@
     class="page"
 >
 
-    <div class="page-heading">
-
-        <span>
-            🛒
-        </span>
-
-        <div>
-
-            <h2>
-                Mon panier
-            </h2>
-
-            <p>
-                Vérifiez votre sélection.
-            </p>
-
-        </div>
-
-    </div>
+    <h2>
+        🛒 Mon panier
+    </h2>
 
 
     <div id="contenu-panier"></div>
@@ -583,9 +586,7 @@
 
     <div class="total">
 
-        <span>
-            Total
-        </span>
+        Total :
 
         <strong>
 
@@ -611,7 +612,7 @@
             id="client-nom"
             type="text"
             placeholder="Votre nom"
-            maxlength="100"
+            autocomplete="name"
         >
 
 
@@ -619,19 +620,20 @@
             id="telephone"
             type="tel"
             placeholder="Numéro de téléphone"
-            maxlength="30"
+            autocomplete="tel"
         >
 
 
         <textarea
             id="adresse"
             placeholder="Lieu ou adresse de livraison"
-            maxlength="500"
+            autocomplete="street-address"
         ></textarea>
 
 
         <button
-            class="btn full-button"
+            type="button"
+            class="btn"
             onclick="passerCommande()"
         >
             ✅ Passer la commande
@@ -640,6 +642,7 @@
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -651,25 +654,9 @@
     class="page"
 >
 
-    <div class="page-heading">
-
-        <span>
-            💬
-        </span>
-
-        <div>
-
-            <h2>
-                Chat de ma commande
-            </h2>
-
-            <p>
-                Conversation privée avec Yemalin Aura.
-            </p>
-
-        </div>
-
-    </div>
+    <h2>
+        💬 Chat de ma commande
+    </h2>
 
 
     <div
@@ -690,14 +677,16 @@
             id="chat-message"
             type="text"
             placeholder="Écrire un message..."
-            maxlength="2000"
+            autocomplete="off"
             onkeydown="
                 if(event.key === 'Enter')
                     envoyerChat()
             "
         >
 
+
         <button
+            type="button"
             onclick="envoyerChat()"
         >
             Envoyer
@@ -707,17 +696,21 @@
 
 </section>
 
+
+
 </main>
 
 
+
 <!-- =====================================================
-     NOTIFICATION
+     NOTIFICATION VISUELLE
 ===================================================== -->
 
 <div
     id="notification"
     class="notification"
 ></div>
+
 
 
 <!-- =====================================================
@@ -732,21 +725,27 @@
         class="footer-logo"
     >
 
+
     <h3>
         Yemalin Aura
     </h3>
+
 
     <p>
         Le raffinement qui nous distingue
     </p>
 
+
     <div class="footer-line"></div>
 
+
     <small>
-        © 2026 Yemalin Aura — Tous droits réservés.
+        © 2026 Yemalin Aura
+        — Tous droits réservés.
     </small>
 
 </footer>
+
 
 
 <!-- =====================================================
@@ -755,19 +754,21 @@
 
 <script>
 
-window.VAPID_PUBLIC_KEY =
-    {{ vapid_public_key|default('')|tojson }};
+    window.VAPID_PUBLIC_KEY =
+        "{{ vapid_public_key }}";
 
 </script>
+
 
 
 <!-- =====================================================
-     PUSH
+     NOTIFICATIONS PUSH
 ===================================================== -->
 
 <script
-    src="{{ url_for('static', filename='push.js') }}">
-</script>
+    src="{{ url_for('static', filename='push.js') }}"
+></script>
+
 
 
 <!-- =====================================================
@@ -775,19 +776,20 @@ window.VAPID_PUBLIC_KEY =
 ===================================================== -->
 
 <script
-    src="{{ url_for('static', filename='script.js') }}">
-</script>
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
 
 
 <!-- =====================================================
-     ANIMATION SLOGAN
+     ANIMATION DU SLOGAN
 ===================================================== -->
 
 <script>
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
 
         const element =
             document.getElementById(
@@ -837,14 +839,15 @@ document.addEventListener(
             );
 
 
-            requestAnimationFrame(
-                function () {
+            setTimeout(
+                function() {
 
                     mot.classList.add(
                         "show"
                     );
 
-                }
+                },
+                50
             );
 
 
@@ -872,16 +875,15 @@ document.addEventListener(
 function allerProduits() {
 
     const section =
-        document.getElementById(
-            "section-produits"
+        document.querySelector(
+            ".products-section"
         );
 
 
     if (section) {
 
         section.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
+            behavior: "smooth"
         });
 
     }
@@ -893,4 +895,4 @@ function allerProduits() {
 
 </body>
 
-                                </html>
+            </html>
