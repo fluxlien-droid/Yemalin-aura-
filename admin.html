@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Yemalin Aura — Administration</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f7f5;
+            color: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: #111;
+            color: white;
+            padding: 18px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .brand small {
+            display: block;
+            font-size: 12px;
+            font-weight: normal;
+            opacity: .7;
+            margin-top: 4px;
+        }
+
+        .logout {
+            background: #fff;
+            color: #111;
+            border: 0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        }
+
+        .stat span {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat strong {
+            font-size: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.06);
+            margin-bottom: 20px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin: 6px 0 12px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #111;
+            color: white;
+        }
+
+        .danger {
+            background: #c62828;
+            color: white;
+        }
+
+        .secondary {
+            background: #eee;
+            color: #222;
+        }
+
+        .product-list,
+        .order-list,
+        .message-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item {
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .product-image {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .order {
+            border-left: 5px solid #111;
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            background: #eee;
+            padding: 6px 9px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .chat {
+            height: 360px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 12px;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 10px 12px;
+            border-radius: 14px;
+            margin: 8px 0;
+        }
+
+        .bubble.client {
+            background: #e9e9e9;
+        }
+
+        .bubble.admin {
+            background: #111;
+            color: white;
+            margin-left: auto;
+        }
+
+        .bubble small {
+            display: block;
+            opacity: .6;
+            margin-bottom: 4px;
+        }
+
+        .pub-preview {
+            width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            background: #eee;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        video.pub-preview {
+            object-fit: contain;
+        }
+
+        .empty {
+            color: #777;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #notification {
+            position: fixed;
+            right: 15px;
+            bottom: 15px;
+            background: #111;
+            color: white;
+            padding: 13px 16px;
+            border-radius: 12px;
+            display: none;
+            z-index: 100;
+        }
+
+        @media (max-width: 900px) {
+
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            main {
+                padding: 12px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat strong {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <div class="brand">
+            Yemalin Aura
+            <small>
+                Administration — Le raffinement qui nous distingue
+            </small>
+        </div>
+
+        <a class="logout" href="/admin/logout">
+            Déconnexion
+        </a>
+
+    </div>
+</header>
+
+
+<main>
+
+    <h1>Tableau de bord</h1>
+
+
+    <!-- =========================
+         STATISTIQUES
+    ========================== -->
+
+    <section class="dashboard">
+
+        <div class="stat">
+            <span>Commandes</span>
+            <strong id="stat-commandes">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Clients</span>
+            <strong id="stat-clients">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Revenus</span>
+            <strong id="stat-revenus">0 FCFA</strong>
+        </div>
+
+        <div class="stat">
+            <span>En livraison</span>
+            <strong id="stat-livraisons">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Nouvelles</span>
+            <strong id="stat-nouvelles">0</strong>
+        </div>
+
+    </section>
+
+
+    <div class="grid">
+
+        <!-- =========================
+             AJOUT PRODUIT
+        ========================== -->
+
+        <section class="card">
+
+            <h2>🛍️ Ajouter un produit</h2>
+
+            <form id="produit-form">
+
+                <label>Nom</label>
+
+                <input
+                    name="nom"
+                    required
+                    placeholder="Nom du produit"
+                >
+
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    placeholder="Description"
+                ></textarea>
+
+                <label>Prix FCFA</label>
+
+                <input
+                    name="prix"
+                    type="number"
+                    min="0"
+                    required
+                    placeholder="5000"
+                >
+
+                <label>Image</label>
+
+                <input
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                >
+
+                <button
+                    class="primary"
+                    type="submit"
+                >
+                    ➕ Ajouter le produit
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUITS
+        ========================== -->
+
+        <section class="card">
+
+            <h2>📦 Produits</h2>
+
+            <div
+                id="produits-admin"
+                class="product-list"
+            >
+                Chargement...
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =========================
+         COMMANDES
+    ========================== -->
+
+    <section class="card">
+
+        <h2>📦 Commandes</h2>
+
+        <div
+            id="commandes-admin"
+            class="order-list"
+        >
+            Chargement...
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CHAT
+    ========================== -->
+
+    <section class="card">
+
+        <h2>💬 Chat privé</h2>
+
+        <p id="chat-client">
+            Sélectionne une commande pour ouvrir son chat.
+        </p>
+
+        <div
+            id="chat-box"
+            class="chat"
+        >
+            <div class="empty">
+                Aucun chat sélectionné.
+            </div>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+
+            <input
+                id="chat-input"
+                placeholder="Écrire une réponse..."
+            >
+
+            <button
+                class="primary"
+                onclick="envoyerReponseChat()"
+            >
+                Envoyer
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         MESSAGES GÉNÉRAUX
+    ========================== -->
+
+    <section class="card">
+
+        <h2>📩 Messages des clients</h2>
+
+        <div
+            id="messages-admin"
+            class="message-list"
+        >
+            Chargement...
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PUBLICITÉ 1
+    ========================== -->
+
+    <section class="card">
+
+        <h2>📢 Publicité 1</h2>
+
+        <form
+            class="pub-form"
+            data-position="1"
+        >
+
+            <label>Titre</label>
+
+            <input
+                name="titre"
+                placeholder="Titre de la publicité"
+            >
+
+            <label>Image ou vidéo</label>
+
+            <input
+                name="media"
+                type="file"
+                accept="image/*,video/*"
+            >
+
+            <label>Lien derrière la publicité</label>
+
+            <input
+                name="lien"
+                type="url"
+                placeholder="https://..."
+            >
+
+            <label>Texte</label>
+
+            <textarea
+                name="texte"
+                placeholder="Description..."
+            ></textarea>
+
+            <button
+                class="primary"
+                type="submit"
+            >
+                ☁️ Enregistrer la publicité
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================
+         PUBLICITÉ 2
+    ========================== -->
+
+    <section class="card">
+
+        <h2>📢 Publicité 2</h2>
+
+        <form
+            class="pub-form"
+            data-position="2"
+        >
+
+            <label>Titre</label>
+
+            <input
+                name="titre"
+                placeholder="Titre de la publicité"
+            >
+
+            <label>Image ou vidéo</label>
+
+            <input
+                name="media"
+                type="file"
+                accept="image/*,video/*"
+            >
+
+            <label>Lien derrière la publicité</label>
+
+            <input
+                name="lien"
+                type="url"
+                placeholder="https://..."
+            >
+
+            <label>Texte</label>
+
+            <textarea
+                name="texte"
+                placeholder="Description..."
+            ></textarea>
+
+            <button
+                class="primary"
+                type="submit"
+            >
+                ☁️ Enregistrer la publicité
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<div id="notification"></div>
+
+
+<script>
+
+let commandeChatActive = null;
+
+
+// =====================================================
+// NOTIFICATION
+// =====================================================
+
+function notification(message) {
+
+    const box =
+        document.getElementById(
+            "notification"
+        );
+
+    box.textContent = message;
+
+    box.style.display = "block";
+
+    setTimeout(() => {
+        box.style.display = "none";
+    }, 3000);
+}
+
+
+// =====================================================
+// DASHBOARD
+// =====================================================
+
+async function chargerDashboard() {
+
+    const response =
+        await fetch(
+            "/api/admin/dashboard"
+        );
+
+    if (!response.ok) {
+        return;
+    }
+
+    const data =
+        await response.json();
+
+    const s = data.stats;
+
+    document.getElementById(
+        "stat-commandes"
+    ).textContent = s.commandes;
+
+    document.getElementById(
+        "stat-clients"
+    ).textContent = s.clients;
+
+    document.getElementById(
+        "stat-revenus"
+    ).textContent =
+        Number(s.revenus).toLocaleString(
+            "fr-FR"
+        ) + " FCFA";
+
+    document.getElementById(
+        "stat-livraisons"
+    ).textContent = s.livraisons;
+
+    document.getElementById(
+        "stat-nouvelles"
+    ).textContent = s.nouvelles;
+}
+
+
+// =====================================================
+// PRODUITS
+// =====================================================
+
+async function chargerProduits() {
+
+    const response =
+        await fetch(
+            "/api/produits"
+        );
+
+    const produits =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "produits-admin"
+        );
+
+    if (!produits.length) {
+
+        container.innerHTML =
+            '<div class="empty">Aucun produit.</div>';
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    produits.forEach(p => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className = "item";
+
+        div.innerHTML = `
+
+            ${
+                p.image
+                ?
+                `<img
+                    class="product-image"
+                    src="${escapeHtml(p.image)}"
+                    alt=""
+                >`
+                :
+                ""
+            }
+
+            <strong>
+                ${escapeHtml(p.nom)}
+            </strong>
+
+            <div>
+                ${escapeHtml(
+                    p.description || ""
+                )}
+            </div>
+
+            <p>
+                <b>
+                    ${Number(p.prix).toLocaleString("fr-FR")}
+                    FCFA
+                </b>
+            </p>
+
+            <button
+                class="danger"
+                onclick="supprimerProduit(${p.id})"
+            >
+                🗑️ Supprimer
+            </button>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+
+async function supprimerProduit(id) {
+
+    if (!confirm(
+        "Supprimer ce produit ?"
+    )) {
+        return;
+    }
+
+    const response =
+        await fetch(
+            `/api/admin/produit/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (data.ok) {
+
+        notification(
+            "Produit supprimé."
+        );
+
+        chargerProduits();
+    }
+}
+
+
+document.getElementById(
+    "produit-form"
+).addEventListener(
+    "submit",
+    async function(e) {
+
+        e.preventDefault();
+
+        const formData =
+            new FormData(this);
+
+        const response =
+            await fetch(
+                "/api/admin/produit",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            notification(
+                data.message ||
+                "Erreur."
+            );
+
+            return;
+        }
+
+        notification(
+            "Produit ajouté."
+        );
+
+        this.reset();
+
+        chargerProduits();
+    }
+);
+
+
+// =====================================================
+// COMMANDES
+// =====================================================
+
+async function chargerCommandes() {
+
+    const response =
+        await fetch(
+            "/api/admin/commandes"
+        );
+
+    const commandes =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "commandes-admin"
+        );
+
+    if (!commandes.length) {
+
+        container.innerHTML =
+            '<div class="empty">Aucune commande.</div>';
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    commandes.forEach(c => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "item order";
+
+        div.innerHTML = `
+
+            <div class="order-top">
+
+                <strong>
+                    Commande #${c.id}
+                </strong>
+
+                <span class="status">
+                    ${escapeHtml(c.statut)}
+                </span>
+
+            </div>
+
+            <p>
+                👤 ${escapeHtml(c.client_nom)}
+            </p>
+
+            <p>
+                📞 ${escapeHtml(c.telephone)}
+            </p>
+
+            <p>
+                📍 ${escapeHtml(c.adresse || "Non précisé")}
+            </p>
+
+            <p>
+                💰
+                <b>
+                    ${Number(c.total).toLocaleString("fr-FR")}
+                    FCFA
+                </b>
+            </p>
+
+            <p>
+                🕒 ${escapeHtml(c.date)}
+            </p>
+
+            <select
+                onchange="changerStatut(${c.id}, this.value)"
+            >
+
+                <option
+                    ${c.statut === "Nouvelle" ? "selected" : ""}
+                >
+                    Nouvelle
+                </option>
+
+                <option
+                    ${c.statut === "Confirmée" ? "selected" : ""}
+                >
+                    Confirmée
+                </option>
+
+                <option
+                    ${c.statut === "En livraison" ? "selected" : ""}
+                >
+                    En livraison
+                </option>
+
+                <option
+                    ${c.statut === "Terminée" ? "selected" : ""}
+                >
+                    Terminée
+                </option>
+
+                <option
+                    ${c.statut === "Annulée" ? "selected" : ""}
+                >
+                    Annulée
+                </option>
+
+            </select>
+
+            <button
+                class="primary"
+                onclick="ouvrirChat(${c.id}, '${escapeJs(c.client_nom)}')"
+            >
+                💬 Ouvrir le chat privé
+            </button>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+
+async function changerStatut(
+    commandeId,
+    statut
+) {
+
+    await fetch(
+        `/api/admin/commande/${commandeId}/statut`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                statut: statut
+            })
+        }
+    );
+
+    notification(
+        "Statut mis à jour."
+    );
+
+    chargerDashboard();
+    chargerCommandes();
+}
+
+
+// =====================================================
+// CHAT ADMIN
+// =====================================================
+
+async function ouvrirChat(
+    commandeId,
+    clientNom
+) {
+
+    commandeChatActive =
+        commandeId;
+
+    document.getElementB
