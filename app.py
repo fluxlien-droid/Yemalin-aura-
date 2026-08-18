@@ -1522,6 +1522,53 @@ def repondre_message_general(message_id):
         "ok": True,
         "message": "Réponse enregistrée."
     })
+    # =========================================================
+# MESSAGES GÉNÉRAUX — CLIENT — LIRE
+# =========================================================
+
+@app.route(
+    "/api/messages-generaux",
+    methods=["GET"]
+)
+def lire_messages_generaux():
+
+    token = request.cookies.get(
+        "client_token"
+    )
+
+    if not token:
+        return jsonify([])
+
+    conn = db()
+
+    messages = conn.execute("""
+        SELECT
+            id,
+            client_nom,
+            message,
+            reponse,
+            date,
+            date_reponse
+        FROM messages_generaux
+        WHERE client_token = ?
+        ORDER BY id DESC
+    """, (
+        token,
+    )).fetchall()
+
+    conn.close()
+
+    return jsonify([
+        {
+            "id": message["id"],
+            "client_nom": message["client_nom"],
+            "message": message["message"],
+            "reponse": message["reponse"] or "",
+            "date": message["date"],
+            "date_reponse": message["date_reponse"] or ""
+        }
+        for message in messages
+    ])
 
 
 # =========================================================
