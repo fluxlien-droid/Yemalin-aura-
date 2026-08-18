@@ -1,133 +1,100 @@
-/* =====================================================
-   YEMALIN AURA — script.js
-===================================================== */
+/* =========================================================
+   YEMALIN AURA — SCRIPT PRINCIPAL
+   Compatible avec index.html
+========================================================= */
 
-let panier = [];
+"use strict";
 
-let commandeChatActive = null;
+/* =========================================================
+   VARIABLES
+========================================================= */
 
+let panier = JSON.parse(
+    localStorage.getItem("yemalin_panier") || "[]"
+);
 
-/* =====================================================
-   INITIALISATION
-===================================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    chargerPanier();
-
-    afficherPanier();
-
-    afficherCompteur();
-
-});
+let commandeActuelle = null;
 
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
+/* =========================================================
+   OUTILS
+========================================================= */
 
-function ouvrirPage(page) {
-
-    document
-        .querySelectorAll(".page")
-        .forEach(section => {
-            section.classList.remove("active");
-        });
-
-
-    const cible =
-        document.getElementById(page);
-
-
-    if (cible) {
-
-        cible.classList.add("active");
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-
-
-    if (page === "commandes") {
-
-        chargerCommandes();
-
-    }
-
-
-    if (page === "messages") {
-
-        // La page message est prête.
-        // Aucun chargement obligatoire ici.
-
-    }
-
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-function ouvrirPanier() {
+function notify(message) {
+    const box = document.getElementById("notification");
 
-    ouvrirPage("panier");
-
-    afficherPanier();
-
-}
-
-
-/* =====================================================
-   PANIER — STOCKAGE
-===================================================== */
-
-function chargerPanier() {
-
-    try {
-
-        const sauvegarde =
-            localStorage.getItem(
-                "yemalin_panier"
-            );
-
-
-        if (sauvegarde) {
-
-            panier =
-                JSON.parse(sauvegarde);
-
-        }
-
-    } catch (e) {
-
-        panier = [];
-
+    if (!box) {
+        alert(message);
+        return;
     }
 
+    box.textContent = message;
+    box.classList.add("show");
+
+    setTimeout(() => {
+        box.classList.remove("show");
+    }, 3000);
 }
 
 
 function sauvegarderPanier() {
-
     localStorage.setItem(
         "yemalin_panier",
         JSON.stringify(panier)
     );
-
 }
 
 
-/* =====================================================
-   AJOUTER AU PANIER
-===================================================== */
+/* =========================================================
+   NAVIGATION ENTRE LES PAGES
+========================================================= */
+
+function ouvrirPage(pageId) {
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    const page = document.getElementById(pageId);
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+    if (pageId === "commandes") {
+        chargerCommandesClient();
+    }
+
+    if (pageId === "messages") {
+        chargerMessagesGeneraux();
+    }
+}
+
+
+/* =========================================================
+   PANIER
+========================================================= */
 
 function ajouterPanier(produit) {
 
-    const existant =
-        panier.find(
-            p => p.id === produit.id
-        );
-
+    const existant = panier.find(
+        item => Number(item.id) === Number(produit.id)
+    );
 
     if (existant) {
 
@@ -136,386 +103,332 @@ function ajouterPanier(produit) {
     } else {
 
         panier.push({
-
-            id: produit.id,
-
+            id: Number(produit.id),
             nom: produit.nom,
-
             prix: Number(produit.prix),
-
             quantite: 1
-
         });
-
     }
 
-
     sauvegarderPanier();
-
     afficherPanier();
 
-    afficherCompteur();
+    notify("🛒 Produit ajouté au panier.");
+}
 
 
-    notification(
-        `${produit.nom} ajouté au panier.`
+function retirerPanier(id) {
+
+    panier = panier.filter(
+        item => Number(item.id) !== Number(id)
     );
 
-}
-
-
-/* =====================================================
-   QUANTITÉ
-===================================================== */
-
-function augmenterQuantite(id) {
-
-    const produit =
-        panier.find(
-            p => p.id === id
-        );
-
-
-    if (!produit) {
-        return;
-    }
-
-
-    produit.quantite += 1;
-
-
     sauvegarderPanier();
-
     afficherPanier();
-
-    afficherCompteur();
-
 }
 
 
-function diminuerQuantite(id) {
+function modifierQuantite(id, changement) {
 
-    const produit =
-        panier.find(
-            p => p.id === id
-        );
+    const produit = panier.find(
+        item => Number(item.id) === Number(id)
+    );
 
+    if (!produit) return;
 
-    if (!produit) {
-        return;
-    }
-
-
-    produit.quantite -= 1;
-
+    produit.quantite += changement;
 
     if (produit.quantite <= 0) {
-
-        panier =
-            panier.filter(
-                p => p.id !== id
-            );
-
+        retirerPanier(id);
+        return;
     }
-
 
     sauvegarderPanier();
-
     afficherPanier();
-
-    afficherCompteur();
-
 }
 
 
-function supprimerPanier(id) {
+function viderPanier() {
 
-    panier =
-        panier.filter(
-            p => p.id !== id
-        );
-
+    panier = [];
 
     sauvegarderPanier();
-
     afficherPanier();
 
-    afficherCompteur();
-
+    notify("🛒 Panier vidé.");
 }
 
 
-/* =====================================================
-   COMPTEUR
-===================================================== */
+function calculerTotal() {
 
-function afficherCompteur() {
-
-    const totalArticles =
-        panier.reduce(
-            (total, produit) =>
-                total + produit.quantite,
-            0
-        );
-
-
-    const compteur =
-        document.getElementById(
-            "compteur"
-        );
-
-
-    if (compteur) {
-
-        compteur.textContent =
-            totalArticles;
-
-    }
-
-
-    const compteurRapide =
-        document.getElementById(
-            "compteur-rapide"
-        );
-
-
-    if (compteurRapide) {
-
-        compteurRapide.textContent =
-            totalArticles;
-
-    }
-
+    return panier.reduce(
+        (total, item) =>
+            total +
+            Number(item.prix) *
+            Number(item.quantite),
+        0
+    );
 }
 
 
-/* =====================================================
-   AFFICHAGE PANIER
-===================================================== */
+function nombreArticles() {
+
+    return panier.reduce(
+        (total, item) =>
+            total + Number(item.quantite),
+        0
+    );
+}
+
 
 function afficherPanier() {
 
-    const container =
-        document.getElementById(
-            "contenu-panier"
-        );
+    const compteur =
+        document.getElementById("compteur");
+
+    const compteurRapide =
+        document.getElementById("compteur-rapide");
+
+    const contenu =
+        document.getElementById("contenu-panier");
+
+    const total =
+        document.getElementById("total");
 
 
-    const totalElement =
-        document.getElementById(
-            "total"
-        );
+    const nombre = nombreArticles();
 
-
-    if (!container) {
-        return;
+    if (compteur) {
+        compteur.textContent = nombre;
     }
+
+    if (compteurRapide) {
+        compteurRapide.textContent = nombre;
+    }
+
+
+    if (total) {
+        total.textContent =
+            calculerTotal().toLocaleString("fr-FR");
+    }
+
+
+    if (!contenu) return;
 
 
     if (!panier.length) {
 
-        container.innerHTML = `
-            <div class="empty-products">
-                🛒 Votre panier est vide.
+        contenu.innerHTML = `
+            <div class="empty-state">
+                <p>🛒 Votre panier est vide.</p>
+
+                <button
+                    type="button"
+                    class="btn"
+                    onclick="ouvrirPage('accueil')"
+                >
+                    Découvrir les produits
+                </button>
             </div>
         `;
 
-
-        if (totalElement) {
-
-            totalElement.textContent =
-                "0";
-
-        }
-
-
         return;
-
     }
 
 
-    container.innerHTML = "";
-
-
-    let total = 0;
-
-
-    panier.forEach(produit => {
+    contenu.innerHTML = panier.map(item => {
 
         const sousTotal =
-            produit.prix *
-            produit.quantite;
+            Number(item.prix) *
+            Number(item.quantite);
+
+        return `
+            <article class="cart-item">
+
+                <div class="cart-item-info">
+
+                    <h3>
+                        ${escapeHtml(item.nom)}
+                    </h3>
+
+                    <p>
+                        ${Number(item.prix).toLocaleString("fr-FR")}
+                        FCFA / unité
+                    </p>
+
+                </div>
 
 
-        total += sousTotal;
+                <div class="cart-quantity">
+
+                    <button
+                        type="button"
+                        onclick="modifierQuantite(
+                            ${item.id},
+                            -1
+                        )"
+                    >
+                        −
+                    </button>
+
+                    <strong>
+                        ${item.quantite}
+                    </strong>
+
+                    <button
+                        type="button"
+                        onclick="modifierQuantite(
+                            ${item.id},
+                            1
+                        )"
+                    >
+                        +
+                    </button>
+
+                </div>
 
 
-        const div =
-            document.createElement(
-                "div"
-            );
-
-
-        div.className =
-            "panier-item";
-
-
-        div.innerHTML = `
-
-            <div class="panier-info">
-
-                <strong>
-                    ${escapeHtml(produit.nom)}
+                <strong class="cart-subtotal">
+                    ${sousTotal.toLocaleString("fr-FR")}
+                    FCFA
                 </strong>
 
-                <small>
-                    ${formatFCFA(produit.prix)}
-                    FCFA ×
-                    ${produit.quantite}
-                </small>
-
-                <br>
-
-                <small>
-                    Sous-total :
-                    <b>
-                        ${formatFCFA(sousTotal)}
-                        FCFA
-                    </b>
-                </small>
-
-            </div>
-
-
-            <div class="panier-actions">
 
                 <button
-                    onclick="diminuerQuantite(${produit.id})"
-                >
-                    −
-                </button>
-
-                <span>
-                    ${produit.quantite}
-                </span>
-
-                <button
-                    onclick="augmenterQuantite(${produit.id})"
-                >
-                    +
-                </button>
-
-                <button
-                    onclick="supprimerPanier(${produit.id})"
+                    type="button"
+                    class="btn"
+                    onclick="retirerPanier(${item.id})"
                 >
                     🗑️
                 </button>
 
-            </div>
-
+            </article>
         `;
 
+    }).join("") + `
 
-        container.appendChild(div);
-
-    });
-
-
-    if (totalElement) {
-
-        totalElement.textContent =
-            formatFCFA(total);
-
-    }
-
+        <button
+            type="button"
+            class="btn"
+            onclick="viderPanier()"
+        >
+            🗑️ Vider le panier
+        </button>
+    `;
 }
 
 
-/* =====================================================
-   PASSER COMMANDE
-===================================================== */
+function ouvrirPanier() {
+
+    ouvrirPage("panier");
+
+    afficherPanier();
+}
+
+
+/* =========================================================
+   PASSER UNE COMMANDE
+========================================================= */
 
 async function passerCommande() {
 
     if (!panier.length) {
 
-        notification(
-            "Votre panier est vide."
+        notify(
+            "🛒 Votre panier est vide."
         );
 
         return;
-
     }
 
 
     const nom =
-        document
-            .getElementById(
-                "client-nom"
-            )
-            ?.value
-            .trim();
-
+        document.getElementById("client-nom")
+            ?.value.trim();
 
     const telephone =
-        document
-            .getElementById(
-                "telephone"
-            )
-            ?.value
-            .trim();
-
+        document.getElementById("telephone")
+            ?.value.trim();
 
     const adresse =
-        document
-            .getElementById(
-                "adresse"
-            )
-            ?.value
-            .trim();
+        document.getElementById("adresse")
+            ?.value.trim();
 
 
-    if (!nom || !telephone) {
+    if (!nom) {
 
-        notification(
-            "Veuillez renseigner votre nom et votre téléphone."
+        notify(
+            "Veuillez entrer votre nom."
         );
 
         return;
+    }
 
+
+    if (!telephone) {
+
+        notify(
+            "Veuillez entrer votre numéro de téléphone."
+        );
+
+        return;
+    }
+
+
+    if (!adresse) {
+
+        notify(
+            "Veuillez entrer votre lieu de livraison."
+        );
+
+        return;
+    }
+
+
+    const bouton =
+        document.querySelector(
+            "#panier .card .btn"
+        );
+
+
+    if (bouton) {
+        bouton.disabled = true;
     }
 
 
     try {
 
-        const response =
-            await fetch(
-                "/api/commande",
-                {
-                    method: "POST",
+        const response = await fetch(
+            "/api/commande",
+            {
+                method: "POST",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-                    body: JSON.stringify({
+                credentials:
+                    "same-origin",
 
-                        client_nom:
-                            nom,
+                body: JSON.stringify({
 
-                        telephone:
-                            telephone,
+                    client_nom: nom,
 
-                        adresse:
-                            adresse,
+                    telephone: telephone,
 
-                        panier:
-                            panier
+                    adresse: adresse,
 
-                    })
-                }
-            );
+                    produits: panier.map(item => ({
+                        produit_id:
+                            Number(item.id),
+
+                        quantite:
+                            Number(item.quantite)
+                    }))
+                })
+            }
+        );
 
 
         const data =
@@ -524,84 +437,84 @@ async function passerCommande() {
 
         if (!response.ok || !data.ok) {
 
-            notification(
+            throw new Error(
                 data.message ||
-                "Impossible d'envoyer la commande."
+                "Impossible de passer la commande."
             );
-
-            return;
-
         }
 
 
-        panier = [];
+        commandeActuelle =
+            data.commande ||
+            data;
 
+
+        panier = [];
 
         sauvegarderPanier();
 
         afficherPanier();
 
-        afficherCompteur();
 
-
-        notification(
-            `Commande #${data.commande_id} envoyée avec succès.`
+        notify(
+            "✅ Commande envoyée avec succès."
         );
-
-
-        document
-            .getElementById(
-                "client-nom"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "telephone"
-            )
-            .value = "";
-
-
-        document
-            .getElementById(
-                "adresse"
-            )
-            .value = "";
 
 
         ouvrirPage("commandes");
 
+        chargerCommandesClient();
 
-        chargerCommandes();
+
+        document.getElementById(
+            "client-nom"
+        ).value = "";
+
+        document.getElementById(
+            "telephone"
+        ).value = "";
+
+        document.getElementById(
+            "adresse"
+        ).value = "";
 
 
     } catch (error) {
 
-        notification(
-            "Erreur de connexion au serveur."
+        console.error(
+            "Commande:",
+            error
         );
 
-    }
+        notify(
+            "❌ " +
+            (
+                error.message ||
+                "Erreur de connexion."
+            )
+        );
 
+    } finally {
+
+        if (bouton) {
+            bouton.disabled = false;
+        }
+    }
 }
 
 
-/* =====================================================
-   COMMANDES CLIENT
-===================================================== */
+/* =========================================================
+   COMMANDES DU CLIENT
+========================================================= */
 
-async function chargerCommandes() {
+async function chargerCommandesClient() {
 
     const container =
         document.getElementById(
             "liste-commandes"
         );
 
-
-    if (!container) {
-        return;
-    }
+    if (!container) return;
 
 
     container.innerHTML =
@@ -612,120 +525,147 @@ async function chargerCommandes() {
 
         const response =
             await fetch(
-                "/api/commandes"
+                "/api/mes-commandes",
+                {
+                    credentials:
+                        "same-origin"
+                }
             );
 
 
+        const data =
+            await response.json();
+
+
         if (!response.ok) {
-
-            throw new Error();
-
+            throw new Error(
+                data.message ||
+                "Erreur."
+            );
         }
 
 
         const commandes =
-            await response.json();
+            Array.isArray(data)
+                ? data
+                : (
+                    data.commandes ||
+                    []
+                );
 
 
         if (!commandes.length) {
 
             container.innerHTML = `
-                <div class="empty-products">
-                    📦 Aucune commande.
+                <div class="empty-state">
+                    <p>
+                        Vous n'avez encore aucune commande.
+                    </p>
                 </div>
             `;
 
             return;
-
         }
 
 
-        container.innerHTML = "";
+        container.innerHTML =
+            commandes.map(commande => `
 
+                <article class="order-card">
 
-        commandes.forEach(commande => {
+                    <h3>
+                        📦 Commande #${commande.id}
+                    </h3>
 
-            const div =
-                document.createElement(
-                    "div"
-                );
+                    <p>
+                        <strong>
+                            Total :
+                        </strong>
 
+                        ${Number(
+                            commande.total || 0
+                        ).toLocaleString("fr-FR")}
 
-            div.className =
-                "commande-card";
+                        FCFA
+                    </p>
 
+                    <p>
+                        <strong>
+                            Statut :
+                        </strong>
 
-            div.innerHTML = `
+                        ${escapeHtml(
+                            commande.statut ||
+                            "Nouvelle"
+                        )}
+                    </p>
 
-                <h3>
-                    Commande #${commande.id}
-                </h3>
+                    <p>
+                        <small>
+                            ${escapeHtml(
+                                commande.date || ""
+                            )}
+                        </small>
+                    </p>
 
-                <span class="commande-statut">
-                    ${escapeHtml(commande.statut)}
-                </span>
+                    <button
+                        type="button"
+                        class="btn"
+                        onclick="ouvrirChatClient(
+                            ${commande.id}
+                        )"
+                    >
+                        💬 Ouvrir le chat
+                    </button>
 
-                <p>
-                    💰
-                    ${formatFCFA(commande.total)}
-                    FCFA
-                </p>
+                </article>
 
-                <p>
-                    📍
-                    ${escapeHtml(
-                        commande.adresse ||
-                        "Lieu non précisé"
-                    )}
-                </p>
-
-                <p>
-                    🕒
-                    ${escapeHtml(commande.date)}
-                </p>
-
-                <button
-                    class="commande-button"
-                    onclick="ouvrirChatCommande(${commande.id})"
-                >
-                    💬 Ouvrir le chat privé
-                </button>
-
-            `;
-
-
-            container.appendChild(div);
-
-        });
+            `).join("");
 
 
     } catch (error) {
 
+        console.error(
+            "Commandes:",
+            error
+        );
+
         container.innerHTML = `
-            <div class="empty-products">
-                Impossible de charger les commandes.
+            <div class="error">
+                Impossible de charger vos commandes.
             </div>
         `;
-
     }
-
 }
 
 
-/* =====================================================
-   CHAT
-===================================================== */
+/* =========================================================
+   CHAT CLIENT
+========================================================= */
 
-async function ouvrirChatCommande(
+async function ouvrirChatClient(
     commandeId
 ) {
 
-    commandeChatActive =
+    commandeActuelle =
         commandeId;
-
 
     ouvrirPage("chat");
 
+    await chargerChatClient(
+        commandeId
+    );
+}
+
+
+async function chargerChatClient(
+    commandeId
+) {
+
+    const messagesContainer =
+        document.getElementById(
+            "chat-messages"
+        );
 
     const info =
         document.getElementById(
@@ -733,144 +673,137 @@ async function ouvrirChatCommande(
         );
 
 
-    if (info) {
-
-        info.textContent =
-            `Conversation privée — Commande #${commandeId}`;
-
-    }
+    if (!messagesContainer) return;
 
 
-    await chargerChat();
-
-}
-
-
-async function chargerChat() {
-
-    if (!commandeChatActive) {
-        return;
-    }
-
-
-    const container =
-        document.getElementById(
-            "chat-messages"
-        );
-
-
-    if (!container) {
-        return;
-    }
+    messagesContainer.innerHTML =
+        "<p>Chargement...</p>";
 
 
     try {
 
         const response =
             await fetch(
-                `/api/commande/${commandeChatActive}`
+                `/api/chat/${commandeId}`,
+                {
+                    credentials:
+                        "same-origin"
+                }
             );
-
-
-        if (!response.ok) {
-
-            throw new Error();
-
-        }
 
 
         const data =
             await response.json();
 
 
-        container.innerHTML = "";
+        if (!response.ok || !data.ok) {
 
-
-        if (!data.messages.length) {
-
-            container.innerHTML = `
-                <div class="empty-products">
-                    Aucun message pour le moment.
-                </div>
-            `;
-
-            return;
-
+            throw new Error(
+                data.message ||
+                "Chat indisponible."
+            );
         }
 
 
-        data.messages.forEach(message => {
+        if (info) {
 
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "chat-bubble " +
-                (
-                    message.auteur === "Admin"
-                    ? "admin"
-                    : "client"
-                );
+            info.innerHTML = `
+                <strong>
+                    Commande #${commandeId}
+                </strong>
+            `;
+        }
 
 
-            div.innerHTML = `
+        const messages =
+            data.messages || [];
 
-                <small>
-                    ${escapeHtml(
-                        message.auteur
-                    )}
-                    ·
-                    ${escapeHtml(
-                        message.date
-                    )}
-                </small>
 
-                ${escapeHtml(
-                    message.message
-                )}
+        if (!messages.length) {
 
+            messagesContainer.innerHTML = `
+                <p>
+                    Aucun message pour le moment.
+                </p>
             `;
 
-
-            container.appendChild(div);
-
-        });
+            return;
+        }
 
 
-        container.scrollTop =
-            container.scrollHeight;
+        messagesContainer.innerHTML =
+            messages.map(message => {
+
+                const admin =
+                    message.auteur === "Admin";
+
+                return `
+                    <div class="
+                        message-bubble
+                        ${admin
+                            ? "message-admin"
+                            : "message-client"}
+                    ">
+
+                        <strong>
+                            ${admin
+                                ? "Administration"
+                                : escapeHtml(
+                                    message.client_nom ||
+                                    "Vous"
+                                )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml(
+                                message.message
+                            )}
+                        </p>
+
+                        <small>
+                            ${escapeHtml(
+                                message.date || ""
+                            )}
+                        </small>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+        messagesContainer.scrollTop =
+            messagesContainer.scrollHeight;
 
 
     } catch (error) {
 
-        container.innerHTML = `
-            <div class="empty-products">
-                Impossible de charger le chat.
+        console.error(
+            "Chat:",
+            error
+        );
+
+        messagesContainer.innerHTML = `
+            <div class="error">
+                ${escapeHtml(
+                    error.message ||
+                    "Erreur de chargement du chat."
+                )}
             </div>
         `;
-
     }
-
 }
 
 
-/* =====================================================
-   ENVOYER CHAT
-===================================================== */
-
 async function envoyerChat() {
 
-    if (!commandeChatActive) {
+    if (!commandeActuelle) {
 
-        notification(
+        notify(
             "Aucune commande sélectionnée."
         );
 
         return;
-
     }
 
 
@@ -880,25 +813,24 @@ async function envoyerChat() {
         );
 
 
-    if (!input) {
-        return;
-    }
+    if (!input) return;
 
 
     const message =
         input.value.trim();
 
 
-    if (!message) {
-        return;
-    }
+    if (!message) return;
+
+
+    input.disabled = true;
 
 
     try {
 
         const response =
             await fetch(
-                `/api/chat/${commandeChatActive}`,
+                `/api/chat/${commandeActuelle}`,
                 {
                     method: "POST",
 
@@ -907,19 +839,11 @@ async function envoyerChat() {
                             "application/json"
                     },
 
+                    credentials:
+                        "same-origin",
+
                     body: JSON.stringify({
-
-                        message:
-                            message,
-
-                        auteur:
-                            "Client",
-
-                        client_nom:
-                            localStorage.getItem(
-                                "yemalin_client_nom"
-                            ) || ""
-
+                        message: message
                     })
                 }
             );
@@ -931,78 +855,82 @@ async function envoyerChat() {
 
         if (!response.ok || !data.ok) {
 
-            notification(
+            throw new Error(
                 data.message ||
                 "Message non envoyé."
             );
-
-            return;
-
         }
 
 
         input.value = "";
 
 
-        await chargerChat();
+        await chargerChatClient(
+            commandeActuelle
+        );
+
 
     } catch (error) {
 
-        notification(
-            "Erreur de connexion."
+        notify(
+            "❌ " +
+            (
+                error.message ||
+                "Erreur d'envoi."
+            )
         );
 
-    }
+    } finally {
 
+        input.disabled = false;
+
+        input.focus();
+    }
 }
 
 
-/* =====================================================
-   MESSAGE GÉNÉRAL
-===================================================== */
+/* =========================================================
+   MESSAGES GÉNÉRAUX
+========================================================= */
 
 async function envoyerMessageGeneral() {
 
     const nom =
-        document
-            .getElementById(
-                "message-nom"
-            )
-            ?.value
-            .trim();
-
+        document.getElementById(
+            "message-nom"
+        )?.value.trim();
 
     const message =
-        document
-            .getElementById(
-                "message-general"
-            )
-            ?.value
-            .trim();
+        document.getElementById(
+            "message-general"
+        )?.value.trim();
 
 
-    if (!nom || !message) {
+    if (!nom) {
 
-        notification(
-            "Veuillez remplir les champs."
+        notify(
+            "Veuillez entrer votre nom."
         );
 
         return;
-
     }
 
 
-    localStorage.setItem(
-        "yemalin_client_nom",
-        nom
-    );
+    if (!message) {
+
+        notify(
+            "Veuillez écrire votre message."
+        );
+
+        return;
+    }
 
 
     try {
 
         const response =
             await fetch(
-                "/api/message",
+                "/api/message-general",
                 {
                     method: "POST",
 
@@ -1011,14 +939,12 @@ async function envoyerMessageGeneral() {
                             "application/json"
                     },
 
+                    credentials:
+                        "same-origin",
+
                     body: JSON.stringify({
-
-                        client_nom:
-                            nom,
-
-                        message:
-                            message
-
+                        client_nom: nom,
+                        message: message
                     })
                 }
             );
@@ -1030,147 +956,204 @@ async function envoyerMessageGeneral() {
 
         if (!response.ok || !data.ok) {
 
-            notification(
+            throw new Error(
                 data.message ||
                 "Message non envoyé."
             );
-
-            return;
-
         }
 
 
-        document
-            .getElementById(
-                "message-general"
-            )
-            .value = "";
+        document.getElementById(
+            "message-general"
+        ).value = "";
 
 
-        notification(
-            "Votre message a été envoyé."
+        notify(
+            "✅ Message envoyé."
         );
+
+
+        chargerMessagesGeneraux();
 
 
     } catch (error) {
 
-        notification(
-            "Erreur de connexion."
+        notify(
+            "❌ " +
+            (
+                error.message ||
+                "Erreur d'envoi."
+            )
         );
-
     }
-
 }
 
 
-/* =====================================================
-   NOTIFICATION
-===================================================== */
+async function chargerMessagesGeneraux() {
 
-function notification(message) {
+    try {
 
-    const element =
-        document.getElementById(
-            "notification"
+        const response =
+            await fetch(
+                "/api/messages-generaux",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) return;
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Messages généraux:",
+            data
         );
 
+    } catch (error) {
 
-    if (!element) {
+        console.error(
+            "Messages généraux:",
+            error
+        );
+    }
+}
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+async function demanderNotifications() {
+
+    if (
+        !("Notification" in window)
+    ) {
+
+        notify(
+            "❌ Les notifications ne sont pas supportées."
+        );
+
         return;
     }
 
 
-    element.textContent =
-        message;
+    try {
+
+        const permission =
+            await Notification.requestPermission();
 
 
-    element.classList.add(
-        "show"
-    );
+        if (permission !== "granted") {
 
+            notify(
+                "🔕 Notifications non autorisées."
+            );
 
-    clearTimeout(
-        window.notificationTimer
-    );
-
-
-    window.notificationTimer =
-        setTimeout(
-            () => {
-
-                element.classList.remove(
-                    "show"
-                );
-
-            },
-            3000
-        );
-
-}
-
-
-/* =====================================================
-   UTILITAIRES
-===================================================== */
-
-function formatFCFA(nombre) {
-
-    return Number(nombre || 0)
-        .toLocaleString(
-            "fr-FR"
-        );
-
-}
-
-
-function escapeHtml(value) {
-
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-/* =====================================================
-   ACTUALISATION DU CHAT
-===================================================== */
-
-setInterval(
-    () => {
-
-        if (
-            commandeChatActive &&
-            document
-                .getElementById("chat")
-                ?.classList
-                .contains("active")
-        ) {
-
-            chargerChat();
-
+            return;
         }
 
-    },
-    4000
+
+        if (
+            "serviceWorker" in navigator &&
+            "PushManager" in window
+        ) {
+
+            const registration =
+                await navigator.serviceWorker.ready;
+
+
+            const existing =
+                await registration.pushManager
+                    .getSubscription();
+
+
+            if (existing) {
+
+                notify(
+                    "🔔 Notifications déjà activées."
+                );
+
+                return;
+            }
+
+
+            notify(
+                "🔔 Notification activée."
+            );
+
+            /*
+             * L'inscription Push complète
+             * est gérée par push.js.
+             */
+
+            if (
+                typeof window.activerPush ===
+                "function"
+            ) {
+
+                await window.activerPush(
+                    registration
+                );
+            }
+
+        } else {
+
+            notify(
+                "🔔 Notifications activées."
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Notifications:",
+            error
+        );
+
+        notify(
+            "❌ Impossible d'activer les notifications."
+        );
+    }
+}
+
+
+/* =========================================================
+   ACTUALISATION DU CHAT
+========================================================= */
+
+setInterval(() => {
+
+    if (
+        commandeActuelle &&
+        document.getElementById("chat")
+            ?.classList.contains("active")
+    ) {
+
+        chargerChatClient(
+            commandeActuelle
+        );
+    }
+
+}, 5000);
+
+
+/* =========================================================
+   INITIALISATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        afficherPanier();
+
+        chargerCommandesClient();
+
+    }
 );
