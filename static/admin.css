@@ -1884,4 +1884,76 @@ select:focus-visible {
         max-height: 55px !important;
         object-fit: contain !important;
     }
+<!-- =====================================================
+     STYLE — NOUVELLES INFORMATIONS ADMIN
+====================================================== -->
+
+<style>
+
+.admin-footer-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 15px;
+
+    font-size: 13px;
+    line-height: 1.7;
+
+    text-align: center;
+
+    color: #777;
+}
+
+
+/* Fait par Franck */
+.admin-footer-info span:nth-of-type(3) {
+    color: #8b6b45;
+    font-weight: 700;
+}
+
+
+/* Collaboration DT */
+.admin-footer-info span:nth-of-type(5) {
+    color: #6f4e37;
+    font-weight: 700;
+}
+
+
+/* Nom du directeur */
+.admin-footer-info span:nth-of-type(5) strong {
+    color: #b8860b;
+    font-weight: 800;
+}
+
+
+/* Séparateurs • */
+.admin-footer-info span:nth-of-type(2),
+.admin-footer-info span:nth-of-type(4),
+.admin-footer-info span:nth-of-type(6) {
+    color: #c9a66b;
+    font-weight: bold;
+}
+
+
+/* Sur téléphone */
+@media (max-width: 600px) {
+
+    .admin-footer-info {
+        flex-direction: column;
+        gap: 3px;
+        padding: 0 15px;
+    }
+
+    .admin-footer-info span:nth-of-type(2),
+    .admin-footer-info span:nth-of-type(4),
+    .admin-footer-info span:nth-of-type(6) {
+        display: none;
+    }
+
+}
+
+</style>
 </style>
