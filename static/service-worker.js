@@ -1,23 +1,18 @@
-// =====================================================
-// YEMALIN AURA
-// SERVICE WORKER — NOTIFICATIONS PUSH
-// =====================================================
+"use strict";
 
-const CACHE_NAME =
-    "yemalin-aura-v1";
+/* =========================================================
+   YEMALIN AURA — SERVICE WORKER
+   Notifications Push
+========================================================= */
 
 
-// =====================================================
-// INSTALLATION
-// =====================================================
+/* =========================================================
+   INSTALLATION
+========================================================= */
 
 self.addEventListener(
     "install",
-    event => {
-
-        console.log(
-            "Yemalin Aura Service Worker installé."
-        );
+    function(event) {
 
         self.skipWaiting();
 
@@ -25,13 +20,13 @@ self.addEventListener(
 );
 
 
-// =====================================================
-// ACTIVATION
-// =====================================================
+/* =========================================================
+   ACTIVATION
+========================================================= */
 
 self.addEventListener(
     "activate",
-    event => {
+    function(event) {
 
         event.waitUntil(
             self.clients.claim()
@@ -41,91 +36,80 @@ self.addEventListener(
 );
 
 
-// =====================================================
-// NOTIFICATION PUSH
-// =====================================================
+/* =========================================================
+   RÉCEPTION D'UNE NOTIFICATION PUSH
+========================================================= */
 
 self.addEventListener(
     "push",
-    event => {
+    function(event) {
 
-        let data = {
-
-            title:
-                "Yemalin Aura",
-
-            body:
-                "Vous avez une nouvelle notification.",
-
-            url:
-                "/"
-
-        };
-
+        let data = {};
 
         try {
 
             if (event.data) {
 
-                const received =
+                data =
                     event.data.json();
-
-                data = {
-                    ...data,
-                    ...received
-                };
 
             }
 
         } catch (error) {
 
-            console.log(
-                "Notification texte."
+            console.error(
+                "Erreur données Push:",
+                error
             );
 
-            if (event.data) {
-
-                data.body =
-                    event.data.text();
-
-            }
-
+            data = {
+                title: "Yemalin Aura",
+                body: "Vous avez une nouvelle notification."
+            };
         }
+
+
+        const title =
+            data.title ||
+            "Yemalin Aura";
 
 
         const options = {
 
             body:
-                data.body,
+                data.body ||
+                "Vous avez une nouvelle notification.",
 
             icon:
-                data.icon
-                || "/static/logo.png",
+                data.icon ||
+                "/static/logo.png",
 
             badge:
-                data.badge
-                || "/static/logo.png",
+                data.badge ||
+                "/static/logo.png",
 
             data: {
-
                 url:
-                    data.url || "/"
-
+                    data.url ||
+                    "/"
             },
 
             vibrate: [
                 200,
                 100,
                 200
-            ]
+            ],
 
+            tag:
+                data.tag ||
+                "yemalin-aura"
         };
 
 
         event.waitUntil(
 
             self.registration.showNotification(
-                data.title,
+                title,
                 options
             )
 
@@ -135,68 +119,57 @@ self.addEventListener(
 );
 
 
-// =====================================================
-// CLIC SUR NOTIFICATION
-// =====================================================
+/* =========================================================
+   CLIC SUR LA NOTIFICATION
+========================================================= */
 
 self.addEventListener(
     "notificationclick",
-    event => {
+    function(event) {
 
         event.notification.close();
 
 
         const url =
-            event.notification.data?.url
-            || "/";
+            event.notification.data?.url ||
+            "/";
 
 
         event.waitUntil(
 
             clients.matchAll({
-
                 type: "window",
-
                 includeUncontrolled: true
-
             })
+            .then(function(clientList) {
 
-            .then(
-                clientList => {
-
-                    for (
-                        const client
-                        of clientList
-                    ) {
-
-                        if (
-                            "focus"
-                            in client
-                        ) {
-
-                            client.navigate(
-                                url
-                            );
-
-                            return client.focus();
-
-                        }
-
-                    }
-
+                for (
+                    const client
+                    of clientList
+                ) {
 
                     if (
-                        clients.openWindow
+                        "focus" in client
                     ) {
 
-                        return clients.openWindow(
-                            url
-                        );
+                        client.navigate(url);
 
+                        return client.focus();
                     }
 
                 }
-            )
+
+
+                if (
+                    clients.openWindow
+                ) {
+
+                    return clients.openWindow(
+                        url
+                    );
+                }
+
+            })
 
         );
 
