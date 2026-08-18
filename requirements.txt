@@ -1,0 +1,5 @@
+Flask
+cloudinary
+gunicorn
+pywebpush
+cryptography
