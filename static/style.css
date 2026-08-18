@@ -1,7 +1,7 @@
 /* =========================================================
    YEMALIN AURA — STYLE PRINCIPAL
    PARTIE 1/2
-========================================================= */
+   ========================================================= */
 
 * {
     box-sizing: border-box;
@@ -9,925 +9,160 @@
     padding: 0;
 }
 
-:root {
-    --fond: #faf8f4;
-    --blanc: #ffffff;
-    --texte: #242424;
-    --texte-secondaire: #777;
-    --principal: #8b6b45;
-    --principal-fonce: #62482c;
-    --bordure: #e8e0d5;
-    --ombre: 0 8px 30px rgba(0, 0, 0, 0.08);
-    --rayon: 18px;
-}
-
 html {
     scroll-behavior: smooth;
 }
 
 body {
-    min-height: 100vh;
-    background: var(--fond);
-    color: var(--texte);
     font-family:
         Inter,
+        system-ui,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Arial,
         sans-serif;
-    line-height: 1.6;
+
+    background: #f7f8fc;
+    color: #171717;
+    line-height: 1.5;
 }
+
+
+/* =========================================================
+   LIENS
+   ========================================================= */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+
+/* =========================================================
+   CONTENEUR
+   ========================================================= */
+
+.container {
+    width: min(
+        1200px,
+        calc(100% - 30px)
+    );
+
+    margin: 0 auto;
+}
+
 
 /* =========================================================
    HEADER
-========================================================= */
+   ========================================================= */
 
+header,
 .site-header {
     position: sticky;
     top: 0;
     z-index: 1000;
 
-    width: 100%;
-    padding: 14px 5%;
+    background: rgba(
+        255,
+        255,
+        255,
+        0.96
+    );
+
+    border-bottom: 1px solid #e8e8e8;
+
+    backdrop-filter: blur(12px);
+}
+
+
+.navbar {
+    min-height: 70px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
-
-    background: rgba(255, 255, 255, 0.96);
-    border-bottom: 1px solid var(--bordure);
-    backdrop-filter: blur(12px);
 }
 
-.brand {
+
+.logo,
+.site-logo {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.logo {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    border-radius: 12px;
-    flex-shrink: 0;
-}
-
-.brand-name {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.35rem;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    color: var(--principal-fonce);
-}
-
-.brand-slogan {
-    color: var(--texte-secondaire);
-    font-size: 0.76rem;
-}
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-nav button {
-    border: 1px solid var(--bordure);
-    background: var(--blanc);
-    color: var(--texte);
-
-    padding: 9px 13px;
-    min-height: 40px;
-
-    border-radius: 12px;
-    cursor: pointer;
-
-    font-size: 0.9rem;
-    font-weight: 600;
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-nav button:hover {
-    background: var(--principal);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 107, 69, 0.2);
-}
-
-#compteur {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 21px;
-    height: 21px;
-    margin-left: 4px;
-
-    padding: 0 5px;
-
-    border-radius: 50px;
-    background: var(--principal);
-    color: white;
-
-    font-size: 0.72rem;
-}
-
-/* =========================================================
-   MAIN
-========================================================= */
-
-main {
-    width: 100%;
-    overflow: hidden;
-}
-
-.page {
-    display: none;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 35px 5%;
-}
-
-.page.active {
-    display: block;
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-    position: relative;
-
-    min-height: 480px;
-    padding: 70px 30px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at top,
-            rgba(139, 107, 69, 0.15),
-            transparent 55%
-        );
-
-    border-radius: 0 0 35px 35px;
-}
-
-.hero-logo {
-    position: absolute;
-
-    width: min(520px, 75vw);
-    height: min(520px, 75vw);
-
-    object-fit: contain;
-
-    opacity: 0.07;
-    pointer-events: none;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-
-    max-width: 720px;
-}
-
-.animated-brand {
-    margin-bottom: 8px;
-
-    color: var(--principal);
-    font-family: Georgia, "Times New Roman", serif;
-
-    font-size: clamp(2rem, 6vw, 4rem);
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-.slogan-animation {
-    min-height: 55px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-
-    color: var(--texte);
-
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.4rem, 4vw, 2.3rem);
-    font-weight: 600;
-}
-
-.slogan-word {
-    opacity: 0;
-    transform: translateY(15px);
-
-    transition:
-        opacity 0.5s ease,
-        transform 0.5s ease;
-}
-
-.slogan-word.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hero-content p {
-    max-width: 560px;
-    margin: 22px auto;
-
-    color: var(--texte-secondaire);
-    font-size: 1rem;
-}
-
-/* =========================================================
-   BOUTONS
-========================================================= */
-
-.btn,
-.hero-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: auto;
-    max-width: 100%;
-
-    min-height: 44px;
-    padding: 11px 18px;
-
-    border: 0;
-    border-radius: 13px;
-
-    background: var(--principal);
-    color: white;
-
-    font-size: 0.95rem;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    text-decoration: none;
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.btn:hover,
-.hero-button:hover {
-    background: var(--principal-fonce);
-    transform: translateY(-2px);
-    box-shadow: 0 7px 18px rgba(98, 72, 44, 0.22);
-}
-
-.hero-button {
-    padding: 13px 24px;
-}
-
-/* =========================================================
-   PRODUITS
-========================================================= */
-
-.products-section {
-    padding: 55px 0 25px;
-}
-
-.section-title {
-    margin-bottom: 28px;
-
-    text-align: center;
-
-    color: var(--principal-fonce);
-
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.8rem, 5vw, 2.6rem);
-}
-
-.produits {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(230px, 1fr)
-        );
-
-    gap: 22px;
-}
-
-/* =========================================================
-   CARTE PRODUIT
-========================================================= */
-
-.produit {
-    min-width: 0;
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
-
-    background: var(--blanc);
-
-    border: 1px solid var(--bordure);
-    border-radius: var(--rayon);
-
-    box-shadow: var(--ombre);
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-.produit:hover {
-    transform: translateY(-5px);
-
-    box-shadow:
-        0 14px 35px rgba(0, 0, 0, 0.11);
-}
-
-.produit-image {
-    display: block;
-
-    width: 100%;
-    height: 230px;
-
-    object-fit: cover;
-
-    background: #f0ece6;
-}
-
-.image-vide {
-    width: 100%;
-    height: 230px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #f0ece6;
-
-    font-size: 3rem;
-}
-
-.produit-content {
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 20px;
-}
-
-.produit-content h3 {
-    margin-bottom: 8px;
-
-    color: var(--texte);
-
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.25rem;
-}
-
-.produit-content p {
-    margin-bottom: 15px;
-
-    color: var(--texte-secondaire);
-    font-size: 0.9rem;
-
-    overflow-wrap: anywhere;
-}
-
-.prix {
-    margin-top: auto;
-    margin-bottom: 15px;
-
-    color: var(--principal-fonce);
-
-    font-size: 1.2rem;
-    font-weight: 800;
-}
-
-.produit-content .btn {
-    width: 100%;
-}
-
-/* =========================================================
-   PRODUITS VIDES
-========================================================= */
-
-.empty-products {
-    grid-column: 1 / -1;
-
-    padding: 40px 20px;
-
-    text-align: center;
-
-    background: var(--blanc);
-    border: 1px dashed var(--bordure);
-    border-radius: var(--rayon);
-
-    color: var(--texte-secondaire);
-}
-
-/* =========================================================
-   PANIER RAPIDE
-========================================================= */
-
-.quick-cart {
-    margin: 45px 0;
-    padding: 30px;
-
-    text-align: center;
-
-    background: var(--blanc);
-
-    border: 1px solid var(--bordure);
-    border-radius: var(--rayon);
-
-    box-shadow: var(--ombre);
-}
-
-.quick-cart h2 {
-    margin-bottom: 8px;
-
-    color: var(--principal-fonce);
-
-    font-family: Georgia, "Times New Roman", serif;
-}
-
-.quick-cart p {
-    margin-bottom: 20px;
-
-    color: var(--texte-secondaire);
-}
-
-/* =========================================================
-   CONTACT
-========================================================= */
-
-.contact-section {
-    margin: 25px 0 45px;
-    padding: 35px 25px;
-
-    text-align: center;
-
-    background: #f3eee7;
-
-    border-radius: var(--rayon);
-}
-
-.contact-section h2 {
-    margin-bottom: 8px;
-
-    font-family: Georgia, "Times New Roman", serif;
-}
-
-.contact-section p {
-    margin-bottom: 20px;
-    color: var(--texte-secondaire);
-}
-
-/* =========================================================
-   PUBLICITÉ UNIQUE EN BAS
-========================================================= */
-
-.publicite-section {
-    width: 100%;
-    max-width: 720px;
-
-    margin: 45px auto 20px;
-}
-
-.publicite-label {
-    margin-bottom: 7px;
-
-    text-align: center;
-
-    color: #999;
-
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-}
-
-.publicite {
-    position: relative;
-
-    display: block;
-
-    width: 100%;
-
-    overflow: hidden;
-
-    background: #eee;
-
-    border: 1px solid var(--bordure);
-    border-radius: 12px;
-
-    text-decoration: none;
-
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.publicite img,
-.publicite video {
-    display: block;
-
-    width: 100%;
-    max-height: 180px;
-
-    object-fit: cover;
-}
-
-.publicite-overlay {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    padding: 12px 15px;
-
-    color: white;
-
-    background: linear-gradient(
-        transparent,
-        rgba(0, 0, 0, 0.75)
-    );
-}
-
-.publicite-overlay h3 {
-    font-size: 0.95rem;
-}
-
-.publicite-overlay p {
-    font-size: 0.78rem;
-}
-
-.publicite-overlay span {
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-/* =========================================================
-   CARTES / FORMULAIRES
-========================================================= */
-
-.card {
-    margin: 20px 0;
-    padding: 22px;
-
-    background: var(--blanc);
-
-    border: 1px solid var(--bordure);
-    border-radius: var(--rayon);
-
-    box-shadow: var(--ombre);
-}
-
-.card input,
-.card textarea,
-#client-nom,
-#telephone,
-#adresse,
-#message-nom,
-#message-general,
-#chat-message {
-    display: block;
-
-    width: 100%;
-
-    margin-bottom: 13px;
-    padding: 12px 14px;
-
-    border: 1px solid var(--bordure);
-    border-radius: 11px;
-
-    background: #fff;
-    color: var(--texte);
-
-    font: inherit;
-
-    outline: none;
-}
-
-.card textarea,
-#adresse,
-#message-general {
-    min-height: 110px;
-    resize: vertical;
-}
-
-.card input:focus,
-.card textarea:focus,
-#client-nom:focus,
-#telephone:focus,
-#adresse:focus,
-#message-nom:focus,
-#message-general:focus,
-#chat-message:focus {
-    border-color: var(--principal);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(139, 107, 69, 0.10);
-}
-
-/* =========================================================
-   TOTAL PANIER
-========================================================= */
-
-.total {
-    margin: 20px 0;
-    padding: 18px;
-
-    text-align: right;
-
-    background: var(--blanc);
-
-    border: 1px solid var(--bordure);
-    border-radius: 14px;
-
-    font-size: 1.05rem;
-}
-
-.total strong {
-    color: var(--principal-fonce);
-}
-
-/* =========================================================
-   NOTIFICATION
-========================================================= */
-
-.notification {
-    position: fixed;
-
-    left: 50%;
-    bottom: 20px;
-
-    z-index: 3000;
-
-    width: min(92%, 430px);
-
-    padding: 14px 18px;
-
-    transform:
-        translate(-50%, 130px);
-
-    opacity: 0;
-
-    background: #242424;
-    color: white;
-
-    border-radius: 13px;
-
-    text-align: center;
-
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-
-    transition:
-        transform 0.3s ease,
-        opacity 0.3s ease;
-
-    pointer-events: none;
-}
-
-.notification.show {
-    transform:
-        translate(-50%, 0);
-
-    opacity: 1;
-   }
-/* =========================================================
-   YEMALIN AURA — STYLE PRINCIPAL
-   PARTIE 2/2
-========================================================= */
-
-/* =========================================================
-   COMMANDES
-========================================================= */
-
-#commandes > h2,
-#messages > h2,
-#panier > h2,
-#chat > h2 {
-    margin-bottom: 25px;
-
-    color: var(--principal-fonce);
-
-    font-family: Georgia, "Times New Roman", serif;
-
-    font-size: clamp(1.7rem, 5vw, 2.4rem);
-
-    text-align: center;
-}
-
-/* =========================================================
-   LISTE DES COMMANDES
-========================================================= */
-
-#liste-commandes {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(250px, 1fr)
-        );
-
-    gap: 18px;
-}
-
-.commande {
-    padding: 20px;
-
-    background: var(--blanc);
-
-    border: 1px solid var(--bordure);
-    border-radius: 16px;
-
-    box-shadow: var(--ombre);
-}
-
-.commande h3 {
-    margin-bottom: 8px;
-
-    color: var(--principal-fonce);
-
-    font-family: Georgia, "Times New Roman", serif;
-}
-
-.commande p {
-    margin: 5px 0;
-
-    color: var(--texte-secondaire);
-
-    overflow-wrap: anywhere;
-}
-
-/* =========================================================
-   STATUTS
-========================================================= */
-
-.statut {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    margin-top: 12px;
-
-    padding: 6px 11px;
-
-    border-radius: 30px;
-
-    background: #f1ece5;
-    color: var(--principal-fonce);
-
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-.statut.nouvelle {
-    background: #fff3d8;
-    color: #765500;
-}
-
-.statut.confirmee {
-    background: #e7f5e9;
-    color: #276337;
-}
-
-.statut.livraison {
-    background: #e5efff;
-    color: #27528a;
-}
-
-.statut.terminee {
-    background: #e7f7f1;
-    color: #17644a;
-}
-
-.statut.annulee {
-    background: #ffe8e8;
-    color: #8b2929;
-}
-
-/* =========================================================
-   CHAT
-========================================================= */
-
-.chat-info {
-    margin-bottom: 15px;
-
-    padding: 13px 16px;
-
-    background: #f3eee7;
-
-    border-radius: 12px;
-
-    color: var(--texte-secondaire);
-
-    font-size: 0.9rem;
-}
-
-.chat-messages {
-    min-height: 250px;
-    max-height: 500px;
-
-    overflow-y: auto;
-
-    padding: 18px;
-
-    background: #f5f2ee;
-
-    border: 1px solid var(--bordure);
-    border-radius: 17px;
-}
-
-.chat-message {
-    max-width: 78%;
-
-    margin-bottom: 12px;
-    padding: 11px 14px;
-
-    border-radius: 15px;
-
-    overflow-wrap: anywhere;
-}
-
-.chat-message.client {
-    margin-right: auto;
-
-    background: white;
-
-    border: 1px solid var(--bordure);
-}
-
-.chat-message.admin {
-    margin-left: auto;
-
-    background: var(--principal);
-
-    color: white;
-}
-
-.chat-message small {
-    display: block;
-
-    margin-top: 4px;
-
-    font-size: 0.68rem;
-
-    opacity: 0.7;
-}
-
-.chat-input {
-    display: flex;
-
     align-items: center;
 
     gap: 10px;
 
-    margin-top: 15px;
+    font-size: 21px;
+    font-weight: 800;
 }
 
-.chat-input input {
-    flex: 1;
 
-    min-width: 0;
+.logo img,
+.site-logo img {
+    width: 42px;
+    height: 42px;
 
-    margin: 0 !important;
+    object-fit: contain;
+
+    border-radius: 12px;
 }
 
-.chat-input button {
-    flex-shrink: 0;
+
+.nav-links {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+
+.nav-links a,
+.nav-links button {
+    border: 0;
+
+    background: transparent;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+
+.nav-links a:hover,
+.nav-links button:hover {
+    background: #f0f0f0;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
 
     min-height: 44px;
 
@@ -936,459 +171,1570 @@ main {
     border: 0;
     border-radius: 12px;
 
-    background: var(--principal);
-    color: white;
+    cursor: pointer;
 
     font-weight: 700;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        opacity .2s ease;
+}
+
+
+.btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, .10);
+}
+
+
+.btn:active {
+    transform: translateY(0);
+}
+
+
+.btn-primary {
+    background: #111;
+    color: #fff;
+}
+
+
+.btn-secondary {
+    background: #eee;
+    color: #111;
+}
+
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+
+.btn-success {
+    background: #198754;
+    color: #fff;
+}
+
+
+.btn-warning {
+    background: #ffc107;
+    color: #111;
+}
+
+
+/* =========================================================
+   TITRES
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4 {
+    line-height: 1.2;
+}
+
+
+.page-title {
+    margin-bottom: 8px;
+
+    font-size: clamp(
+        26px,
+        5vw,
+        42px
+    );
+
+    font-weight: 850;
+}
+
+
+.section-title {
+    margin-bottom: 18px;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+    padding: 55px 0 35px;
+
+    text-align: center;
+}
+
+
+.hero h1 {
+    margin-bottom: 12px;
+
+    font-size: clamp(
+        32px,
+        7vw,
+        58px
+    );
+
+    font-weight: 900;
+}
+
+
+.hero p {
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    color: #666;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   PUBLICITÉ
+   ========================================================= */
+
+.publicite {
+    width: 100%;
+
+    margin: 20px auto;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background: #fff;
+
+    box-shadow:
+        0 8px 30px
+        rgba(0, 0, 0, .08);
+}
+
+
+.publicite img,
+.publicite video {
+    display: block;
+
+    width: 100%;
+    max-height: 380px;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   PRODUITS
+   ========================================================= */
+
+.produits,
+.products-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px, 1fr)
+        );
+
+    gap: 20px;
+
+    padding: 20px 0 40px;
+}
+
+
+.produit,
+.product-card {
+    overflow: hidden;
+
+    background: #fff;
+
+    border: 1px solid #e9e9e9;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, .06);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.produit:hover,
+.product-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, .10);
+}
+
+
+.produit-image,
+.product-card img {
+    display: block;
+
+    width: 100%;
+    height: 210px;
+
+    object-fit: cover;
+
+    background: #eee;
+}
+
+
+.produit-content,
+.product-content {
+    padding: 17px;
+}
+
+
+.produit h3,
+.product-card h3 {
+    margin-bottom: 7px;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+
+.produit p,
+.product-card p {
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+.prix,
+.price {
+    display: block;
+
+    margin: 12px 0;
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   FORMULAIRES
+   ========================================================= */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+
+label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-weight: 700;
+
+    font-size: 14px;
+}
+
+
+input,
+textarea,
+select {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 11px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #171717;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #999;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0, 0, 0, .06);
+}
+
+
+textarea {
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+
+/* =========================================================
+   CARTES
+   ========================================================= */
+
+.card {
+    background: #fff;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, .05);
+}
+
+
+/* =========================================================
+   PANIER
+   ========================================================= */
+
+.panier,
+.cart {
+    position: fixed;
+
+    right: 18px;
+    bottom: 18px;
+
+    z-index: 1100;
+
+    width: min(
+        390px,
+        calc(100% - 36px)
+    );
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    background: #fff;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 18px 50px
+        rgba(0, 0, 0, .18);
+
+    padding: 20px;
+}
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.message {
+    padding: 12px 15px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    background: #f2f2f2;
+}
+
+
+.message.client {
+    margin-left: 20px;
+}
+
+
+.message.admin {
+    margin-right: 20px;
+
+    background: #e9e9e9;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+.notification,
+.toast {
+    position: fixed;
+
+    right: 18px;
+    bottom: 18px;
+
+    z-index: 3000;
+
+    max-width: 350px;
+
+    padding: 14px 18px;
+
+    border-radius: 13px;
+
+    background: #111;
+    color: #fff;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, .20);
+
+    animation:
+        apparition .25s ease;
+}
+
+
+@keyframes apparition {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   ADMIN — STRUCTURE
+   ========================================================= */
+
+.admin-page {
+    min-height: 100vh;
+
+    background: #f7f8fc;
+}
+
+
+.admin-container {
+    width: min(
+        1250px,
+        calc(100% - 30px)
+    );
+
+    margin: 0 auto;
+
+    padding: 30px 0 60px;
+}
+
+
+.admin-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+
+    padding: 22px;
+
+    background: #fff;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, .05);
+}
+
+
+.admin-header h1 {
+    font-size: 28px;
+
+    font-weight: 900;
+}
+
+
+.admin-header p {
+    margin-top: 5px;
+
+    color: #777;
+}
+
+
+/* =========================================================
+   ADMIN — STATISTIQUES
+   ========================================================= */
+
+.admin-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(170px, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-bottom: 25px;
+}
+
+
+.stat-card {
+    padding: 20px;
+
+    background: #fff;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, .05);
+}
+
+
+.stat-card .stat-title {
+    color: #777;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+.stat-card .stat-value {
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: 28px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   ADMIN — GRILLE
+   ========================================================= */
+
+.admin-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(300px, 1fr)
+        );
+
+    gap: 20px;
+}
+
+
+.admin-card {
+    background: #fff;
+
+    border: 1px solid #e8e8e8;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, .05);
+}
+
+
+.admin-card h2 {
+    margin-bottom: 16px;
+
+    font-size: 20px;
+
+    font-weight: 850;
+   }
+/* =========================================================
+   YEMALIN AURA — STYLE PRINCIPAL
+   PARTIE 2/2
+   ========================================================= */
+
+
+/* =========================================================
+   ADMIN — BARRE D'ACTIONS
+   ========================================================= */
+
+.admin-actions {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+
+.admin-actions .btn {
+    min-width: 130px;
+}
+
+
+/* =========================================================
+   ADMIN — FORMULAIRE PRODUIT
+   ========================================================= */
+
+.product-form {
+    display: grid;
+
+    gap: 14px;
+}
+
+
+.product-form .form-row {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+
+.file-input {
+    padding: 12px;
+
+    background: #f8f8f8;
+
+    border: 1px dashed #ccc;
+
+    border-radius: 12px;
 
     cursor: pointer;
 }
 
-.chat-input button:hover {
-    background: var(--principal-fonce);
+
+.file-input input {
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    box-shadow: none;
 }
+
+
+.file-help {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
 
 /* =========================================================
-   FOOTER
-========================================================= */
+   ADMIN — LISTE PRODUITS
+   ========================================================= */
 
-.site-footer {
-    margin-top: 50px;
-    padding: 40px 20px 28px;
+.admin-products {
+    display: grid;
 
-    text-align: center;
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(240px, 1fr)
+        );
 
-    background: #211c17;
-    color: white;
+    gap: 16px;
 }
 
-.footer-logo {
-    width: 62px;
-    height: 62px;
 
-    object-fit: contain;
+.admin-product {
+    overflow: hidden;
 
-    margin-bottom: 10px;
+    background: #fff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 18px
+        rgba(0, 0, 0, .05);
+}
+
+
+.admin-product-media {
+    position: relative;
+
+    width: 100%;
+    height: 180px;
+
+    overflow: hidden;
+
+    background: #eee;
+}
+
+
+.admin-product-media img,
+.admin-product-media video {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.admin-product-content {
+    padding: 15px;
+}
+
+
+.admin-product-content h3 {
+    margin-bottom: 6px;
+
+    font-size: 17px;
+
+    font-weight: 850;
+}
+
+
+.admin-product-content p {
+    color: #666;
+
+    font-size: 13px;
+}
+
+
+.admin-product-price {
+    margin: 10px 0;
+
+    font-size: 19px;
+
+    font-weight: 900;
+}
+
+
+.admin-product-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+
+.admin-product-actions button {
+    flex: 1;
+
+    min-width: 100px;
+}
+
+
+/* =========================================================
+   ADMIN — COMMANDES
+   ========================================================= */
+
+.commandes-list {
+    display: grid;
+
+    gap: 14px;
+}
+
+
+.commande-card {
+    padding: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0, 0, 0, .04);
+}
+
+
+.commande-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 15px;
+}
+
+
+.commande-id {
+    font-weight: 900;
+
+    font-size: 18px;
+}
+
+
+.commande-client {
+    margin-top: 5px;
+
+    color: #666;
+
+    font-size: 14px;
+}
+
+
+.commande-total {
+    font-weight: 900;
+
+    font-size: 18px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUTS
+   ========================================================= */
+
+.statut {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+.statut-nouvelle {
+    background: #fff3cd;
+
+    color: #856404;
+}
+
+
+.statut-confirmee {
+    background: #d1e7dd;
+
+    color: #0f5132;
+}
+
+
+.statut-livraison {
+    background: #cff4fc;
+
+    color: #055160;
+}
+
+
+.statut-terminee {
+    background: #d1e7dd;
+
+    color: #0f5132;
+}
+
+
+.statut-annulee {
+    background: #f8d7da;
+
+    color: #842029;
+}
+
+
+/* =========================================================
+   ADMIN — MESSAGES
+   ========================================================= */
+
+.messages-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    max-height: 600px;
+
+    overflow-y: auto;
+}
+
+
+.message-card {
+    padding: 15px;
+
+    background: #fafafa;
+
+    border: 1px solid #e7e7e7;
 
     border-radius: 14px;
 }
 
-.site-footer h3 {
+
+.message-card-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+
+.message-author {
+    font-weight: 850;
+}
+
+
+.message-date {
+    color: #888;
+
+    font-size: 11px;
+}
+
+
+.message-text {
+    white-space: pre-wrap;
+
+    color: #333;
+
+    font-size: 14px;
+}
+
+
+.message-reply {
+    margin-top: 12px;
+
+    padding: 12px;
+
+    background: #eee;
+
+    border-radius: 12px;
+}
+
+
+.message-reply strong {
+    display: block;
+
     margin-bottom: 4px;
-
-    font-family: Georgia, "Times New Roman", serif;
-
-    font-size: 1.4rem;
 }
 
+
+.message-form {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+
+.message-form textarea {
+    min-height: 48px;
+
+    max-height: 130px;
+
+    resize: vertical;
+}
+
+
+.message-form button {
+    align-self: flex-end;
+
+    min-height: 48px;
+}
+
+
+/* =========================================================
+   ADMIN — PUBLICITÉ
+   ========================================================= */
+
+.pub-preview {
+    width: 100%;
+
+    min-height: 120px;
+
+    margin: 12px 0;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f3f3f3;
+
+    border: 1px dashed #ccc;
+
+    border-radius: 14px;
+}
+
+
+.pub-preview img,
+.pub-preview video {
+    display: block;
+
+    width: 100%;
+    max-height: 300px;
+
+    object-fit: cover;
+}
+
+
+.pub-empty {
+    padding: 25px;
+
+    color: #888;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TABLEAU ADMIN
+   ========================================================= */
+
+.admin-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border-radius: 15px;
+}
+
+
+.admin-table {
+    width: 100%;
+
+    min-width: 650px;
+
+    border-collapse: collapse;
+
+    background: #fff;
+}
+
+
+.admin-table th,
+.admin-table td {
+    padding: 13px;
+
+    border-bottom: 1px solid #eee;
+
+    text-align: left;
+
+    font-size: 14px;
+}
+
+
+.admin-table th {
+    background: #f5f5f5;
+
+    font-weight: 850;
+}
+
+
+.admin-table tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 26px;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    background: #111;
+
+    color: #fff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   CHARGEMENT
+   ========================================================= */
+
+.loading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 100px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+.spinner {
+    width: 22px;
+    height: 22px;
+
+    margin-right: 8px;
+
+    border: 3px solid #ddd;
+
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    animation:
+        tourner .8s linear infinite;
+}
+
+
+@keyframes tourner {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   ÉTAT VIDE
+   ========================================================= */
+
+.empty-state {
+    padding: 35px 20px;
+
+    text-align: center;
+
+    background: #fff;
+
+    border: 1px dashed #d5d5d5;
+
+    border-radius: 16px;
+
+    color: #777;
+}
+
+
+.empty-state strong {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #333;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer,
+.site-footer {
+    margin-top: 40px;
+
+    padding: 30px 15px;
+
+    background: #111;
+
+    color: #fff;
+
+    text-align: center;
+}
+
+
+footer p,
 .site-footer p {
-    color: #cfc8c0;
+    color: #bbb;
 
-    font-size: 0.85rem;
+    font-size: 13px;
 }
 
-.footer-line {
-    width: 80px;
-    height: 1px;
-
-    margin: 20px auto;
-
-    background: #8b6b45;
-}
-
-.site-footer small {
-    color: #aaa;
-
-    font-size: 0.72rem;
-}
 
 /* =========================================================
-   LIENS
-========================================================= */
+   LOGIN ADMIN
+   ========================================================= */
 
-a {
-    color: inherit;
+.login-page {
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background: #f7f8fc;
 }
 
-/* =========================================================
-   BOUTONS — ÉVITER LE CHEVAUCHEMENT
-========================================================= */
 
-button {
-    font-family: inherit;
+.login-box {
+    width: min(
+        420px,
+        100%
+    );
+
+    padding: 28px;
+
+    background: #fff;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(0, 0, 0, .10);
 }
 
-button,
-.btn,
-.hero-button {
-    white-space: normal;
 
-    overflow-wrap: anywhere;
+.login-box h1 {
+    margin-bottom: 8px;
+
+    font-size: 27px;
+
+    font-weight: 900;
 }
 
-.card .btn {
+
+.login-box p {
+    margin-bottom: 22px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+.login-box .btn {
+    width: 100%;
+
     margin-top: 5px;
 }
 
-.produit-content .btn {
-    margin-top: auto;
-}
 
 /* =========================================================
-   SCROLLBAR
-========================================================= */
+   RESPONSIVE — TABLETTE
+   ========================================================= */
 
-::-webkit-scrollbar {
-    width: 7px;
-}
+@media (max-width: 800px) {
 
-::-webkit-scrollbar-track {
-    background: #f1eee9;
-}
+    .navbar {
+        min-height: 62px;
+    }
 
-::-webkit-scrollbar-thumb {
-    background: #b39a7d;
+    .nav-links {
+        gap: 4px;
+    }
 
-    border-radius: 20px;
-}
+    .nav-links a,
+    .nav-links button {
+        padding: 8px 9px;
 
-::-webkit-scrollbar-thumb:hover {
-    background: var(--principal);
-}
+        font-size: 13px;
+    }
 
-/* =========================================================
-   TABLETTE
-========================================================= */
-
-@media (max-width: 850px) {
-
-    .site-header {
-        padding: 12px 4%;
-
+    .admin-header {
         align-items: flex-start;
+
+        flex-direction: column;
     }
 
-    .brand-slogan {
-        display: none;
+    .admin-actions {
+        width: 100%;
     }
 
-    nav {
-        gap: 6px;
+    .admin-actions .btn {
+        flex: 1;
     }
 
-    nav button {
-        padding: 8px 10px;
-
-        font-size: 0.78rem;
+    .product-form .form-row {
+        grid-template-columns: 1fr;
     }
 
-    .hero {
-        min-height: 420px;
-
-        padding: 55px 20px;
-    }
-
-    .produits {
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
-
-        gap: 15px;
-    }
-
-    .produit-image,
-    .image-vide {
-        height: 200px;
-    }
-
-    .produit-content {
-        padding: 16px;
-    }
 }
 
+
 /* =========================================================
-   TÉLÉPHONE
-========================================================= */
+   RESPONSIVE — TÉLÉPHONE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
-    body {
+    .container,
+    .admin-container {
+        width: min(
+            100% - 20px,
+            1250px
+        );
+    }
+
+
+    .hero {
+        padding: 35px 0 25px;
+    }
+
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+
+    .hero p {
         font-size: 14px;
     }
 
-    .site-header {
-        position: relative;
 
-        display: block;
-
-        padding: 12px 14px;
-    }
-
-    .brand {
-        justify-content: center;
-
-        margin-bottom: 12px;
-    }
-
-    .logo {
-        width: 43px;
-        height: 43px;
-    }
-
-    .brand-name {
-        font-size: 1.15rem;
-    }
-
-    nav {
-        width: 100%;
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 7px;
-    }
-
-    nav button {
-        width: 100%;
-
-        min-height: 42px;
-
-        padding: 8px 6px;
-
-        font-size: 0.76rem;
-    }
-
-    .page {
-        padding: 25px 13px;
-    }
-
-    .hero {
-        min-height: 390px;
-
-        padding: 45px 15px;
-
-        border-radius: 0 0 25px 25px;
-    }
-
-    .animated-brand {
-        font-size: 2.1rem;
-    }
-
-    .slogan-animation {
-        font-size: 1.35rem;
-
-        gap: 5px;
-
-        line-height: 1.35;
-    }
-
-    .hero-content p {
-        font-size: 0.9rem;
-
-        margin: 17px auto;
-    }
-
-    .hero-button {
-        width: 100%;
-        max-width: 330px;
-    }
-
-    .products-section {
-        padding-top: 35px;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-
-        margin-bottom: 20px;
-    }
-
-    .produits {
+    .produits,
+    .products-grid {
         grid-template-columns: 1fr;
 
-        gap: 17px;
+        gap: 14px;
     }
+
 
     .produit-image,
-    .image-vide {
-        height: 230px;
+    .product-card img {
+        height: 220px;
     }
 
-    .produit-content {
-        padding: 18px;
+
+    .admin-container {
+        padding-top: 15px;
     }
 
-    .produit-content h3 {
-        font-size: 1.15rem;
-    }
 
-    .prix {
-        font-size: 1.1rem;
-    }
-
-    .quick-cart {
-        margin: 30px 0;
-        padding: 25px 17px;
-    }
-
-    .contact-section {
-        padding: 28px 17px;
-    }
-
-    .publicite-section {
-        margin-top: 30px;
-    }
-
-    .publicite img,
-    .publicite video {
-        max-height: 140px;
-    }
-
-    .card {
+    .admin-header {
         padding: 17px;
     }
 
-    .total {
-        text-align: center;
+
+    .admin-header h1 {
+        font-size: 23px;
     }
 
-    .chat-messages {
-        min-height: 230px;
 
-        padding: 13px;
+    .admin-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
     }
 
-    .chat-message {
-        max-width: 88%;
+
+    .stat-card {
+        padding: 15px;
     }
 
-    .chat-input {
-        align-items: stretch;
+
+    .stat-card .stat-value {
+        font-size: 23px;
     }
 
-    .chat-input input {
-        width: 100%;
+
+    .admin-grid {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
     }
 
-    .chat-input button {
-        padding: 10px 13px;
+
+    .admin-card {
+        padding: 15px;
     }
 
-    .site-footer {
-        margin-top: 35px;
 
-        padding: 35px 15px 25px;
-    }
-}
-
-/* =========================================================
-   TRÈS PETITS ÉCRANS
-========================================================= */
-
-@media (max-width: 360px) {
-
-    .brand-name {
-        font-size: 1rem;
+    .admin-products {
+        grid-template-columns: 1fr;
     }
 
-    nav button {
-        font-size: 0.7rem;
-    }
 
-    .animated-brand {
-        font-size: 1.8rem;
-    }
-
-    .slogan-animation {
-        font-size: 1.15rem;
-    }
-
-    .produit-image,
-    .image-vide {
-        height: 200px;
-    }
-
-    .chat-input {
+    .commande-top {
         flex-direction: column;
     }
 
-    .chat-input button {
+
+    .commande-total {
+        white-space: normal;
+    }
+
+
+    .message-form {
+        flex-direction: column;
+    }
+
+
+    .message-form button {
         width: 100%;
     }
+
+
+    .admin-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .admin-actions .btn {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    .panier,
+    .cart {
+        right: 10px;
+        bottom: 10px;
+
+        width: calc(100% - 20px);
+    }
+
+
+    .notification,
+    .toast {
+        right: 10px;
+        bottom: 10px;
+
+        max-width: calc(100% - 20px);
+    }
+
 }
 
+
 /* =========================================================
-   ACCESSIBILITÉ
-========================================================= */
+   PETITS TÉLÉPHONES
+   ========================================================= */
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-    outline: 3px solid rgba(139, 107, 69, 0.35);
+@media (max-width: 380px) {
 
-    outline-offset: 2px;
-   .contact-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+
+
+    .admin-actions {
+        grid-template-columns: 1fr;
+    }
+
+
+    .btn {
+        width: 100%;
+    }
+
+
+    .login-box {
+        padding: 20px;
+    }
+
+}
+
+
+/* =========================================================
+   UTILITAIRES
+   ========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+
+.mt-20 {
     margin-top: 20px;
 }
 
-.contact-buttons .btn {
-    min-width: 150px;
-    text-decoration: none;
+
+.mb-10 {
+    margin-bottom: 10px;
 }
 
-.contact-call {
-    background: var(--principal);
+
+.mb-20 {
+    margin-bottom: 20px;
 }
 
-.contact-whatsapp {
-    background: #25D366;
+
+.w-full {
+    width: 100%;
 }
 
-.contact-note {
-    margin-top: 15px;
-    color: var(--texte-secondaire);
-    font-size: 0.8rem;
-}
-
-@media (max-width: 500px) {
-
-    .contact-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .contact-buttons .btn {
-        width: 100%;
-        max-width: 330px;
-    }
-       }
-}
 
 /* =========================================================
-   RÉDUCTION DES ANIMATIONS
-========================================================= */
+   ACCESSIBILITÉ
+   ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+button:disabled,
+.btn:disabled {
+    opacity: .55;
 
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
+    cursor: not-allowed;
 
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+    transform: none !important;
 
-        transition-duration: 0.01ms !important;
-    }
-   }
+    box-shadow: none !important;
+}
 
+
+/* =========================================================
+   FIN STYLE YEMALIN AURA
+   ========================================================= */
