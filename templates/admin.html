@@ -1,200 +1,456 @@
-<!DOCTYPE html><html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yemalin Aura — Administration</title><link rel="stylesheet"
-      href="{{ url_for('static', filename='admin.css') }}">
+<!DOCTYPE html>
+<html lang="fr">
 
-</head><body><header class="admin-header"><div class="admin-brand">
-    <img
-        src="{{ url_for('static', filename='logo.png') }}"
-        alt="Yemalin Aura"
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <div>
-        <h1>Yemalin Aura</h1>
-        <p>Administration</p>
-    </div>
-</div>
+    <title>
+        Administration — Yemalin Aura
+    </title>
 
-<div class="header-actions">
-    <a href="/" class="header-button">
-        🏠 Boutique
-    </a>
+    <meta
+        name="description"
+        content="Administration Yemalin Aura"
+    >
 
-    <a href="/admin/logout"
-       class="header-button logout">
-        🚪 Déconnexion
-    </a>
-</div>
+    <meta
+        name="theme-color"
+        content="#8b6b45"
+    >
 
-</header><main class="admin-container"><!-- =====================================================
-     BIENVENUE
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='logo.png') }}"
+    >
+
+    <!-- =====================================================
+         CSS ADMIN
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='admin.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
 ====================================================== -->
 
-<section class="admin-welcome">
+<header class="admin-header">
 
-    <div>
-        <span class="admin-label">
-            TABLEAU DE BORD
-        </span>
+    <div class="admin-brand">
 
-        <h2>
-            Bienvenue dans votre administration
-        </h2>
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="Yemalin Aura"
+            class="admin-logo"
+        >
+
+        <div>
+
+            <h1>
+                Yemalin Aura
+            </h1>
+
+            <p>
+                Administration
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin-header-actions">
+
+        <a
+            href="/"
+            class="header-button"
+        >
+            🏠 Voir le site
+        </a>
+
+
+        <a
+            href="/admin/logout"
+            class="header-button logout-button"
+        >
+            🚪 Déconnexion
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     NAVIGATION ADMIN
+====================================================== -->
+
+<nav class="admin-nav">
+
+    <button
+        type="button"
+        class="nav-button active"
+        onclick="ouvrirAdminPage('dashboard', this)"
+    >
+        📊 Dashboard
+    </button>
+
+
+    <button
+        type="button"
+        class="nav-button"
+        onclick="ouvrirAdminPage('produits-page', this)"
+    >
+        🛍️ Produits
+    </button>
+
+
+    <button
+        type="button"
+        class="nav-button"
+        onclick="ouvrirAdminPage('commandes-page', this)"
+    >
+        📦 Commandes
+    </button>
+
+
+    <button
+        type="button"
+        class="nav-button"
+        onclick="ouvrirAdminPage('messages-page', this)"
+    >
+        💬 Messages
+    </button>
+
+
+    <button
+        type="button"
+        class="nav-button"
+        onclick="ouvrirAdminPage('publicite-page', this)"
+    >
+        📢 Publicité
+    </button>
+
+</nav>
+
+
+<!-- =====================================================
+     CONTENU PRINCIPAL
+====================================================== -->
+
+<main class="admin-main">
+
+
+<!-- =====================================================
+     DASHBOARD
+====================================================== -->
+
+<section
+    id="dashboard"
+    class="admin-page active"
+>
+
+    <div class="page-heading">
+
+        <div>
+
+            <h2>
+                📊 Tableau de bord
+            </h2>
+
+            <p>
+                Vue générale de votre boutique.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="refresh-button"
+            onclick="actualiserTout()"
+        >
+            🔄 Actualiser
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         STATISTIQUES
+    ================================================== -->
+
+    <div class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📦
+            </div>
+
+            <div>
+
+                <span class="stat-label">
+                    Commandes
+                </span>
+
+                <strong
+                    id="stat-commandes"
+                    class="stat-value"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                👥
+            </div>
+
+            <div>
+
+                <span class="stat-label">
+                    Clients
+                </span>
+
+                <strong
+                    id="stat-clients"
+                    class="stat-value"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                💰
+            </div>
+
+            <div>
+
+                <span class="stat-label">
+                    Revenus
+                </span>
+
+                <strong
+                    id="stat-revenus"
+                    class="stat-value"
+                >
+                    0 FCFA
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🚚
+            </div>
+
+            <div>
+
+                <span class="stat-label">
+                    En livraison
+                </span>
+
+                <strong
+                    id="stat-livraisons"
+                    class="stat-value"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                🔔
+            </div>
+
+            <div>
+
+                <span class="stat-label">
+                    Nouvelles commandes
+                </span>
+
+                <strong
+                    id="stat-nouvelles"
+                    class="stat-value"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMATIONS
+    ================================================== -->
+
+    <div class="dashboard-card">
+
+        <h3>
+            Bienvenue dans votre espace administrateur 👋
+        </h3>
 
         <p>
-            Gérez vos produits, commandes,
-            messages et publicités.
+            Depuis cette page, vous pouvez gérer les
+            produits, consulter les commandes, répondre
+            aux clients et gérer votre publicité.
         </p>
+
     </div>
 
 </section>
 
 
 <!-- =====================================================
-     STATISTIQUES
+     PRODUITS
 ====================================================== -->
 
-<section class="stats-grid">
+<section
+    id="produits-page"
+    class="admin-page"
+>
 
-    <div class="stat-card">
-        📦
+    <div class="page-heading">
+
         <div>
-            <span>Commandes</span>
-            <strong id="stat-commandes">0</strong>
+
+            <h2>
+                🛍️ Gestion des produits
+            </h2>
+
+            <p>
+                Ajoutez et gérez les produits de votre boutique.
+            </p>
+
         </div>
-    </div>
 
-    <div class="stat-card">
-        👥
-        <div>
-            <span>Clients</span>
-            <strong id="stat-clients">0</strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        💰
-        <div>
-            <span>Revenus</span>
-            <strong id="stat-revenus">
-                0 FCFA
-            </strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        🚚
-        <div>
-            <span>En livraison</span>
-            <strong id="stat-livraisons">
-                0
-            </strong>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        🔔
-        <div>
-            <span>Nouvelles</span>
-            <strong id="stat-nouvelles">
-                0
-            </strong>
-        </div>
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     AJOUTER PRODUIT
-====================================================== -->
-
-<section class="admin-card">
-
-    <div class="section-header">
-        <h2>🛍️ Ajouter un produit</h2>
     </div>
 
 
-    <form
-        id="produit-form"
-        class="product-form"
-        enctype="multipart/form-data"
-    >
+    <!-- FORMULAIRE AJOUT PRODUIT -->
 
-        <div class="form-group">
+    <div class="admin-card">
 
-            <label for="produit-nom">
-                Nom
-            </label>
-
-            <input
-                id="produit-nom"
-                type="text"
-                name="nom"
-                required
-            >
-
-        </div>
+        <h3>
+            ➕ Ajouter un produit
+        </h3>
 
 
-        <div class="form-group">
+        <form
+            id="produit-form"
+            enctype="multipart/form-data"
+        >
 
-            <label for="produit-prix">
-                Prix (FCFA)
-            </label>
+            <div class="form-group">
 
-            <input
-                id="produit-prix"
-                type="number"
-                name="prix"
-                min="0"
-                step="1"
-                required
-            >
+                <label for="produit-nom">
+                    Nom du produit
+                </label>
 
-        </div>
+                <input
+                    id="produit-nom"
+                    name="nom"
+                    type="text"
+                    placeholder="Nom du produit"
+                    required
+                >
 
-
-        <div class="form-group full">
-
-            <label for="produit-description">
-                Description
-            </label>
-
-            <textarea
-                id="produit-description"
-                name="description"
-            ></textarea>
-
-        </div>
+            </div>
 
 
-        <div class="form-group full">
+            <div class="form-group">
 
-            <label for="produit-media">
-                Média
-            </label>
+                <label for="produit-description">
+                    Description
+                </label>
 
-            <input
-                id="produit-media"
-                type="file"
-                name="media"
-                accept="image/*,video/*"
-            >
+                <textarea
+                    id="produit-description"
+                    name="description"
+                    placeholder="Description du produit..."
+                    rows="4"
+                ></textarea>
 
-        </div>
-
-
-        <div
-            id="media-preview"
-            class="media-preview full"
-        ></div>
+            </div>
 
 
-        <div class="form-submit full">
+            <div class="form-group">
+
+                <label for="produit-prix">
+                    Prix en FCFA
+                </label>
+
+                <input
+                    id="produit-prix"
+                    name="prix"
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="Exemple : 5000"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="produit-media">
+                    Image ou vidéo
+                </label>
+
+                <input
+                    id="produit-media"
+                    name="media"
+                    type="file"
+                    accept="image/*,video/*"
+                >
+
+                <small>
+                    Formats image ou vidéo acceptés.
+                </small>
+
+            </div>
+
 
             <button
                 type="submit"
@@ -203,107 +459,72 @@
                 ➕ Ajouter le produit
             </button>
 
-        </div>
-
-    </form>
-
-</section>
-
-
-<!-- =====================================================
-     PRODUITS
-====================================================== -->
-
-<section class="admin-card">
-
-    <div class="section-header">
-
-        <h2>📦 Produits</h2>
-
-        <button
-            type="button"
-            class="secondary-button"
-            onclick="chargerProduits()"
-        >
-            🔄 Actualiser
-        </button>
+        </form>
 
     </div>
 
 
-    <div
-        id="products"
-        class="admin-products"
-    >
+    <!-- LISTE DES PRODUITS -->
 
-        <div class="loading">
-            Chargement...
+    <div class="admin-card">
+
+        <div class="card-heading">
+
+            <h3>
+                📦 Produits publiés
+            </h3>
+
+            <button
+                type="button"
+                class="small-button"
+                onclick="chargerProduits()"
+            >
+                🔄 Actualiser
+            </button>
+
+        </div>
+
+
+        <div id="products">
+
+            <div class="loading">
+                Chargement des produits...
+            </div>
+
         </div>
 
     </div>
 
 </section>
-
-
-<!-- =====================================================
-     SUITE PARTIE 2
-====================================================== -->
-
-<!--
-    La partie 2 commence ici avec :
-    - Commandes
-    - Messages privés
-    - Publicité
--->
-    <!-- =====================================================
-     PRODUITS
-===================================================== -->
-
-<section class="admin-card">
-
-    <div class="section-header">
-
-        <h2>📦 Produits</h2>
-
-        <button
-            type="button"
-            class="secondary-button"
-            onclick="chargerProduits()"
-        >
-            🔄 Actualiser
-        </button>
-
-    </div>
-
-
-    <div
-        id="products"
-        class="admin-products"
-    >
-
-        <div class="loading">
-            Chargement...
-        </div>
-
-    </div>
-
-</section>
-
 
 
 <!-- =====================================================
      COMMANDES
-===================================================== -->
+====================================================== -->
 
-<section class="admin-card">
+<section
+    id="commandes-page"
+    class="admin-page"
+>
 
-    <div class="section-header">
+    <div class="page-heading">
 
-        <h2>📋 Commandes</h2>
+        <div>
+
+            <h2>
+                📦 Commandes
+            </h2>
+
+            <p>
+                Consultez et gérez les commandes de vos clients.
+            </p>
+
+        </div>
+
 
         <button
             type="button"
-            class="secondary-button"
+            class="refresh-button"
             onclick="chargerCommandes()"
         >
             🔄 Actualiser
@@ -314,11 +535,11 @@
 
     <div
         id="orders"
-        class="orders-list"
+        class="orders-container"
     >
 
         <div class="loading">
-            Chargement...
+            Chargement des commandes...
         </div>
 
     </div>
@@ -326,20 +547,33 @@
 </section>
 
 
-
 <!-- =====================================================
-     MESSAGES GÉNÉRAUX
-===================================================== -->
+     MESSAGES
+====================================================== -->
 
-<section class="admin-card">
+<section
+    id="messages-page"
+    class="admin-page"
+>
 
-    <div class="section-header">
+    <div class="page-heading">
 
-        <h2>💬 Messages privés</h2>
+        <div>
+
+            <h2>
+                💬 Messages
+            </h2>
+
+            <p>
+                Consultez les messages envoyés par vos clients.
+            </p>
+
+        </div>
+
 
         <button
             type="button"
-            class="secondary-button"
+            class="refresh-button"
             onclick="chargerMessagesGeneraux()"
         >
             🔄 Actualiser
@@ -350,120 +584,153 @@
 
     <div
         id="general-messages"
-        class="general-messages"
+        class="messages-container"
     >
 
         <div class="loading">
-            Chargement...
+            Chargement des messages...
         </div>
 
     </div>
 
 </section>
-
 
 
 <!-- =====================================================
      PUBLICITÉ
-===================================================== -->
+====================================================== -->
 
-<section class="admin-card">
+<section
+    id="publicite-page"
+    class="admin-page"
+>
 
-    <div class="section-header">
+    <div class="page-heading">
 
-        <h2>📢 Publicité</h2>
+        <div>
+
+            <h2>
+                📢 Publicité
+            </h2>
+
+            <p>
+                Gérez la publicité affichée sur votre boutique.
+            </p>
+
+        </div>
 
     </div>
 
 
-    <form
-        id="pub-form"
-        class="pub-form"
-        enctype="multipart/form-data"
-    >
+    <div class="admin-card">
 
-        <input
-            type="hidden"
-            name="position"
-            value="1"
+        <h3>
+            📢 Configurer la publicité
+        </h3>
+
+
+        <form
+            id="pub-form"
+            enctype="multipart/form-data"
         >
 
+            <div class="form-group">
 
-        <div class="form-group">
+                <label for="pub-titre">
+                    Titre
+                </label>
 
-            <label>
-                Titre
-            </label>
+                <input
+                    id="pub-titre"
+                    name="titre"
+                    type="text"
+                    placeholder="Titre de la publicité"
+                >
 
-            <input
-                type="text"
-                name="titre"
-                placeholder="Titre de la publicité"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Lien
-            </label>
-
-            <input
-                type="url"
-                name="lien"
-                placeholder="https://..."
-            >
-
-        </div>
+            </div>
 
 
-        <div class="form-group">
+            <div class="form-group">
 
-            <label>
-                Texte
-            </label>
+                <label for="pub-texte">
+                    Texte
+                </label>
 
-            <textarea
-                name="texte"
-                placeholder="Texte de la publicité..."
-            ></textarea>
+                <textarea
+                    id="pub-texte"
+                    name="texte"
+                    rows="4"
+                    placeholder="Texte de la publicité..."
+                ></textarea>
 
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Image ou vidéo
-            </label>
-
-            <input
-                type="file"
-                name="media"
-                accept="image/*,video/*"
-            >
-
-        </div>
+            </div>
 
 
-        <button
-            type="submit"
-            class="primary-button"
-        >
-            📢 Enregistrer la publicité
-        </button>
+            <div class="form-group">
 
-    </form>
+                <label for="pub-lien">
+                    Lien
+                </label>
+
+                <input
+                    id="pub-lien"
+                    name="lien"
+                    type="url"
+                    placeholder="https://..."
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pub-media">
+                    Image ou vidéo
+                </label>
+
+                <input
+                    id="pub-media"
+                    name="media"
+                    type="file"
+                    accept="image/*,video/*"
+                >
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    📢 Enregistrer la publicité
+                </button>
+
+
+                <button
+                    type="button"
+                    class="danger-button"
+                    onclick="supprimerPublicite()"
+                >
+                    🗑️ Supprimer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </section>
 
 
+</main>
+
 
 <!-- =====================================================
      CHAT ADMIN
-===================================================== -->
+====================================================== -->
 
 <div
     id="chat-box"
@@ -472,15 +739,15 @@
 
     <div class="chat-header">
 
-        <strong id="chat-title">
-            Chat
-        </strong>
+        <h3 id="chat-title">
+            💬 Conversation
+        </h3>
 
 
         <button
             type="button"
             onclick="fermerChat()"
-            class="close-chat"
+            class="chat-close"
         >
             ✕
         </button>
@@ -491,28 +758,30 @@
     <div
         id="chat-messages"
         class="chat-messages"
-    ></div>
+    >
+
+        <div class="loading">
+            Chargement...
+        </div>
+
+    </div>
 
 
-    <div class="chat-send">
+    <div class="chat-input">
 
-        <input
+        <textarea
             id="admin-message"
-            type="text"
+            rows="2"
             placeholder="Écrire une réponse..."
-            autocomplete="off"
-            onkeydown="
-                if(event.key === 'Enter')
-                    envoyerMessageAdmin()
-            "
-        >
+        ></textarea>
 
 
         <button
             type="button"
             onclick="envoyerMessageAdmin()"
+            class="primary-button"
         >
-            ➤
+            💬 Envoyer
         </button>
 
     </div>
@@ -520,1188 +789,189 @@
 </div>
 
 
-
 <!-- =====================================================
      NOTIFICATION
-===================================================== -->
+====================================================== -->
 
 <div
     id="notification"
-    class="admin-notification"
+    class="notification"
 ></div>
 
 
+<!-- =====================================================
+     VARIABLES JAVASCRIPT
+====================================================== -->
 
 <script>
 
 let commandeChatActuelle = null;
 
 
+/* =====================================================
+   NAVIGATION ADMIN
+===================================================== */
 
-// =====================================================
-// NOTIFICATION
-// =====================================================
+function ouvrirAdminPage(
+    pageId,
+    bouton
+) {
+
+    document
+        .querySelectorAll(".admin-page")
+        .forEach(function(page) {
+
+            page.classList.remove("active");
+
+        });
+
+
+    const page =
+        document.getElementById(pageId);
+
+
+    if (page) {
+
+        page.classList.add("active");
+
+    }
+
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(function(btn) {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    if (bouton) {
+
+        bouton.classList.add("active");
+
+    }
+
+}
+
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
 
 function notify(message) {
 
-    const box =
+    const element =
         document.getElementById(
             "notification"
         );
 
-    if (!box) return;
 
-    box.textContent = message;
+    if (!element) {
+        return;
+    }
 
-    box.classList.add("show");
 
-    setTimeout(
-        function() {
+    element.textContent =
+        message;
 
-            box.classList.remove("show");
 
-        },
-        3000
+    element.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        window.notificationTimer
+    );
+
+
+    window.notificationTimer =
+        setTimeout(
+            function() {
+
+                element.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
     );
 
 }
 
 
-
-// =====================================================
-// ÉCHAPPEMENT HTML
-// =====================================================
-
-function escapeHtml(value) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        value == null
-            ? ""
-            : String(value);
-
-    return div.innerHTML;
-
-}
-
-
-
-// =====================================================
-// ÉCHAPPEMENT JAVASCRIPT
-// =====================================================
+/* =====================================================
+   ESCAPE JAVASCRIPT
+===================================================== */
 
 function escapeJs(value) {
 
     return String(
-        value || ""
+        value ?? ""
     )
-    .replace(/\\/g, "\\\\")
-    .replace(/'/g, "\\'")
-    .replace(/\r/g, "\\r")
-    .replace(/\n/g, "\\n");
-
-}
-
-
-
-// =====================================================
-// CHARGER LES PRODUITS
-// =====================================================
-
-async function chargerProduits() {
-
-    const container =
-        document.getElementById(
-            "products"
-        );
-
-    if (!container) return;
-
-
-    container.innerHTML =
-        '<div class="loading">Chargement...</div>';
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/produits",
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Impossible de charger les produits."
-            );
-
-        }
-
-
-        const produits =
-            await response.json();
-
-
-        if (!Array.isArray(produits)) {
-
-            throw new Error(
-                "Réponse invalide."
-            );
-
-        }
-
-
-        if (produits.length === 0) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    Aucun produit disponible.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            produits.map(
-                function(produit) {
-
-                    let media = "";
-
-
-                    if (
-                        produit.media_type ===
-                        "video" &&
-                        produit.video
-                    ) {
-
-                        media = `
-                            <video
-                                src="${escapeHtml(produit.video)}"
-                                controls
-                                muted
-                                playsinline
-                            ></video>
-                        `;
-
-                    }
-
-                    else if (
-                        produit.image
-                    ) {
-
-                        media = `
-                            <img
-                                src="${escapeHtml(produit.image)}"
-                                alt="${escapeHtml(produit.nom)}"
-                                loading="lazy"
-                            >
-                        `;
-
-                    }
-
-                    else {
-
-                        media = `
-                            <div class="image-vide">
-                                🛍️
-                            </div>
-                        `;
-
-                    }
-
-
-                    return `
-
-                        <article
-                            class="admin-product"
-                        >
-
-                            <div
-                                class="admin-product-image"
-                            >
-                                ${media}
-                            </div>
-
-
-                            <div
-                                class="admin-product-content"
-                            >
-
-                                <h3>
-                                    ${escapeHtml(
-                                        produit.nom
-                                    )}
-                                </h3>
-
-
-                                <p>
-                                    ${escapeHtml(
-                                        produit.description || ""
-                                    )}
-                                </p>
-
-
-                                <strong>
-                                    ${Number(
-                                        produit.prix
-                                    ).toLocaleString(
-                                        "fr-FR"
-                                    )}
-                                    FCFA
-                                </strong>
-
-
-                                <button
-                                    type="button"
-                                    class="delete-button"
-                                    onclick="
-                                        supprimerProduit(
-                                            ${produit.id}
-                                        )
-                                    "
-                                >
-                                    🗑️ Supprimer
-                                </button>
-
-                            </div>
-
-                        </article>
-
-                    `;
-
-                }
-            ).join("");
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        container.innerHTML = `
-            <div class="error">
-                ❌ Erreur de chargement des produits.
-            </div>
-        `;
-
-    }
-
-}
-
-
-
-// =====================================================
-// SUPPRIMER PRODUIT
-// =====================================================
-
-async function supprimerProduit(id) {
-
-    if (
-        !confirm(
-            "Voulez-vous vraiment supprimer ce produit ?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/admin/produit/${id}`,
-                {
-                    method: "DELETE",
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.ok
-        ) {
-
-            throw new Error(
-                data.message ||
-                "Erreur lors de la suppression."
-            );
-
-        }
-
-
-        notify(
-            "✅ Produit supprimé."
-        );
-
-
-        await chargerProduits();
-
-        await chargerDashboard();
-
-    }
-
-    catch (error) {
-
-        notify(
-            "❌ " +
-            (
-                error.message ||
-                "Erreur de connexion."
-            )
-        );
-
-    }
-
-}
-
-
-
-// =====================================================
-// CHARGER LES COMMANDES
-// =====================================================
-
-async function chargerCommandes() {
-
-    const container =
-        document.getElementById(
-            "orders"
-        );
-
-    if (!container) return;
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/commandes",
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Erreur commandes."
-            );
-
-        }
-
-
-        const commandes =
-            await response.json();
-
-
-        if (
-            !Array.isArray(commandes) ||
-            commandes.length === 0
-        ) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    Aucune commande.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            commandes.map(
-                function(cmd) {
-
-                    return `
-
-                        <article
-                            class="order-card"
-                        >
-
-                            <h3>
-                                Commande #${cmd.id}
-                            </h3>
-
-
-                            <p>
-                                👤
-                                ${escapeHtml(
-                                    cmd.client_nom
-                                )}
-                            </p>
-
-
-                            <p>
-                                📞
-                                ${escapeHtml(
-                                    cmd.telephone
-                                )}
-                            </p>
-
-
-                            <p>
-                                📍
-                                ${escapeHtml(
-                                    cmd.adresse || ""
-                                )}
-                            </p>
-
-
-                            <p>
-                                💰
-                                <strong>
-                                    ${Number(
-                                        cmd.total
-                                    ).toLocaleString(
-                                        "fr-FR"
-                                    )}
-                                    FCFA
-                                </strong>
-                            </p>
-
-
-                            <select
-                                onchange="
-                                    changerStatut(
-                                        ${cmd.id},
-                                        this.value
-                                    )
-                                "
-                            >
-
-                                ${[
-                                    "Nouvelle",
-                                    "Confirmée",
-                                    "En livraison",
-                                    "Terminée",
-                                    "Annulée"
-                                ].map(
-                                    function(statut) {
-
-                                        return `
-                                            <option
-                                                value="${statut}"
-                                                ${
-                                                    cmd.statut ===
-                                                    statut
-                                                        ? "selected"
-                                                        : ""
-                                                }
-                                            >
-                                                ${statut}
-                                            </option>
-                                        `;
-
-                                    }
-                                ).join("")}
-
-                            </select>
-
-
-                            <button
-                                type="button"
-                                class="secondary-button"
-                                onclick="
-                                    ouvrirChat(
-                                        ${cmd.id},
-                                        '${escapeJs(
-                                            cmd.client_nom
-                                        )}'
-                                    )
-                                "
-                            >
-                                💬 Message
-                            </button>
-
-                        </article>
-
-                    `;
-
-                }
-            ).join("");
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        container.innerHTML = `
-            <div class="error">
-                ❌ Erreur de chargement des commandes.
-            </div>
-        `;
-
-    }
-
-}
-
-            </script>
-            <script>
-
-// =====================================================
-// CHANGER LE STATUT D'UNE COMMANDE
-// =====================================================
-
-async function changerStatut(id, statut) {
-
-    try {
-
-        const response = await fetch(
-            `/api/admin/commande/${id}/statut`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    statut: statut
-                }),
-
-                credentials: "same-origin"
-            }
-        );
-
-
-        const data = await response.json();
-
-
-        if (!response.ok || !data.ok) {
-
-            throw new Error(
-                data.message ||
-                "Impossible de modifier le statut."
-            );
-
-        }
-
-
-        notify(
-            "✅ Statut de la commande mis à jour."
-        );
-
-
-        await chargerCommandes();
-
-        await chargerDashboard();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        notify(
-            "❌ " +
-            (
-                error.message ||
-                "Erreur de connexion."
-            )
-        );
-
-    }
-
-}
-
-
-
-// =====================================================
-// OUVRIR LE CHAT D'UNE COMMANDE
-// =====================================================
-
-async function ouvrirChat(
-    id,
-    clientNom
-) {
-
-    commandeChatActuelle = id;
-
-
-    const titre =
-        document.getElementById(
-            "chat-title"
-        );
-
-
-    if (titre) {
-
-        titre.textContent =
-            "💬 " +
-            clientNom;
-
-    }
-
-
-    const chatBox =
-        document.getElementById(
-            "chat-box"
-        );
-
-
-    if (chatBox) {
-
-        chatBox.classList.add(
-            "open"
-        );
-
-    }
-
-
-    await chargerChat(id);
-
-}
-
-
-
-// =====================================================
-// FERMER LE CHAT
-// =====================================================
-
-function fermerChat() {
-
-    commandeChatActuelle = null;
-
-
-    const chatBox =
-        document.getElementById(
-            "chat-box"
-        );
-
-
-    if (chatBox) {
-
-        chatBox.classList.remove(
-            "open"
-        );
-
-    }
-
-}
-
-
-
-// =====================================================
-// CHARGER LE CHAT
-// =====================================================
-
-async function chargerChat(id) {
-
-    const container =
-        document.getElementById(
-            "chat-messages"
-        );
-
-
-    if (!container) return;
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/admin/chat/${id}`,
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.ok
-        ) {
-
-            throw new Error(
-                data.message ||
-                "Impossible de charger le chat."
-            );
-
-        }
-
-
-        if (
-            !data.messages ||
-            data.messages.length === 0
-        ) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    Aucun message pour cette commande.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            data.messages.map(
-                function(message) {
-
-                    const admin =
-                        message.auteur ===
-                        "Admin";
-
-
-                    return `
-
-                        <div
-                            class="
-                                message-bubble
-                                ${
-                                    admin
-                                        ? "message-admin"
-                                        : "message-client"
-                                }
-                            "
-                        >
-
-                            <strong>
-                                ${
-                                    admin
-                                        ? "Vous"
-                                        : escapeHtml(
-                                            message.client_nom ||
-                                            "Client"
-                                        )
-                                }
-                            </strong>
-
-
-                            <p>
-                                ${escapeHtml(
-                                    message.message
-                                )}
-                            </p>
-
-
-                            <small>
-                                ${escapeHtml(
-                                    message.date ||
-                                    ""
-                                )}
-                            </small>
-
-                        </div>
-
-                    `;
-
-                }
-            ).join("");
-
-
-        container.scrollTop =
-            container.scrollHeight;
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        container.innerHTML = `
-            <div class="error">
-                ❌ Erreur de chargement du chat.
-            </div>
-        `;
-
-    }
-
-}
-
-
-
-// =====================================================
-// ENVOYER MESSAGE ADMIN
-// =====================================================
-
-async function envoyerMessageAdmin() {
-
-    if (!commandeChatActuelle) {
-
-        return;
-
-    }
-
-
-    const input =
-        document.getElementById(
-            "admin-message"
-        );
-
-
-    if (!input) return;
-
-
-    const message =
-        input.value.trim();
-
-
-    if (!message) {
-
-        return;
-
-    }
-
-
-    input.disabled = true;
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/chat/${commandeChatActuelle}`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        message: message
-                    }),
-
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.ok
-        ) {
-
-            throw new Error(
-                data.message ||
-                "Impossible d'envoyer le message."
-            );
-
-        }
-
-
-        input.value = "";
-
-
-        await chargerChat(
-            commandeChatActuelle
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        notify(
-            "❌ " +
-            (
-                error.message ||
-                "Erreur d'envoi."
-            )
-        );
-
-    }
-
-    finally {
-
-        input.disabled = false;
-
-        input.focus();
-
-    }
-
-}
-
-
-
-// =====================================================
-// CHARGER LES MESSAGES GÉNÉRAUX
-// =====================================================
-
-async function chargerMessagesGeneraux() {
-
-    const container =
-        document.getElementById(
-            "general-messages"
-        );
-
-
-    if (!container) return;
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/messages-generaux",
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Erreur de chargement."
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const messages =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(
-                        data.messages
-                    )
-                        ? data.messages
-                        : []
-                );
-
-
-        if (
-            messages.length === 0
-        ) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    Aucun message général.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            messages.map(
-                function(item) {
-
-                    return `
-
-                        <article
-                            class="general-message"
-                        >
-
-                            <h3>
-                                💬
-                                ${escapeHtml(
-                                    item.client_nom ||
-                                    "Client"
-                                )}
-                            </h3>
-
-
-                            <p>
-                                ${escapeHtml(
-                                    item.message ||
-                                    ""
-                                )}
-                            </p>
-
-
-                            ${
-                                item.reponse
-                                    ? `
-                                        <div
-                                            class="
-                                                admin-response
-                                            "
-                                        >
-                                            <strong>
-                                                Réponse :
-                                            </strong>
-
-                                            <p>
-                                                ${escapeHtml(
-                                                    item.reponse
-                                                )}
-                                            </p>
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-
-                            <small>
-                                ${escapeHtml(
-                                    item.date ||
-                                    ""
-                                )}
-                            </small>
-
-                        </article>
-
-                    `;
-
-                }
-            ).join("");
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        container.innerHTML = `
-            <div class="error">
-                ❌ Impossible de charger les messages.
-            </div>
-        `;
-
-    }
-
-}
-
-
-
-// =====================================================
-// ENREGISTRER LA PUBLICITÉ
-// =====================================================
-
-document
-    .getElementById("pub-form")
-    ?.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const form =
-                this;
-
-
-            const button =
-                form.querySelector(
-                    "button[type='submit']"
-                );
-
-
-            if (button) {
-
-                button.disabled = true;
-
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/admin/publicite",
-                        {
-                            method: "POST",
-
-                            body:
-                                new FormData(form),
-
-                            credentials:
-                                "same-origin"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !data.ok
-                ) {
-
-                    throw new Error(
-                        data.message ||
-                        "Impossible d'enregistrer la publicité."
-                    );
-
-                }
-
-
-                notify(
-                    "✅ Publicité enregistrée."
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                notify(
-                    "❌ " +
-                    (
-                        error.message ||
-                        "Erreur de connexion."
-                    )
-                );
-
-            }
-
-            finally {
-
-                if (button) {
-
-                    button.disabled = false;
-
-                }
-
-            }
-
-        }
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /"/g,
+        '\\"'
+    )
+    .replace(
+        /\n/g,
+        "\\n"
+    )
+    .replace(
+        /\r/g,
+        "\\r"
     );
 
+}
 
+        </script>
+        <!-- =====================================================
+     JAVASCRIPT — DASHBOARD
+====================================================== -->
 
-// =====================================================
-// CHARGER LE DASHBOARD
-// =====================================================
+<script>
 
 async function chargerDashboard() {
 
@@ -1711,16 +981,15 @@ async function chargerDashboard() {
             await fetch(
                 "/api/admin/dashboard",
                 {
-                    credentials:
-                        "same-origin"
+                    credentials: "same-origin"
                 }
             );
 
 
         if (!response.ok) {
-
-            return;
-
+            throw new Error(
+                "Erreur serveur"
+            );
         }
 
 
@@ -1729,15 +998,15 @@ async function chargerDashboard() {
 
 
         if (!data.ok) {
-
-            return;
-
+            throw new Error(
+                data.message ||
+                "Impossible de charger le dashboard."
+            );
         }
 
 
         const stats =
-            data.stats ||
-            {};
+            data.stats || {};
 
 
         const commandes =
@@ -1773,7 +1042,9 @@ async function chargerDashboard() {
         if (commandes) {
 
             commandes.textContent =
-                stats.commandes || 0;
+                Number(
+                    stats.commandes || 0
+                ).toLocaleString("fr-FR");
 
         }
 
@@ -1781,7 +1052,9 @@ async function chargerDashboard() {
         if (clients) {
 
             clients.textContent =
-                stats.clients || 0;
+                Number(
+                    stats.clients || 0
+                ).toLocaleString("fr-FR");
 
         }
 
@@ -1791,10 +1064,8 @@ async function chargerDashboard() {
             revenus.textContent =
                 Number(
                     stats.revenus || 0
-                ).toLocaleString(
-                    "fr-FR"
-                ) +
-                " FCFA";
+                ).toLocaleString("fr-FR")
+                + " FCFA";
 
         }
 
@@ -1802,7 +1073,9 @@ async function chargerDashboard() {
         if (livraisons) {
 
             livraisons.textContent =
-                stats.livraisons || 0;
+                Number(
+                    stats.livraisons || 0
+                ).toLocaleString("fr-FR");
 
         }
 
@@ -1810,7 +1083,9 @@ async function chargerDashboard() {
         if (nouvelles) {
 
             nouvelles.textContent =
-                stats.nouvelles || 0;
+                Number(
+                    stats.nouvelles || 0
+                ).toLocaleString("fr-FR");
 
         }
 
@@ -1819,7 +1094,7 @@ async function chargerDashboard() {
     catch (error) {
 
         console.error(
-            "Dashboard:",
+            "Dashboard :",
             error
         );
 
@@ -1829,59 +1104,2979 @@ async function chargerDashboard() {
 
 
 
-// =====================================================
-// INITIALISATION
-// =====================================================
+/* =====================================================
+   PRODUITS
+===================================================== */
+
+async function chargerProduits() {
+
+    const container =
+        document.getElementById(
+            "products"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Chargement des produits...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/produits",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erreur serveur"
+            );
+
+        }
+
+
+        const produits =
+            await response.json();
+
+
+        if (!Array.isArray(produits)
+            || !produits.length) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div>
+                        🛍️
+                    </div>
+
+                    <h3>
+                        Aucun produit
+                    </h3>
+
+                    <p>
+                        Ajoutez votre premier
+                        produit ci-dessus.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            produits.map(
+                function(produit) {
+
+                    let media = "";
+
+
+                    if (
+                        produit.media_type === "video"
+                        &&
+                        produit.video
+                    ) {
+
+                        media = `
+                            <video
+                                src="${escapeHtml(
+                                    produit.video
+                                )}"
+                                class="admin-product-media"
+                                controls
+                                muted
+                                playsinline
+                                preload="metadata"
+                            ></video>
+                        `;
+
+                    }
+
+                    else if (
+                        produit.image
+                    ) {
+
+                        media = `
+                            <img
+                                src="${escapeHtml(
+                                    produit.image
+                                )}"
+                                alt="${escapeHtml(
+                                    produit.nom
+                                )}"
+                                class="admin-product-media"
+                                loading="lazy"
+                            >
+                        `;
+
+                    }
+
+                    else {
+
+                        media = `
+                            <div
+                                class="admin-product-media media-empty"
+                            >
+                                🛍️
+                            </div>
+                        `;
+
+                    }
+
+
+                    return `
+
+                        <article
+                            class="admin-product-card"
+                        >
+
+                            <div class="admin-product-image">
+
+                                ${media}
+
+                            </div>
+
+
+                            <div
+                                class="admin-product-content"
+                            >
+
+                                <h3>
+                                    ${escapeHtml(
+                                        produit.nom
+                                    )}
+                                </h3>
+
+
+                                ${
+                                    produit.description
+                                    ?
+                                    `
+                                    <p>
+                                        ${escapeHtml(
+                                            produit.description
+                                        )}
+                                    </p>
+                                    `
+                                    :
+                                    ""
+                                }
+
+
+                                <strong
+                                    class="admin-product-price"
+                                >
+                                    ${Number(
+                                        produit.prix || 0
+                                    ).toLocaleString(
+                                        "fr-FR"
+                                    )}
+                                    FCFA
+                                </strong>
+
+
+                                <small>
+                                    Ajouté le
+                                    ${escapeHtml(
+                                        produit.date || ""
+                                    )}
+                                </small>
+
+
+                                <button
+                                    type="button"
+                                    class="danger-button"
+                                    onclick="supprimerProduit(
+                                        ${Number(
+                                            produit.id
+                                        )}
+                                    )"
+                                >
+                                    🗑️ Supprimer
+                                </button>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            ).join("");
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Produits :",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error">
+                ❌ Impossible de charger
+                les produits.
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   AJOUTER UN PRODUIT
+===================================================== */
+
+const produitForm =
+    document.getElementById(
+        "produit-form"
+    );
+
+
+if (produitForm) {
+
+    produitForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const form =
+                this;
+
+
+            const button =
+                form.querySelector(
+                    "button[type='submit']"
+                );
+
+
+            const formData =
+                new FormData(
+                    form
+                );
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "⏳ Ajout en cours...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/admin/produit",
+                        {
+                            method: "POST",
+
+                            body:
+                                formData,
+
+                            credentials:
+                                "same-origin"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok
+                    ||
+                    !data.ok
+                ) {
+
+                    notify(
+                        data.message
+                        ||
+                        "Impossible d'ajouter le produit."
+                    );
+
+                    return;
+
+                }
+
+
+                notify(
+                    "✅ Produit ajouté avec succès."
+                );
+
+
+                form.reset();
+
+
+                await chargerProduits();
+
+
+                await chargerDashboard();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Ajout produit :",
+                    error
+                );
+
+
+                notify(
+                    "❌ Erreur de connexion."
+                );
+
+            }
+
+            finally {
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "➕ Ajouter le produit";
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   SUPPRIMER UN PRODUIT
+===================================================== */
+
+async function supprimerProduit(
+    produitId
+) {
+
+    if (!produitId) {
+        return;
+    }
+
+
+    const confirmation =
+        confirm(
+            "Voulez-vous vraiment supprimer ce produit ?"
+        );
+
+
+    if (!confirmation) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/produit/${produitId}`,
+                {
+                    method: "DELETE",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            notify(
+                data.message
+                ||
+                "Impossible de supprimer le produit."
+            );
+
+            return;
+
+        }
+
+
+        notify(
+            "✅ Produit supprimé."
+        );
+
+
+        await chargerProduits();
+
+
+        await chargerDashboard();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Suppression produit :",
+            error
+        );
+
+
+        notify(
+            "❌ Erreur de connexion."
+        );
+
+    }
+
+}
+
+    </script>
+    <!-- =====================================================
+     COMMANDES
+====================================================== -->
+
+<script>
+
+async function chargerCommandes() {
+
+    const container =
+        document.getElementById("orders");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Chargement des commandes...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/commandes",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erreur serveur"
+            );
+
+        }
+
+
+        const commandes =
+            await response.json();
+
+
+        if (
+            !Array.isArray(commandes)
+            ||
+            !commandes.length
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div>
+                        📦
+                    </div>
+
+                    <h3>
+                        Aucune commande
+                    </h3>
+
+                    <p>
+                        Les nouvelles commandes
+                        apparaîtront ici.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            commandes.map(
+                function(commande) {
+
+                    const statut =
+                        String(
+                            commande.statut || "Nouvelle"
+                        );
+
+
+                    const produits =
+                        Array.isArray(
+                            commande.produits
+                        )
+                        ?
+                        commande.produits
+                        :
+                        [];
+
+
+                    let produitsHtml =
+                        "";
+
+
+                    if (produits.length) {
+
+                        produitsHtml = `
+
+                            <div class="order-products">
+
+                                <h4>
+                                    🛍️ Produits
+                                </h4>
+
+                                ${produits.map(
+                                    function(produit) {
+
+                                        return `
+                                            <div
+                                                class="order-product"
+                                            >
+
+                                                <span>
+
+                                                    ${escapeHtml(
+                                                        produit.nom
+                                                    )}
+
+                                                    ×
+                                                    ${Number(
+                                                        produit.quantite || 1
+                                                    )}
+
+                                                </span>
+
+
+                                                <strong>
+
+                                                    ${Number(
+                                                        produit.prix || 0
+                                                    ).toLocaleString(
+                                                        "fr-FR"
+                                                    )}
+
+                                                    FCFA
+
+                                                </strong>
+
+                                            </div>
+                                        `;
+
+                                    }
+                                ).join("")}
+
+                            </div>
+
+                        `;
+
+                    }
+
+
+                    return `
+
+                        <article
+                            class="order-card"
+                        >
+
+                            <div class="order-top">
+
+                                <div>
+
+                                    <span
+                                        class="order-number"
+                                    >
+                                        Commande #${Number(
+                                            commande.id
+                                        )}
+                                    </span>
+
+
+                                    <h3>
+                                        ${escapeHtml(
+                                            commande.client_nom
+                                        )}
+                                    </h3>
+
+                                </div>
+
+
+                                <span
+                                    class="status status-${escapeHtml(
+                                        statut
+                                    )}"
+                                >
+                                    ${escapeHtml(
+                                        statut
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div class="order-info">
+
+                                <p>
+
+                                    📞
+
+                                    <strong>
+                                        Téléphone :
+                                    </strong>
+
+                                    ${escapeHtml(
+                                        commande.telephone
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    📍
+
+                                    <strong>
+                                        Adresse :
+                                    </strong>
+
+                                    ${escapeHtml(
+                                        commande.adresse
+                                        ||
+                                        "Non indiquée"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    🕐
+
+                                    <strong>
+                                        Date :
+                                    </strong>
+
+                                    ${escapeHtml(
+                                        commande.date
+                                        ||
+                                        ""
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    💰
+
+                                    <strong>
+                                        Total :
+                                    </strong>
+
+                                    ${Number(
+                                        commande.total || 0
+                                    ).toLocaleString(
+                                        "fr-FR"
+                                    )}
+
+                                    FCFA
+
+                                </p>
+
+                            </div>
+
+
+                            ${produitsHtml}
+
+
+                            <div
+                                class="order-actions"
+                            >
+
+                                <select
+                                    class="status-select"
+                                    data-order-id="${Number(
+                                        commande.id
+                                    )}"
+                                >
+
+                                    <option
+                                        value="Nouvelle"
+                                        ${
+                                            statut === "Nouvelle"
+                                            ?
+                                            "selected"
+                                            :
+                                            ""
+                                        }
+                                    >
+                                        Nouvelle
+                                    </option>
+
+
+                                    <option
+                                        value="Confirmée"
+                                        ${
+                                            statut === "Confirmée"
+                                            ?
+                                            "selected"
+                                            :
+                                            ""
+                                        }
+                                    >
+                                        Confirmée
+                                    </option>
+
+
+                                    <option
+                                        value="En livraison"
+                                        ${
+                                            statut === "En livraison"
+                                            ?
+                                            "selected"
+                                            :
+                                            ""
+                                        }
+                                    >
+                                        En livraison
+                                    </option>
+
+
+                                    <option
+                                        value="Terminée"
+                                        ${
+                                            statut === "Terminée"
+                                            ?
+                                            "selected"
+                                            :
+                                            ""
+                                        }
+                                    >
+                                        Terminée
+                                    </option>
+
+
+                                    <option
+                                        value="Annulée"
+                                        ${
+                                            statut === "Annulée"
+                                            ?
+                                            "selected"
+                                            :
+                                            ""
+                                        }
+                                    >
+                                        Annulée
+                                    </option>
+
+                                </select>
+
+
+                                <button
+                                    type="button"
+                                    class="chat-button"
+                                    onclick="ouvrirChat(
+                                        ${Number(
+                                            commande.id
+                                        )},
+                                        '${escapeJs(
+                                            commande.client_nom
+                                        )}'
+                                    )"
+                                >
+                                    💬 Message
+                                </button>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            ).join("");
+
+
+        /*
+         * Gestion des changements de statut
+         */
+
+        container
+            .querySelectorAll(
+                ".status-select"
+            )
+            .forEach(
+                function(select) {
+
+                    select.addEventListener(
+                        "change",
+                        function() {
+
+                            changerStatut(
+                                Number(
+                                    this.dataset.orderId
+                                ),
+                                this.value
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Commandes :",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error">
+
+                ❌ Impossible de charger
+                les commandes.
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CHANGER LE STATUT D'UNE COMMANDE
+===================================================== */
+
+async function changerStatut(
+    commandeId,
+    statut
+) {
+
+    if (!commandeId || !statut) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/commande/${commandeId}/statut`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            statut:
+                                statut
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            notify(
+                data.message
+                ||
+                "Impossible de modifier le statut."
+            );
+
+
+            /*
+             * Recharge les commandes
+             * afin de remettre le statut
+             * réel affiché par le serveur.
+             */
+
+            await chargerCommandes();
+
+            return;
+
+        }
+
+
+        notify(
+            "✅ Statut mis à jour."
+        );
+
+
+        await chargerDashboard();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Statut commande :",
+            error
+        );
+
+
+        notify(
+            "❌ Erreur de connexion."
+        );
+
+
+        await chargerCommandes();
+
+    }
+
+}
+
+</script>
+<!-- =====================================================
+     CHAT ADMIN
+====================================================== -->
+
+<script>
+
+async function ouvrirChat(
+    commandeId,
+    clientNom
+) {
+
+    if (!commandeId) {
+        return;
+    }
+
+
+    commandeChatActuelle =
+        commandeId;
+
+
+    const box =
+        document.getElementById(
+            "chat-box"
+        );
+
+
+    const title =
+        document.getElementById(
+            "chat-title"
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            "💬 " +
+            (clientNom || "Client");
+
+    }
+
+
+    if (box) {
+
+        box.classList.add(
+            "open"
+        );
+
+    }
+
+
+    await chargerChat(
+        commandeId
+    );
+
+}
+
+
+
+/* =====================================================
+   FERMER LE CHAT
+===================================================== */
+
+function fermerChat() {
+
+    commandeChatActuelle =
+        null;
+
+
+    const box =
+        document.getElementById(
+            "chat-box"
+        );
+
+
+    if (box) {
+
+        box.classList.remove(
+            "open"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CHARGER LES MESSAGES DU CHAT
+===================================================== */
+
+async function chargerChat(
+    commandeId
+) {
+
+    if (!commandeId) {
+        return;
+    }
+
+
+    const container =
+        document.getElementById(
+            "chat-messages"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Chargement...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/chat/${commandeId}`,
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erreur serveur"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.ok) {
+
+            container.innerHTML = `
+                <div class="error">
+
+                    ${escapeHtml(
+                        data.message
+                        ||
+                        "Impossible de charger le chat."
+                    )}
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        const messages =
+            Array.isArray(
+                data.messages
+            )
+            ?
+            data.messages
+            :
+            [];
+
+
+        if (!messages.length) {
+
+            container.innerHTML = `
+                <div class="empty-chat">
+
+                    <div>
+                        💬
+                    </div>
+
+                    <p>
+                        Aucun message pour le moment.
+                    </p>
+
+                    <small>
+                        Envoyez un message au client
+                        pour commencer la conversation.
+                    </small>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            messages.map(
+                function(message) {
+
+                    const estAdmin =
+                        message.auteur === "Admin";
+
+
+                    return `
+
+                        <div
+                            class="
+                                message-bubble
+                                ${
+                                    estAdmin
+                                    ?
+                                    "message-admin"
+                                    :
+                                    "message-client"
+                                }
+                            "
+                        >
+
+                            <div
+                                class="message-author"
+                            >
+
+                                ${
+                                    estAdmin
+                                    ?
+                                    "Vous"
+                                    :
+                                    escapeHtml(
+                                        message.client_nom
+                                        ||
+                                        "Client"
+                                    )
+                                }
+
+                            </div>
+
+
+                            <div
+                                class="message-text"
+                            >
+
+                                ${escapeHtml(
+                                    message.message
+                                )}
+
+                            </div>
+
+
+                            <small>
+
+                                ${escapeHtml(
+                                    message.date
+                                    ||
+                                    ""
+                                )}
+
+                            </small>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join("");
+
+
+        /*
+         * Descendre automatiquement
+         * vers le dernier message.
+         */
+
+        container.scrollTop =
+            container.scrollHeight;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Chat :",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error">
+
+                ❌ Erreur de chargement
+                du chat.
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   ENVOYER UNE RÉPONSE ADMIN
+===================================================== */
+
+async function envoyerMessageAdmin() {
+
+    if (!commandeChatActuelle) {
+
+        notify(
+            "Sélectionnez d'abord une commande."
+        );
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "admin-message"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const message =
+        input.value.trim();
+
+
+    if (!message) {
+        return;
+    }
+
+
+    if (message.length > 2000) {
+
+        notify(
+            "Le message est trop long."
+        );
+
+        return;
+
+    }
+
+
+    input.disabled =
+        true;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/chat/${commandeChatActuelle}`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            message:
+                                message
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            notify(
+                data.message
+                ||
+                "Impossible d'envoyer le message."
+            );
+
+            return;
+
+        }
+
+
+        input.value =
+            "";
+
+
+        await chargerChat(
+            commandeChatActuelle
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Envoi message admin :",
+            error
+        );
+
+
+        notify(
+            "❌ Erreur d'envoi."
+        );
+
+    }
+
+    finally {
+
+        input.disabled =
+            false;
+
+
+        input.focus();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   ENTRÉE CLAVIER DU CHAT
+===================================================== */
+
+const adminMessageInput =
+    document.getElementById(
+        "admin-message"
+    );
+
+
+if (adminMessageInput) {
+
+    adminMessageInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            /*
+             * Entrée = envoyer
+             * Shift + Entrée = nouvelle ligne
+             */
+
+            if (
+                event.key === "Enter"
+                &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+
+                envoyerMessageAdmin();
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+<!-- =====================================================
+     MESSAGES GÉNÉRAUX
+====================================================== -->
+
+<script>
+
+async function chargerMessagesGeneraux() {
+
+    const container =
+        document.getElementById(
+            "general-messages"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = `
+        <div class="loading">
+            Chargement des messages...
+        </div>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/messages-generaux",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erreur serveur"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /*
+         * Ton Flask renvoie directement
+         * une liste de messages.
+         */
+
+        const messages =
+            Array.isArray(data)
+            ?
+            data
+            :
+            (
+                Array.isArray(data.messages)
+                ?
+                data.messages
+                :
+                []
+            );
+
+
+        if (!messages.length) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div>
+                        💬
+                    </div>
+
+                    <h3>
+                        Aucun message
+                    </h3>
+
+                    <p>
+                        Les nouveaux messages
+                        apparaîtront ici.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            messages.map(
+                function(message) {
+
+                    const id =
+                        Number(
+                            message.id || 0
+                        );
+
+
+                    const nom =
+                        escapeHtml(
+                            message.client_nom
+                            ||
+                            "Client"
+                        );
+
+
+                    const texte =
+                        escapeHtml(
+                            message.message
+                            ||
+                            ""
+                        );
+
+
+                    const date =
+                        escapeHtml(
+                            message.date
+                            ||
+                            ""
+                        );
+
+
+                    const reponse =
+                        message.reponse
+                        ?
+                        escapeHtml(
+                            message.reponse
+                        )
+                        :
+                        "";
+
+
+                    return `
+
+                        <article
+                            class="general-message"
+                        >
+
+                            <div
+                                class="general-message-header"
+                            >
+
+                                <div>
+
+                                    <strong>
+                                        👤 ${nom}
+                                    </strong>
+
+
+                                    <small>
+                                        ${date}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="general-message-content"
+                            >
+
+                                <p>
+                                    ${texte}
+                                </p>
+
+                            </div>
+
+
+                            ${
+                                reponse
+                                ?
+                                `
+                                <div
+                                    class="admin-response"
+                                >
+
+                                    <strong>
+                                        ✅ Votre réponse
+                                    </strong>
+
+                                    <p>
+                                        ${reponse}
+                                    </p>
+
+                                    ${
+                                        message.date_reponse
+                                        ?
+                                        `
+                                        <small>
+                                            ${escapeHtml(
+                                                message.date_reponse
+                                            )}
+                                        </small>
+                                        `
+                                        :
+                                        ""
+                                    }
+
+                                </div>
+                                `
+                                :
+                                `
+                                <div
+                                    class="reply-form"
+                                >
+
+                                    <textarea
+                                        id="reply-${id}"
+                                        placeholder="Écrire une réponse..."
+                                        rows="3"
+                                    ></textarea>
+
+
+                                    <button
+                                        type="button"
+                                        class="primary-button"
+                                        onclick="repondreMessageGeneral(
+                                            ${id}
+                                        )"
+                                    >
+                                        💬 Répondre
+                                    </button>
+
+                                </div>
+                                `
+                            }
+
+                        </article>
+
+                    `;
+
+                }
+            ).join("");
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Messages généraux :",
+            error
+        );
+
+
+        container.innerHTML = `
+            <div class="error">
+
+                ❌ Impossible de charger
+                les messages.
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   RÉPONDRE À UN MESSAGE GÉNÉRAL
+===================================================== */
+
+async function repondreMessageGeneral(
+    messageId
+) {
+
+    if (!messageId) {
+        return;
+    }
+
+
+    const input =
+        document.getElementById(
+            `reply-${messageId}`
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const reponse =
+        input.value.trim();
+
+
+    if (!reponse) {
+
+        notify(
+            "Écrivez une réponse."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    if (reponse.length > 3000) {
+
+        notify(
+            "La réponse est trop longue."
+        );
+
+        return;
+
+    }
+
+
+    const bouton =
+        input
+            .parentElement
+            ?.querySelector(
+                "button"
+            );
+
+
+    if (bouton) {
+
+        bouton.disabled =
+            true;
+
+        bouton.textContent =
+            "⏳ Envoi...";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/messages-generaux/${messageId}`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            reponse:
+                                reponse
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            notify(
+                data.message
+                ||
+                "Impossible d'enregistrer la réponse."
+            );
+
+            return;
+
+        }
+
+
+        notify(
+            "✅ Réponse enregistrée."
+        );
+
+
+        await chargerMessagesGeneraux();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Réponse message :",
+            error
+        );
+
+
+        notify(
+            "❌ Erreur de connexion."
+        );
+
+    }
+
+    finally {
+
+        if (bouton) {
+
+            bouton.disabled =
+                false;
+
+            bouton.textContent =
+                "💬 Répondre";
+
+        }
+
+    }
+
+}
+
+</script>
+<!-- =====================================================
+     PUBLICITÉ
+====================================================== -->
+
+<section
+    id="publicite"
+    class="admin-section"
+>
+
+    <div class="section-header">
+
+        <div>
+            <h2>📢 Publicité</h2>
+
+            <p>
+                Gérez la publicité affichée sur
+                la page d'accueil.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="admin-card">
+
+        <form
+            id="pub-form"
+            enctype="multipart/form-data"
+        >
+
+            <div class="form-group">
+
+                <label for="pub-titre">
+                    Titre
+                </label>
+
+                <input
+                    type="text"
+                    id="pub-titre"
+                    name="titre"
+                    placeholder="Titre de la publicité"
+                    maxlength="200"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pub-texte">
+                    Texte
+                </label>
+
+                <textarea
+                    id="pub-texte"
+                    name="texte"
+                    placeholder="Description de la publicité..."
+                    rows="4"
+                    maxlength="1000"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pub-lien">
+                    Lien de destination
+                </label>
+
+                <input
+                    type="url"
+                    id="pub-lien"
+                    name="lien"
+                    placeholder="https://exemple.com"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="pub-media">
+                    Image ou vidéo
+                </label>
+
+                <input
+                    type="file"
+                    id="pub-media"
+                    name="media"
+                    accept="image/*,video/*"
+                >
+
+                <small>
+                    Formats acceptés :
+                    images et vidéos.
+                </small>
+
+            </div>
+
+
+            <div
+                id="pub-preview"
+                class="pub-preview"
+                style="display:none;"
+            ></div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    📢 Enregistrer la publicité
+                </button>
+
+
+                <button
+                    type="button"
+                    class="danger-button"
+                    onclick="supprimerPublicite()"
+                >
+                    🗑️ Supprimer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     SCRIPT PUBLICITÉ
+====================================================== -->
+
+<script>
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        chargerDashboard();
+        const form =
+            document.getElementById(
+                "pub-form"
+            );
 
-        chargerProduits();
 
-        chargerCommandes();
+        if (!form) {
+            return;
+        }
 
-        chargerMessagesGeneraux();
+
+        form.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const bouton =
+                    form.querySelector(
+                        "button[type='submit']"
+                    );
+
+
+                const formData =
+                    new FormData(form);
+
+
+                if (bouton) {
+
+                    bouton.disabled =
+                        true;
+
+                    bouton.textContent =
+                        "⏳ Enregistrement...";
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/admin/publicite",
+                            {
+                                method: "POST",
+
+                                credentials:
+                                    "same-origin",
+
+                                body:
+                                    formData
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok
+                        ||
+                        !data.ok
+                    ) {
+
+                        notify(
+                            data.message
+                            ||
+                            "Erreur lors de l'enregistrement."
+                        );
+
+                        return;
+
+                    }
+
+
+                    notify(
+                        "✅ Publicité enregistrée."
+                    );
+
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Publicité :",
+                        error
+                    );
+
+
+                    notify(
+                        "❌ Erreur de connexion."
+                    );
+
+                }
+
+                finally {
+
+                    if (bouton) {
+
+                        bouton.disabled =
+                            false;
+
+                        bouton.textContent =
+                            "📢 Enregistrer la publicité";
+
+                    }
+
+                }
+
+            }
+        );
 
     }
 );
 
 
 
-// =====================================================
-// ACTUALISATION AUTOMATIQUE
-// =====================================================
+/* =====================================================
+   APERÇU DU MÉDIA
+===================================================== */
 
-setInterval(
+document.addEventListener(
+    "DOMContentLoaded",
     function() {
 
-        chargerDashboard();
+        const input =
+            document.getElementById(
+                "pub-media"
+            );
 
-        chargerCommandes();
 
-        chargerMessagesGeneraux();
+        const preview =
+            document.getElementById(
+                "pub-preview"
+            );
+
+
+        if (!input || !preview) {
+            return;
+        }
+
+
+        input.addEventListener(
+            "change",
+            function() {
+
+                preview.innerHTML = "";
+
+
+                const fichier =
+                    this.files &&
+                    this.files[0];
+
+
+                if (!fichier) {
+
+                    preview.style.display =
+                        "none";
+
+                    return;
+
+                }
+
+
+                const url =
+                    URL.createObjectURL(
+                        fichier
+                    );
+
+
+                if (
+                    fichier.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    image.src =
+                        url;
+
+                    image.alt =
+                        "Aperçu publicité";
+
+                    image.style.maxWidth =
+                        "100%";
+
+                    image.style.maxHeight =
+                        "300px";
+
+                    preview.appendChild(
+                        image
+                    );
+
+                }
+
+                else if (
+                    fichier.type.startsWith(
+                        "video/"
+                    )
+                ) {
+
+                    const video =
+                        document.createElement(
+                            "video"
+                        );
+
+                    video.src =
+                        url;
+
+                    video.controls =
+                        true;
+
+                    video.muted =
+                        true;
+
+                    video.style.maxWidth =
+                        "100%";
+
+                    video.style.maxHeight =
+                        "300px";
+
+                    preview.appendChild(
+                        video
+                    );
+
+                }
+
+                else {
+
+                    preview.textContent =
+                        "Format non supporté.";
+
+                }
+
+
+                preview.style.display =
+                    "block";
+
+            }
+        );
+
+    }
+);
+
+
+
+/* =====================================================
+   SUPPRIMER PUBLICITÉ
+===================================================== */
+
+async function supprimerPublicite() {
+
+    const confirmer =
+        confirm(
+            "Voulez-vous vraiment supprimer la publicité ?"
+        );
+
+
+    if (!confirmer) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/publicite",
+                {
+                    method: "DELETE",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
 
 
         if (
-            commandeChatActuelle
+            !response.ok
+            ||
+            !data.ok
         ) {
 
-            chargerChat(
+            notify(
+                data.message
+                ||
+                "Impossible de supprimer la publicité."
+            );
+
+            return;
+
+        }
+
+
+        const form =
+            document.getElementById(
+                "pub-form"
+            );
+
+
+        if (form) {
+            form.reset();
+        }
+
+
+        const preview =
+            document.getElementById(
+                "pub-preview"
+            );
+
+
+        if (preview) {
+
+            preview.innerHTML =
+                "";
+
+            preview.style.display =
+                "none";
+
+        }
+
+
+        notify(
+            "🗑️ Publicité supprimée."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Suppression publicité :",
+            error
+        );
+
+
+        notify(
+            "❌ Erreur de connexion."
+        );
+
+    }
+
+}
+
+    </script>
+    <!-- =====================================================
+     OUTILS ADMINISTRATEUR
+====================================================== -->
+
+<section
+    id="outils"
+    class="admin-section"
+>
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>⚙️ Outils</h2>
+
+            <p>
+                Outils rapides pour gérer
+                le tableau de bord.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin-card tools-grid">
+
+        <button
+            type="button"
+            class="primary-button"
+            onclick="actualiserTout()"
+        >
+            🔄 Actualiser maintenant
+        </button>
+
+
+        <a
+            href="/"
+            target="_blank"
+            class="secondary-button"
+        >
+            🌐 Ouvrir le site
+        </a>
+
+
+        <a
+            href="/admin/logout"
+            class="danger-button"
+        >
+            🚪 Déconnexion
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     NOTIFICATION ADMIN
+====================================================== -->
+
+<div
+    id="notification"
+    class="notification"
+></div>
+
+
+
+<!-- =====================================================
+     UTILITAIRES JAVASCRIPT
+====================================================== -->
+
+<script>
+
+/* =====================================================
+   ÉCHAPPEMENT HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* =====================================================
+   ÉCHAPEMENT JAVASCRIPT
+===================================================== */
+
+function escapeJs(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+
+    return String(value)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\r/g, "\\r")
+        .replace(/\n/g, "\\n");
+
+}
+
+
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
+
+function notify(message) {
+
+    const element =
+        document.getElementById(
+            "notification"
+        );
+
+
+    if (!element) {
+
+        alert(message);
+
+        return;
+
+    }
+
+
+    element.textContent =
+        message;
+
+
+    element.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        window.notificationTimer
+    );
+
+
+    window.notificationTimer =
+        setTimeout(
+            function() {
+
+                element.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+}
+
+
+
+/* =====================================================
+   NAVIGATION ADMIN
+===================================================== */
+
+function ouvrirSection(id) {
+
+    const sections =
+        document.querySelectorAll(
+            ".admin-section"
+        );
+
+
+    sections.forEach(
+        function(section) {
+
+            section.style.display =
+                "none";
+
+        }
+    );
+
+
+    const section =
+        document.getElementById(id);
+
+
+    if (section) {
+
+        section.style.display =
+            "block";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+
+/* =====================================================
+   ACTUALISER TOUT
+===================================================== */
+
+async function actualiserTout() {
+
+    try {
+
+        if (
+            typeof chargerDashboard ===
+            "function"
+        ) {
+
+            await chargerDashboard();
+
+        }
+
+
+        if (
+            typeof chargerProduits ===
+            "function"
+        ) {
+
+            await chargerProduits();
+
+        }
+
+
+        if (
+            typeof chargerCommandes ===
+            "function"
+        ) {
+
+            await chargerCommandes();
+
+        }
+
+
+        if (
+            typeof chargerMessagesGeneraux ===
+            "function"
+        ) {
+
+            await chargerMessagesGeneraux();
+
+        }
+
+
+        if (
+            typeof commandeChatActuelle !==
+            "undefined"
+            &&
+            commandeChatActuelle
+            &&
+            typeof chargerChat ===
+            "function"
+        ) {
+
+            await chargerChat(
                 commandeChatActuelle
             );
 
         }
 
-    },
-    10000
+
+        notify(
+            "✅ Tableau de bord actualisé."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Actualisation :",
+            error
+        );
+
+
+        notify(
+            "❌ Une erreur est survenue."
+        );
+
+    }
+
+}
+
+</script>
+    <!-- =====================================================
+     ACTUALISATION AUTOMATIQUE
+====================================================== -->
+
+<script>
+
+let actualisationEnCours = false;
+
+
+/* =====================================================
+   ACTUALISATION SÉCURISÉE
+===================================================== */
+
+async function actualiserAutomatiquement() {
+
+    if (actualisationEnCours) {
+        return;
+    }
+
+
+    actualisationEnCours = true;
+
+
+    try {
+
+        if (
+            typeof chargerDashboard ===
+            "function"
+        ) {
+
+            await chargerDashboard();
+
+        }
+
+
+        if (
+            typeof chargerCommandes ===
+            "function"
+        ) {
+
+            await chargerCommandes();
+
+        }
+
+
+        if (
+            typeof chargerMessagesGeneraux ===
+            "function"
+        ) {
+
+            await chargerMessagesGeneraux();
+
+        }
+
+
+        /*
+         * Si un chat est actuellement ouvert,
+         * on actualise uniquement ce chat.
+         */
+
+        if (
+            typeof commandeChatActuelle !==
+            "undefined"
+            &&
+            commandeChatActuelle
+            &&
+            typeof chargerChat ===
+            "function"
+        ) {
+
+            await chargerChat(
+                commandeChatActuelle
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Actualisation automatique :",
+            error
+        );
+
+    }
+
+    finally {
+
+        actualisationEnCours =
+            false;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LANCEMENT AUTOMATIQUE
+====================================================== */
+
+let intervalActualisation =
+    null;
+
+
+function demarrerActualisation() {
+
+    if (intervalActualisation) {
+
+        clearInterval(
+            intervalActualisation
+        );
+
+    }
+
+
+    /*
+     * Toutes les 10 secondes.
+     */
+
+    intervalActualisation =
+        setInterval(
+            actualiserAutomatiquement,
+            10000
+        );
+
+}
+
+
+
+/* =====================================================
+   INITIALISATION DE LA PAGE
+====================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        console.log(
+            "✅ Administration Yemalin Aura chargée."
+        );
+
+
+        /*
+         * Chargement initial du dashboard
+         */
+
+        if (
+            typeof chargerDashboard ===
+            "function"
+        ) {
+
+            await chargerDashboard();
+
+        }
+
+
+        /*
+         * Chargement des produits
+         */
+
+        if (
+            typeof chargerProduits ===
+            "function"
+        ) {
+
+            await chargerProduits();
+
+        }
+
+
+        /*
+         * Chargement des commandes
+         */
+
+        if (
+            typeof chargerCommandes ===
+            "function"
+        ) {
+
+            await chargerCommandes();
+
+        }
+
+
+        /*
+         * Chargement des messages
+         */
+
+        if (
+            typeof chargerMessagesGeneraux ===
+            "function"
+        ) {
+
+            await chargerMessagesGeneraux();
+
+        }
+
+
+        /*
+         * Démarrage de l'actualisation
+         */
+
+        demarrerActualisation();
+
+    }
 );
 
 </script>
 
+
+
+<!-- =====================================================
+     FIN DU JAVASCRIPT ADMIN
+====================================================== -->
+    <!-- =====================================================
+     PIED DE PAGE ADMIN
+====================================================== -->
+
+<footer class="admin-footer">
+
+    <div class="admin-footer-brand">
+
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="Yemalin Aura"
+            class="admin-footer-logo"
+        >
+
+        <div>
+
+            <strong>
+                Yemalin Aura
+            </strong>
+
+            <p>
+                Administration
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin-footer-info">
+
+        <span>
+            © 2026 Yemalin Aura
+        </span>
+
+        <span>
+            •
+        </span>
+
+        <span>
+            Tous droits réservés
+        </span>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =====================================================
+     FERMETURE
+====================================================== -->
+
 </main>
+
 
 </body>
 
-    </html>
+</html>
+                    
