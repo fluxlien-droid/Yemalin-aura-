@@ -1,6 +1,6 @@
 /* =========================================================
    YEMALIN AURA — SCRIPT PRINCIPAL
-   Compatible avec index.html
+   Version corrigée
 ========================================================= */
 
 "use strict";
@@ -21,6 +21,7 @@ let commandeActuelle = null;
 ========================================================= */
 
 function escapeHtml(value) {
+
     return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -31,7 +32,9 @@ function escapeHtml(value) {
 
 
 function notify(message) {
-    const box = document.getElementById("notification");
+
+    const box =
+        document.getElementById("notification");
 
     if (!box) {
         alert(message);
@@ -39,6 +42,7 @@ function notify(message) {
     }
 
     box.textContent = message;
+
     box.classList.add("show");
 
     setTimeout(() => {
@@ -48,6 +52,7 @@ function notify(message) {
 
 
 function sauvegarderPanier() {
+
     localStorage.setItem(
         "yemalin_panier",
         JSON.stringify(panier)
@@ -56,45 +61,74 @@ function sauvegarderPanier() {
 
 
 /* =========================================================
-   NAVIGATION ENTRE LES PAGES
+   NAVIGATION
 ========================================================= */
 
 function ouvrirPage(pageId) {
 
-    document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
-    });
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
 
-    const page = document.getElementById(pageId);
+            page.classList.remove("active");
+
+        });
+
+
+    const page =
+        document.getElementById(pageId);
+
 
     if (page) {
+
         page.classList.add("active");
+
     }
+
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
 
+
     if (pageId === "commandes") {
+
         chargerCommandesClient();
+
     }
 
+
     if (pageId === "messages") {
-        chargerMessagesGeneraux();
+
+        // Aucun chargement nécessaire ici.
+        // Les messages généraux sont envoyés
+        // vers l'administration.
+
+    }
+
+
+    if (pageId === "panier") {
+
+        afficherPanier();
+
     }
 }
 
 
 /* =========================================================
-   PANIER
+   PRODUITS / PANIER
 ========================================================= */
 
 function ajouterPanier(produit) {
 
-    const existant = panier.find(
-        item => Number(item.id) === Number(produit.id)
-    );
+    const existant =
+        panier.find(
+            item =>
+                Number(item.id) ===
+                Number(produit.id)
+        );
+
 
     if (existant) {
 
@@ -103,47 +137,78 @@ function ajouterPanier(produit) {
     } else {
 
         panier.push({
+
             id: Number(produit.id),
-            nom: produit.nom,
-            prix: Number(produit.prix),
+
+            nom: String(produit.nom || ""),
+
+            prix: Number(produit.prix || 0),
+
             quantite: 1
+
         });
+
     }
 
+
     sauvegarderPanier();
+
     afficherPanier();
 
-    notify("🛒 Produit ajouté au panier.");
+    notify(
+        "🛒 Produit ajouté au panier."
+    );
 }
 
 
 function retirerPanier(id) {
 
-    panier = panier.filter(
-        item => Number(item.id) !== Number(id)
-    );
+    panier =
+        panier.filter(
+            item =>
+                Number(item.id) !==
+                Number(id)
+        );
+
 
     sauvegarderPanier();
+
     afficherPanier();
 }
 
 
-function modifierQuantite(id, changement) {
+function modifierQuantite(
+    id,
+    changement
+) {
 
-    const produit = panier.find(
-        item => Number(item.id) === Number(id)
-    );
+    const produit =
+        panier.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
 
-    if (!produit) return;
 
-    produit.quantite += changement;
-
-    if (produit.quantite <= 0) {
-        retirerPanier(id);
+    if (!produit) {
         return;
     }
 
+
+    produit.quantite +=
+        Number(changement);
+
+
+    if (produit.quantite <= 0) {
+
+        retirerPanier(id);
+
+        return;
+    }
+
+
     sauvegarderPanier();
+
     afficherPanier();
 }
 
@@ -153,19 +218,25 @@ function viderPanier() {
     panier = [];
 
     sauvegarderPanier();
+
     afficherPanier();
 
-    notify("🛒 Panier vidé.");
+    notify(
+        "🛒 Panier vidé."
+    );
 }
 
 
 function calculerTotal() {
 
     return panier.reduce(
-        (total, item) =>
-            total +
-            Number(item.prix) *
-            Number(item.quantite),
+        (total, item) => {
+
+            return total +
+                Number(item.prix) *
+                Number(item.quantite);
+
+        },
         0
     );
 }
@@ -174,53 +245,90 @@ function calculerTotal() {
 function nombreArticles() {
 
     return panier.reduce(
-        (total, item) =>
-            total + Number(item.quantite),
+        (total, item) => {
+
+            return total +
+                Number(item.quantite);
+
+        },
         0
     );
 }
 
 
+/* =========================================================
+   AFFICHER LE PANIER
+========================================================= */
+
 function afficherPanier() {
 
     const compteur =
-        document.getElementById("compteur");
+        document.getElementById(
+            "compteur"
+        );
+
 
     const compteurRapide =
-        document.getElementById("compteur-rapide");
+        document.getElementById(
+            "compteur-rapide"
+        );
+
 
     const contenu =
-        document.getElementById("contenu-panier");
+        document.getElementById(
+            "contenu-panier"
+        );
+
 
     const total =
-        document.getElementById("total");
+        document.getElementById(
+            "total"
+        );
 
 
-    const nombre = nombreArticles();
+    const nombre =
+        nombreArticles();
+
 
     if (compteur) {
-        compteur.textContent = nombre;
+
+        compteur.textContent =
+            nombre;
+
     }
 
+
     if (compteurRapide) {
-        compteurRapide.textContent = nombre;
+
+        compteurRapide.textContent =
+            nombre;
+
     }
 
 
     if (total) {
+
         total.textContent =
-            calculerTotal().toLocaleString("fr-FR");
+            calculerTotal()
+                .toLocaleString("fr-FR");
+
     }
 
 
-    if (!contenu) return;
+    if (!contenu) {
+        return;
+    }
 
 
     if (!panier.length) {
 
         contenu.innerHTML = `
+
             <div class="empty-state">
-                <p>🛒 Votre panier est vide.</p>
+
+                <p>
+                    🛒 Votre panier est vide.
+                </p>
 
                 <button
                     type="button"
@@ -229,83 +337,112 @@ function afficherPanier() {
                 >
                     Découvrir les produits
                 </button>
+
             </div>
+
         `;
 
         return;
     }
 
 
-    contenu.innerHTML = panier.map(item => {
+    contenu.innerHTML =
+        panier.map(item => {
 
-        const sousTotal =
-            Number(item.prix) *
-            Number(item.quantite);
-
-        return `
-            <article class="cart-item">
-
-                <div class="cart-item-info">
-
-                    <h3>
-                        ${escapeHtml(item.nom)}
-                    </h3>
-
-                    <p>
-                        ${Number(item.prix).toLocaleString("fr-FR")}
-                        FCFA / unité
-                    </p>
-
-                </div>
+            const sousTotal =
+                Number(item.prix) *
+                Number(item.quantite);
 
 
-                <div class="cart-quantity">
+            return `
 
-                    <button
-                        type="button"
-                        onclick="modifierQuantite(
-                            ${item.id},
-                            -1
-                        )"
+                <article class="cart-item">
+
+                    <div class="cart-item-info">
+
+                        <h3>
+                            ${escapeHtml(
+                                item.nom
+                            )}
+                        </h3>
+
+                        <p>
+                            ${Number(
+                                item.prix
+                            ).toLocaleString(
+                                "fr-FR"
+                            )}
+                            FCFA / unité
+                        </p>
+
+                    </div>
+
+
+                    <div class="cart-quantity">
+
+                        <button
+                            type="button"
+                            onclick="
+                                modifierQuantite(
+                                    ${item.id},
+                                    -1
+                                )
+                            "
+                        >
+                            −
+                        </button>
+
+
+                        <strong>
+                            ${item.quantite}
+                        </strong>
+
+
+                        <button
+                            type="button"
+                            onclick="
+                                modifierQuantite(
+                                    ${item.id},
+                                    1
+                                )
+                            "
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+
+                    <strong
+                        class="cart-subtotal"
                     >
-                        −
-                    </button>
-
-                    <strong>
-                        ${item.quantite}
+                        ${sousTotal.toLocaleString(
+                            "fr-FR"
+                        )}
+                        FCFA
                     </strong>
 
+
                     <button
                         type="button"
-                        onclick="modifierQuantite(
-                            ${item.id},
-                            1
-                        )"
+                        class="btn"
+                        onclick="
+                            retirerPanier(
+                                ${item.id}
+                            )
+                        "
                     >
-                        +
+                        🗑️
                     </button>
 
-                </div>
+                </article>
+
+            `;
+
+        }).join("");
 
 
-                <strong class="cart-subtotal">
-                    ${sousTotal.toLocaleString("fr-FR")}
-                    FCFA
-                </strong>
-
-
-                <button
-                    type="button"
-                    class="btn"
-                    onclick="retirerPanier(${item.id})"
-                >
-                    🗑️
-                </button>
-
-            </article>
-        `;
-
-    }).join("") + `
+    contenu.innerHTML += `
 
         <button
             type="button"
@@ -314,6 +451,7 @@ function afficherPanier() {
         >
             🗑️ Vider le panier
         </button>
+
     `;
 }
 
@@ -343,15 +481,20 @@ async function passerCommande() {
 
 
     const nom =
-        document.getElementById("client-nom")
+        document
+            .getElementById("client-nom")
             ?.value.trim();
+
 
     const telephone =
-        document.getElementById("telephone")
+        document
+            .getElementById("telephone")
             ?.value.trim();
 
+
     const adresse =
-        document.getElementById("adresse")
+        document
+            .getElementById("adresse")
             ?.value.trim();
 
 
@@ -392,61 +535,85 @@ async function passerCommande() {
 
 
     if (bouton) {
+
         bouton.disabled = true;
+
+        bouton.textContent =
+            "⏳ Envoi...";
+
     }
 
 
     try {
 
-        const response = await fetch(
-            "/api/commande",
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                "/api/commande",
+                {
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    method: "POST",
 
-                credentials:
-                    "same-origin",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
+                    credentials:
+                        "same-origin",
 
-                    client_nom: nom,
+                    body: JSON.stringify({
 
-                    telephone: telephone,
+                        client_nom: nom,
 
-                    adresse: adresse,
+                        telephone:
+                            telephone,
 
-                    produits: panier.map(item => ({
-                        produit_id:
-                            Number(item.id),
+                        adresse:
+                            adresse,
 
-                        quantite:
-                            Number(item.quantite)
-                    }))
-                })
-            }
-        );
+                        produits:
+                            panier.map(
+                                item => ({
+
+                                    id:
+                                        Number(
+                                            item.id
+                                        ),
+
+                                    quantite:
+                                        Number(
+                                            item.quantite
+                                        )
+
+                                })
+                            )
+
+                    })
+
+                }
+            );
 
 
         const data =
             await response.json();
 
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
             throw new Error(
                 data.message ||
                 "Impossible de passer la commande."
             );
+
         }
 
 
         commandeActuelle =
-            data.commande ||
-            data;
+            data.commande_id ||
+            null;
 
 
         panier = [];
@@ -461,30 +628,51 @@ async function passerCommande() {
         );
 
 
+        const champNom =
+            document.getElementById(
+                "client-nom"
+            );
+
+
+        const champTelephone =
+            document.getElementById(
+                "telephone"
+            );
+
+
+        const champAdresse =
+            document.getElementById(
+                "adresse"
+            );
+
+
+        if (champNom) {
+            champNom.value = "";
+        }
+
+
+        if (champTelephone) {
+            champTelephone.value = "";
+        }
+
+
+        if (champAdresse) {
+            champAdresse.value = "";
+        }
+
+
         ouvrirPage("commandes");
 
         chargerCommandesClient();
 
 
-        document.getElementById(
-            "client-nom"
-        ).value = "";
-
-        document.getElementById(
-            "telephone"
-        ).value = "";
-
-        document.getElementById(
-            "adresse"
-        ).value = "";
-
-
     } catch (error) {
 
         console.error(
-            "Commande:",
+            "Erreur commande :",
             error
         );
+
 
         notify(
             "❌ " +
@@ -494,17 +682,24 @@ async function passerCommande() {
             )
         );
 
+
     } finally {
 
         if (bouton) {
+
             bouton.disabled = false;
+
+            bouton.textContent =
+                "✅ Passer la commande";
+
         }
+
     }
 }
 
 
 /* =========================================================
-   COMMANDES DU CLIENT
+   COMMANDES CLIENT
 ========================================================= */
 
 async function chargerCommandesClient() {
@@ -514,7 +709,10 @@ async function chargerCommandesClient() {
             "liste-commandes"
         );
 
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
 
 
     container.innerHTML =
@@ -538,10 +736,12 @@ async function chargerCommandesClient() {
 
 
         if (!response.ok) {
+
             throw new Error(
                 data.message ||
-                "Erreur."
+                "Erreur de chargement."
             );
+
         }
 
 
@@ -557,11 +757,16 @@ async function chargerCommandesClient() {
         if (!commandes.length) {
 
             container.innerHTML = `
+
                 <div class="empty-state">
+
                     <p>
-                        Vous n'avez encore aucune commande.
+                        Vous n'avez encore
+                        aucune commande.
                     </p>
+
                 </div>
+
             `;
 
             return;
@@ -569,98 +774,122 @@ async function chargerCommandesClient() {
 
 
         container.innerHTML =
-            commandes.map(commande => `
+            commandes.map(
+                commande => `
 
-                <article class="order-card">
-
-                    <h3>
-                        📦 Commande #${commande.id}
-                    </h3>
-
-                    <p>
-                        <strong>
-                            Total :
-                        </strong>
-
-                        ${Number(
-                            commande.total || 0
-                        ).toLocaleString("fr-FR")}
-
-                        FCFA
-                    </p>
-
-                    <p>
-                        <strong>
-                            Statut :
-                        </strong>
-
-                        ${escapeHtml(
-                            commande.statut ||
-                            "Nouvelle"
-                        )}
-                    </p>
-
-                    <p>
-                        <small>
-                            ${escapeHtml(
-                                commande.date || ""
-                            )}
-                        </small>
-                    </p>
-
-                    <button
-                        type="button"
-                        class="btn"
-                        onclick="ouvrirChatClient(
-                            ${commande.id}
-                        )"
+                    <article
+                        class="order-card"
                     >
-                        💬 Ouvrir le chat
-                    </button>
 
-                </article>
+                        <h3>
+                            📦 Commande
+                            #${commande.id}
+                        </h3>
 
-            `).join("");
 
+                        <p>
+
+                            <strong>
+                                Total :
+                            </strong>
+
+                            ${Number(
+                                commande.total || 0
+                            ).toLocaleString(
+                                "fr-FR"
+                            )}
+
+                            FCFA
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Statut :
+                            </strong>
+
+                            ${escapeHtml(
+                                commande.statut ||
+                                "Nouvelle"
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <small>
+                                ${escapeHtml(
+                                    commande.date ||
+                                    ""
+                                )}
+                            </small>
+
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="btn"
+                            onclick="
+                                ouvrirChatClient(
+                                    ${commande.id}
+                                )
+                            "
+                        >
+                            💬 Ouvrir le chat
+                        </button>
+
+                    </article>
+
+                `
+            ).join("");
 
     } catch (error) {
 
         console.error(
-            "Commandes:",
+            "Commandes :",
             error
         );
 
+
         container.innerHTML = `
+
             <div class="error">
-                Impossible de charger vos commandes.
+
+                ❌ Impossible de charger
+                vos commandes.
+
             </div>
+
         `;
+
     }
 }
-
-
 /* =========================================================
    CHAT CLIENT
 ========================================================= */
 
-async function ouvrirChatClient(
-    commandeId
-) {
+async function ouvrirChatClient(commandeId) {
 
     commandeActuelle =
-        commandeId;
+        Number(commandeId);
 
     ouvrirPage("chat");
 
     await chargerChatClient(
-        commandeId
+        commandeActuelle
     );
 }
 
 
-async function chargerChatClient(
-    commandeId
-) {
+/* =========================================================
+   CHARGER LE CHAT CLIENT
+========================================================= */
+
+async function chargerChatClient(commandeId) {
 
     const messagesContainer =
         document.getElementById(
@@ -673,7 +902,9 @@ async function chargerChatClient(
         );
 
 
-    if (!messagesContainer) return;
+    if (!messagesContainer) {
+        return;
+    }
 
 
     messagesContainer.innerHTML =
@@ -686,6 +917,8 @@ async function chargerChatClient(
             await fetch(
                 `/api/chat/${commandeId}`,
                 {
+                    method: "GET",
+
                     credentials:
                         "same-origin"
                 }
@@ -696,35 +929,56 @@ async function chargerChatClient(
             await response.json();
 
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
             throw new Error(
                 data.message ||
                 "Chat indisponible."
             );
+
         }
 
 
         if (info) {
 
             info.innerHTML = `
+
                 <strong>
-                    Commande #${commandeId}
+                    💬 Commande #${commandeId}
                 </strong>
+
             `;
+
         }
 
 
         const messages =
-            data.messages || [];
+            Array.isArray(data.messages)
+                ? data.messages
+                : [];
 
 
         if (!messages.length) {
 
             messagesContainer.innerHTML = `
-                <p>
-                    Aucun message pour le moment.
-                </p>
+
+                <div class="empty-state">
+
+                    <p>
+                        Aucun message pour le moment.
+                    </p>
+
+                    <small>
+                        Vous pouvez envoyer
+                        un message à
+                        l'administration ci-dessous.
+                    </small>
+
+                </div>
+
             `;
 
             return;
@@ -732,44 +986,57 @@ async function chargerChatClient(
 
 
         messagesContainer.innerHTML =
-            messages.map(message => {
+            messages.map(
+                message => {
 
-                const admin =
-                    message.auteur === "Admin";
+                    const estAdmin =
+                        message.auteur === "Admin";
 
-                return `
-                    <div class="
-                        message-bubble
-                        ${admin
-                            ? "message-admin"
-                            : "message-client"}
-                    ">
 
-                        <strong>
-                            ${admin
-                                ? "Administration"
-                                : escapeHtml(
-                                    message.client_nom ||
-                                    "Vous"
+                    return `
+
+                        <div
+                            class="
+                                message-bubble
+                                ${
+                                    estAdmin
+                                    ? "message-admin"
+                                    : "message-client"
+                                }
+                            "
+                        >
+
+                            <strong>
+
+                                ${
+                                    estAdmin
+                                    ? "👨‍💼 Administration"
+                                    : "👤 Vous"
+                                }
+
+                            </strong>
+
+
+                            <p>
+                                ${escapeHtml(
+                                    message.message
                                 )}
-                        </strong>
+                            </p>
 
-                        <p>
-                            ${escapeHtml(
-                                message.message
-                            )}
-                        </p>
 
-                        <small>
-                            ${escapeHtml(
-                                message.date || ""
-                            )}
-                        </small>
+                            <small>
+                                ${escapeHtml(
+                                    message.date ||
+                                    ""
+                                )}
+                            </small>
 
-                    </div>
-                `;
+                        </div>
 
-            }).join("");
+                    `;
+
+                }
+            ).join("");
 
 
         messagesContainer.scrollTop =
@@ -779,21 +1046,31 @@ async function chargerChatClient(
     } catch (error) {
 
         console.error(
-            "Chat:",
+            "Erreur chat :",
             error
         );
 
+
         messagesContainer.innerHTML = `
+
             <div class="error">
-                ${escapeHtml(
+
+                ❌ ${escapeHtml(
                     error.message ||
                     "Erreur de chargement du chat."
                 )}
+
             </div>
+
         `;
+
     }
 }
 
+
+/* =========================================================
+   ENVOYER MESSAGE DANS LE CHAT
+========================================================= */
 
 async function envoyerChat() {
 
@@ -813,14 +1090,35 @@ async function envoyerChat() {
         );
 
 
-    if (!input) return;
+    if (!input) {
+        return;
+    }
 
 
     const message =
         input.value.trim();
 
 
-    if (!message) return;
+    if (!message) {
+
+        notify(
+            "Écrivez un message."
+        );
+
+        input.focus();
+
+        return;
+    }
+
+
+    if (message.length > 2000) {
+
+        notify(
+            "Le message est trop long."
+        );
+
+        return;
+    }
 
 
     input.disabled = true;
@@ -832,6 +1130,7 @@ async function envoyerChat() {
             await fetch(
                 `/api/chat/${commandeActuelle}`,
                 {
+
                     method: "POST",
 
                     headers: {
@@ -842,9 +1141,12 @@ async function envoyerChat() {
                     credentials:
                         "same-origin",
 
-                    body: JSON.stringify({
-                        message: message
-                    })
+                    body:
+                        JSON.stringify({
+                            message:
+                                message
+                        })
+
                 }
             );
 
@@ -853,12 +1155,16 @@ async function envoyerChat() {
             await response.json();
 
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
             throw new Error(
                 data.message ||
                 "Message non envoyé."
             );
+
         }
 
 
@@ -872,6 +1178,12 @@ async function envoyerChat() {
 
     } catch (error) {
 
+        console.error(
+            "Erreur envoi chat :",
+            error
+        );
+
+
         notify(
             "❌ " +
             (
@@ -880,11 +1192,13 @@ async function envoyerChat() {
             )
         );
 
+
     } finally {
 
         input.disabled = false;
 
         input.focus();
+
     }
 }
 
@@ -893,17 +1207,58 @@ async function envoyerChat() {
    MESSAGES GÉNÉRAUX
 ========================================================= */
 
+/*
+ * IMPORTANT :
+ *
+ * Flask possède cette route :
+ *
+ * POST /api/messages-general
+ *
+ * et attend :
+ *
+ * {
+ *     "nom": "...",
+ *     "message": "..."
+ * }
+ *
+ * L'ancienne version utilisait :
+ *
+ * /api/message-general
+ *
+ * et "client_nom".
+ *
+ * C'était la cause de :
+ *
+ * "Route API introuvable"
+ *
+ * Cette version est corrigée.
+ */
+
+
 async function envoyerMessageGeneral() {
 
-    const nom =
+    const nomInput =
         document.getElementById(
             "message-nom"
-        )?.value.trim();
+        );
 
-    const message =
+
+    const messageInput =
         document.getElementById(
             "message-general"
-        )?.value.trim();
+        );
+
+
+    const nom =
+        nomInput
+        ? nomInput.value.trim()
+        : "";
+
+
+    const message =
+        messageInput
+        ? messageInput.value.trim()
+        : "";
 
 
     if (!nom) {
@@ -911,6 +1266,10 @@ async function envoyerMessageGeneral() {
         notify(
             "Veuillez entrer votre nom."
         );
+
+        if (nomInput) {
+            nomInput.focus();
+        }
 
         return;
     }
@@ -922,16 +1281,53 @@ async function envoyerMessageGeneral() {
             "Veuillez écrire votre message."
         );
 
+        if (messageInput) {
+            messageInput.focus();
+        }
+
         return;
+    }
+
+
+    if (message.length > 3000) {
+
+        notify(
+            "Votre message est trop long."
+        );
+
+        return;
+    }
+
+
+    const bouton =
+        document.querySelector(
+            "#messages .btn"
+        );
+
+
+    if (bouton) {
+
+        bouton.disabled = true;
+
+        bouton.textContent =
+            "⏳ Envoi...";
+
     }
 
 
     try {
 
+        /*
+         * Route Flask correcte :
+         *
+         * /api/messages-general
+         */
+
         const response =
             await fetch(
-                "/api/message-general",
+                "/api/messages-general",
                 {
+
                     method: "POST",
 
                     headers: {
@@ -942,100 +1338,174 @@ async function envoyerMessageGeneral() {
                     credentials:
                         "same-origin",
 
-                    body: JSON.stringify({
-                        client_nom: nom,
-                        message: message
-                    })
+                    body:
+                        JSON.stringify({
+
+                            nom:
+                                nom,
+
+                            message:
+                                message
+
+                        })
+
                 }
             );
 
 
-        const data =
-            await response.json();
+        /*
+         * On vérifie d'abord
+         * que le serveur a répondu.
+         */
+
+        let data = {};
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "Réponse invalide du serveur."
+            );
+
+        }
 
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
             throw new Error(
                 data.message ||
                 "Message non envoyé."
             );
+
         }
 
 
-        document.getElementById(
-            "message-general"
-        ).value = "";
+        /*
+         * Nettoyer les champs
+         */
+
+        if (nomInput) {
+
+            nomInput.value = "";
+
+        }
+
+
+        if (messageInput) {
+
+            messageInput.value = "";
+
+        }
 
 
         notify(
-            "✅ Message envoyé."
+            "✅ Votre message a été envoyé."
         );
 
 
-        chargerMessagesGeneraux();
-
-
     } catch (error) {
+
+        console.error(
+            "Erreur message général :",
+            error
+        );
+
 
         notify(
             "❌ " +
             (
                 error.message ||
-                "Erreur d'envoi."
+                "Erreur de connexion."
             )
         );
+
+
+    } finally {
+
+        if (bouton) {
+
+            bouton.disabled = false;
+
+            bouton.textContent =
+                "Envoyer le message";
+
+        }
+
     }
 }
 
-
-async function chargerMessagesGeneraux() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/messages-generaux",
-                {
-                    credentials:
-                        "same-origin"
-                }
-            );
-
-
-        if (!response.ok) return;
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Messages généraux:",
-            data
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Messages généraux:",
-            error
-        );
-    }
-}
 
 /* =========================================================
-   NOTIFICATIONS
+   ACTUALISER LE CHAT
+========================================================= */
+
+function actualiserChatAutomatiquement() {
+
+    if (!commandeActuelle) {
+        return;
+    }
+
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    if (!chat) {
+        return;
+    }
+
+
+    if (
+        !chat.classList.contains(
+            "active"
+        )
+    ) {
+        return;
+    }
+
+
+    chargerChatClient(
+        commandeActuelle
+    );
+}
+
+
+/*
+ * Actualisation toutes les 5 secondes.
+ */
+
+setInterval(
+    actualiserChatAutomatiquement,
+    5000
+);
+
+
+/* =========================================================
+   NOTIFICATIONS PUSH
 ========================================================= */
 
 async function demanderNotifications() {
+
+    /*
+     * Vérifier si le navigateur
+     * supporte les notifications.
+     */
 
     if (
         !("Notification" in window)
     ) {
 
         notify(
-            "❌ Les notifications ne sont pas supportées."
+            "❌ Les notifications ne sont pas supportées par votre navigateur."
         );
 
         return;
@@ -1048,7 +1518,9 @@ async function demanderNotifications() {
             await Notification.requestPermission();
 
 
-        if (permission !== "granted") {
+        if (
+            permission !== "granted"
+        ) {
 
             notify(
                 "🔕 Notifications non autorisées."
@@ -1058,102 +1530,411 @@ async function demanderNotifications() {
         }
 
 
+        /*
+         * Si push.js existe,
+         * on lui laisse gérer
+         * l'abonnement VAPID.
+         */
+
         if (
-            "serviceWorker" in navigator &&
-            "PushManager" in window
+            typeof window.abonnerNotifications ===
+            "function"
         ) {
 
-            const registration =
-                await navigator.serviceWorker.ready;
-
-
-            const existing =
-                await registration.pushManager
-                    .getSubscription();
-
-
-            if (existing) {
-
-                notify(
-                    "🔔 Notifications déjà activées."
-                );
-
-                return;
-            }
-
-
-            notify(
-                "🔔 Notification activée."
-            );
-
-            /*
-             * L'inscription Push complète
-             * est gérée par push.js.
-             */
-
-            if (
-                typeof window.activerPush ===
-                "function"
-            ) {
-
-                await window.activerPush(
-                    registration
-                );
-            }
-
-        } else {
+            await window.abonnerNotifications();
 
             notify(
                 "🔔 Notifications activées."
             );
+
+            return;
         }
+
+
+        /*
+         * Compatibilité avec certaines
+         * anciennes versions de push.js.
+         */
+
+        if (
+            typeof window.activerNotifications ===
+            "function"
+        ) {
+
+            await window.activerNotifications();
+
+            notify(
+                "🔔 Notifications activées."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Notification simple si aucun
+         * système Push n'est disponible.
+         */
+
+        try {
+
+            new Notification(
+                "Yemalin Aura",
+                {
+                    body:
+                        "Les notifications sont activées."
+                }
+            );
+
+        } catch (notificationError) {
+
+            console.warn(
+                "Notification locale impossible :",
+                notificationError
+            );
+
+        }
+
+
+        notify(
+            "🔔 Notifications autorisées."
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Notifications:",
+            "Notifications :",
             error
         );
+
 
         notify(
             "❌ Impossible d'activer les notifications."
         );
+
     }
-}
-
-
-/* =========================================================
-   ACTUALISATION DU CHAT
-========================================================= */
-
-setInterval(() => {
-
-    if (
-        commandeActuelle &&
-        document.getElementById("chat")
-            ?.classList.contains("active")
-    ) {
-
-        chargerChatClient(
-            commandeActuelle
-        );
-    }
-
-}, 5000);
-
-
+       }
 /* =========================================================
    INITIALISATION
 ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    function() {
+
+        /*
+         * Afficher immédiatement
+         * le contenu du panier.
+         */
 
         afficherPanier();
 
-        chargerCommandesClient();
+
+        /*
+         * Préparer la page
+         * des commandes.
+         */
+
+        const commandes =
+            document.getElementById(
+                "liste-commandes"
+            );
+
+
+        if (commandes) {
+
+            chargerCommandesClient();
+
+        }
+
+
+        /*
+         * Permettre l'envoi du message
+         * général avec Ctrl + Entrée.
+         */
+
+        const messageGeneral =
+            document.getElementById(
+                "message-general"
+            );
+
+
+        if (messageGeneral) {
+
+            messageGeneral.addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.ctrlKey &&
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        envoyerMessageGeneral();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Permettre l'envoi du chat
+         * avec la touche Entrée.
+         *
+         * Ton index.html possède déjà
+         * onkeydown="envoyerChat()",
+         * mais ceci ajoute une sécurité.
+         */
+
+        const chatInput =
+            document.getElementById(
+                "chat-message"
+            );
+
+
+        if (chatInput) {
+
+            chatInput.addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key === "Enter" &&
+                        !event.shiftKey
+                    ) {
+
+                        event.preventDefault();
+
+                        envoyerChat();
+
+                    }
+
+                }
+            );
+
+        }
 
     }
 );
+
+
+/* =========================================================
+   PROTECTION DU LOCALSTORAGE
+========================================================= */
+
+window.addEventListener(
+    "storage",
+    function(event) {
+
+        if (
+            event.key ===
+            "yemalin_panier"
+        ) {
+
+            try {
+
+                panier =
+                    JSON.parse(
+                        event.newValue ||
+                        "[]"
+                    );
+
+
+                if (
+                    !Array.isArray(
+                        panier
+                    )
+                ) {
+
+                    panier = [];
+
+                }
+
+            } catch (error) {
+
+                panier = [];
+
+            }
+
+
+            afficherPanier();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   VÉRIFICATION DU PANIER
+========================================================= */
+
+function nettoyerPanier() {
+
+    if (
+        !Array.isArray(
+            panier
+        )
+    ) {
+
+        panier = [];
+
+    }
+
+
+    panier =
+        panier.filter(
+            item => {
+
+                if (!item) {
+                    return false;
+                }
+
+
+                if (
+                    !item.id ||
+                    !item.nom
+                ) {
+
+                    return false;
+
+                }
+
+
+                const prix =
+                    Number(
+                        item.prix
+                    );
+
+
+                const quantite =
+                    Number(
+                        item.quantite
+                    );
+
+
+                if (
+                    !Number.isFinite(
+                        prix
+                    )
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    !Number.isFinite(
+                        quantite
+                    ) ||
+                    quantite <= 0
+                ) {
+
+                    return false;
+
+                }
+
+
+                item.id =
+                    Number(
+                        item.id
+                    );
+
+
+                item.prix =
+                    prix;
+
+
+                item.quantite =
+                    Math.floor(
+                        quantite
+                    );
+
+
+                return true;
+
+            }
+        );
+
+
+    sauvegarderPanier();
+
+}
+
+
+/* =========================================================
+   LANCER LE NETTOYAGE
+========================================================= */
+
+nettoyerPanier();
+
+afficherPanier();
+
+
+/* =========================================================
+   EMPÊCHER LES ERREURS SI UNE FONCTION
+   EST APPELÉE AVANT LE CHARGEMENT COMPLET
+========================================================= */
+
+window.ouvrirPage =
+    ouvrirPage;
+
+
+window.ouvrirPanier =
+    ouvrirPanier;
+
+
+window.ajouterPanier =
+    ajouterPanier;
+
+
+window.retirerPanier =
+    retirerPanier;
+
+
+window.modifierQuantite =
+    modifierQuantite;
+
+
+window.viderPanier =
+    viderPanier;
+
+
+window.passerCommande =
+    passerCommande;
+
+
+window.chargerCommandesClient =
+    chargerCommandesClient;
+
+
+window.ouvrirChatClient =
+    ouvrirChatClient;
+
+
+window.chargerChatClient =
+    chargerChatClient;
+
+
+window.envoyerChat =
+    envoyerChat;
+
+
+window.envoyerMessageGeneral =
+    envoyerMessageGeneral;
+
+
+window.demanderNotifications =
+    demanderNotifications;
+
+
+/* =========================================================
+   FIN DU SCRIPT
+========================================================= */
