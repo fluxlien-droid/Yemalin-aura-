@@ -1,83 +1,40 @@
-<!DOCTYPE html>
-<html lang="fr">
-
+<!DOCTYPE html><html lang="fr">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yemalin Aura — Administration</title><link rel="stylesheet"
+      href="{{ url_for('static', filename='admin.css') }}">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
+</head><body><header class="admin-header"><div class="admin-brand">
+    <img
+        src="{{ url_for('static', filename='logo.png') }}"
+        alt="Yemalin Aura"
     >
 
-    <title>Yemalin Aura — Administration</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='admin.css') }}"
-    >
-
-</head>
-
-<body>
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
-<header class="admin-header">
-
-    <div class="admin-brand">
-
-        <img
-            src="{{ url_for('static', filename='logo.png') }}"
-            alt="Yemalin Aura"
-        >
-
-        <div>
-            <h1>Yemalin Aura</h1>
-            <p>Administration</p>
-        </div>
-
+    <div>
+        <h1>Yemalin Aura</h1>
+        <p>Administration</p>
     </div>
+</div>
 
+<div class="header-actions">
+    <a href="/" class="header-button">
+        🏠 Boutique
+    </a>
 
-    <div class="header-actions">
+    <a href="/admin/logout"
+       class="header-button logout">
+        🚪 Déconnexion
+    </a>
+</div>
 
-        <a
-            href="/"
-            class="header-button"
-        >
-            🏠 Boutique
-        </a>
-
-        <a
-            href="/admin/logout"
-            class="header-button logout"
-        >
-            🚪 Déconnexion
-        </a>
-
-    </div>
-
-</header>
-
-
-<!-- =====================================================
-     CONTENU
-===================================================== -->
-
-<main class="admin-container">
-
-
-<!-- =====================================================
+</header><main class="admin-container"><!-- =====================================================
      BIENVENUE
-===================================================== -->
+====================================================== -->
 
 <section class="admin-welcome">
 
     <div>
-
         <span class="admin-label">
             TABLEAU DE BORD
         </span>
@@ -88,9 +45,8 @@
 
         <p>
             Gérez vos produits, commandes,
-            messages et publicités depuis cette page.
+            messages et publicités.
         </p>
-
     </div>
 
 </section>
@@ -98,113 +54,54 @@
 
 <!-- =====================================================
      STATISTIQUES
-===================================================== -->
+====================================================== -->
 
 <section class="stats-grid">
 
-
     <div class="stat-card">
-
-        <div class="stat-icon">
-            📦
-        </div>
-
+        📦
         <div>
-
-            <span>
-                Commandes
-            </span>
-
-            <strong id="stat-commandes">
-                0
-            </strong>
-
+            <span>Commandes</span>
+            <strong id="stat-commandes">0</strong>
         </div>
-
     </div>
 
-
     <div class="stat-card">
-
-        <div class="stat-icon">
-            👥
-        </div>
-
+        👥
         <div>
-
-            <span>
-                Clients
-            </span>
-
-            <strong id="stat-clients">
-                0
-            </strong>
-
+            <span>Clients</span>
+            <strong id="stat-clients">0</strong>
         </div>
-
     </div>
 
-
     <div class="stat-card">
-
-        <div class="stat-icon">
-            💰
-        </div>
-
+        💰
         <div>
-
-            <span>
-                Revenus
-            </span>
-
+            <span>Revenus</span>
             <strong id="stat-revenus">
                 0 FCFA
             </strong>
-
         </div>
-
     </div>
 
-
     <div class="stat-card">
-
-        <div class="stat-icon">
-            🚚
-        </div>
-
+        🚚
         <div>
-
-            <span>
-                En livraison
-            </span>
-
+            <span>En livraison</span>
             <strong id="stat-livraisons">
                 0
             </strong>
-
         </div>
-
     </div>
 
-
     <div class="stat-card">
-
-        <div class="stat-icon">
-            🔔
-        </div>
-
+        🔔
         <div>
-
-            <span>
-                Nouvelles
-            </span>
-
+            <span>Nouvelles</span>
             <strong id="stat-nouvelles">
                 0
             </strong>
-
         </div>
-
     </div>
 
 </section>
@@ -212,29 +109,12 @@
 
 <!-- =====================================================
      AJOUTER PRODUIT
-===================================================== -->
+====================================================== -->
 
 <section class="admin-card">
 
     <div class="section-header">
-
-        <div>
-
-            <span class="section-label">
-                BOUTIQUE
-            </span>
-
-            <h2>
-                🛍️ Ajouter un produit
-            </h2>
-
-            <p>
-                Ajoutez une image ou une vidéo
-                à votre produit.
-            </p>
-
-        </div>
-
+        <h2>🛍️ Ajouter un produit</h2>
     </div>
 
 
@@ -244,57 +124,39 @@
         enctype="multipart/form-data"
     >
 
-
-        <!-- NOM -->
-
         <div class="form-group">
 
             <label for="produit-nom">
-                Nom du produit
+                Nom
             </label>
 
             <input
                 id="produit-nom"
                 type="text"
                 name="nom"
-                placeholder="Ex. Parfum Élégance"
-                maxlength="150"
                 required
             >
 
         </div>
 
 
-        <!-- PRIX -->
-
         <div class="form-group">
 
             <label for="produit-prix">
-                Prix
+                Prix (FCFA)
             </label>
 
-            <div class="price-input">
-
-                <input
-                    id="produit-prix"
-                    type="number"
-                    name="prix"
-                    placeholder="15000"
-                    min="0"
-                    step="1"
-                    required
-                >
-
-                <span>
-                    FCFA
-                </span>
-
-            </div>
+            <input
+                id="produit-prix"
+                type="number"
+                name="prix"
+                min="0"
+                step="1"
+                required
+            >
 
         </div>
 
-
-        <!-- DESCRIPTION -->
 
         <div class="form-group full">
 
@@ -305,21 +167,15 @@
             <textarea
                 id="produit-description"
                 name="description"
-                placeholder="Décrivez votre produit..."
-                maxlength="1000"
             ></textarea>
 
         </div>
 
 
-        <!-- IMAGE OU VIDÉO -->
-
         <div class="form-group full">
 
             <label for="produit-media">
-
-                🖼️🎥 Image ou vidéo
-
+                Média
             </label>
 
             <input
@@ -329,20 +185,8 @@
                 accept="image/*,video/*"
             >
 
-            <small>
-
-                Images : JPG, PNG, WEBP...
-
-                <br>
-
-                Vidéos : MP4, WEBM, MOV...
-
-            </small>
-
         </div>
 
-
-        <!-- APERÇU -->
 
         <div
             id="media-preview"
@@ -350,17 +194,13 @@
         ></div>
 
 
-        <!-- BOUTON -->
-
         <div class="form-submit full">
 
             <button
                 type="submit"
                 class="primary-button"
             >
-
                 ➕ Ajouter le produit
-
             </button>
 
         </div>
@@ -372,31 +212,16 @@
 
 <!-- =====================================================
      PRODUITS
-===================================================== -->
+====================================================== -->
 
 <section class="admin-card">
 
     <div class="section-header">
 
-        <div>
-
-            <span class="section-label">
-                CATALOGUE
-            </span>
-
-            <h2>
-                📦 Produits
-            </h2>
-
-            <p>
-                Tous les produits actuellement
-                disponibles dans votre boutique.
-            </p>
-
-        </div>
-
+        <h2>📦 Produits</h2>
 
         <button
+            type="button"
             class="secondary-button"
             onclick="chargerProduits()"
         >
@@ -412,12 +237,58 @@
     >
 
         <div class="loading">
-            Chargement des produits...
+            Chargement...
         </div>
 
     </div>
 
 </section>
+
+
+<!-- =====================================================
+     SUITE PARTIE 2
+====================================================== -->
+
+<!--
+    La partie 2 commence ici avec :
+    - Commandes
+    - Messages privés
+    - Publicité
+-->
+    <!-- =====================================================
+     PRODUITS
+===================================================== -->
+
+<section class="admin-card">
+
+    <div class="section-header">
+
+        <h2>📦 Produits</h2>
+
+        <button
+            type="button"
+            class="secondary-button"
+            onclick="chargerProduits()"
+        >
+            🔄 Actualiser
+        </button>
+
+    </div>
+
+
+    <div
+        id="products"
+        class="admin-products"
+    >
+
+        <div class="loading">
+            Chargement...
+        </div>
+
+    </div>
+
+</section>
+
 
 
 <!-- =====================================================
@@ -428,24 +299,10 @@
 
     <div class="section-header">
 
-        <div>
-
-            <span class="section-label">
-                VENTES
-            </span>
-
-            <h2>
-                📋 Commandes
-            </h2>
-
-            <p>
-                Consultez et gérez les commandes.
-            </p>
-
-        </div>
-
+        <h2>📋 Commandes</h2>
 
         <button
+            type="button"
             class="secondary-button"
             onclick="chargerCommandes()"
         >
@@ -461,7 +318,7 @@
     >
 
         <div class="loading">
-            Chargement des commandes...
+            Chargement...
         </div>
 
     </div>
@@ -469,54 +326,24 @@
 </section>
 
 
+
 <!-- =====================================================
-     MESSAGES / CHAT
+     MESSAGES GÉNÉRAUX
 ===================================================== -->
 
 <section class="admin-card">
 
     <div class="section-header">
 
-        <div>
+        <h2>💬 Messages privés</h2>
 
-            <span class="section-label">
-                COMMUNICATION
-            </span>
-
-            <h2>
-                💬 Messages privés
-            </h2>
-
-            <p>
-                Les conversations avec vos clients.
-                Chaque client ne voit que ses propres
-                messages.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="private-chat-info">
-
-        <div class="info-icon">
-            🔒
-        </div>
-
-        <div>
-
-            <strong>
-                Conversations privées
-            </strong>
-
-            <p>
-                Les messages sont associés à la
-                commande du client et ne sont pas
-                visibles par les autres clients.
-            </p>
-
-        </div>
+        <button
+            type="button"
+            class="secondary-button"
+            onclick="chargerMessagesGeneraux()"
+        >
+            🔄 Actualiser
+        </button>
 
     </div>
 
@@ -527,12 +354,13 @@
     >
 
         <div class="loading">
-            Chargement des messages...
+            Chargement...
         </div>
 
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -543,22 +371,7 @@
 
     <div class="section-header">
 
-        <div>
-
-            <span class="section-label">
-                PROMOTION
-            </span>
-
-            <h2>
-                📢 Publicité
-            </h2>
-
-            <p>
-                Une seule publicité sera affichée
-                en bas de la boutique.
-            </p>
-
-        </div>
+        <h2>📢 Publicité</h2>
 
     </div>
 
@@ -586,7 +399,6 @@
                 type="text"
                 name="titre"
                 placeholder="Titre de la publicité"
-                maxlength="150"
             >
 
         </div>
@@ -595,7 +407,7 @@
         <div class="form-group">
 
             <label>
-                Lien derrière la publicité
+                Lien
             </label>
 
             <input
@@ -607,7 +419,7 @@
         </div>
 
 
-        <div class="form-group full">
+        <div class="form-group">
 
             <label>
                 Texte
@@ -616,16 +428,15 @@
             <textarea
                 name="texte"
                 placeholder="Texte de la publicité..."
-                maxlength="500"
             ></textarea>
 
         </div>
 
 
-        <div class="form-group full">
+        <div class="form-group">
 
             <label>
-                🖼️🎥 Image ou vidéo de la publicité
+                Image ou vidéo
             </label>
 
             <input
@@ -637,39 +448,21 @@
         </div>
 
 
-        <div class="form-submit full">
-
-            <button
-                type="submit"
-                class="primary-button"
-            >
-
-                📢 Enregistrer la publicité
-
-            </button>
-
-        </div>
+        <button
+            type="submit"
+            class="primary-button"
+        >
+            📢 Enregistrer la publicité
+        </button>
 
     </form>
 
 </section>
 
 
-</main>
-
 
 <!-- =====================================================
-     NOTIFICATION
-===================================================== -->
-
-<div
-    id="notification"
-    class="admin-notification"
-></div>
-
-
-<!-- =====================================================
-     CHAT FLOTTANT
+     CHAT ADMIN
 ===================================================== -->
 
 <div
@@ -679,20 +472,13 @@
 
     <div class="chat-header">
 
-        <div>
-
-            <strong id="chat-title">
-                Chat
-            </strong>
-
-            <small>
-                🔒 Conversation privée
-            </small>
-
-        </div>
+        <strong id="chat-title">
+            Chat
+        </strong>
 
 
         <button
+            type="button"
             onclick="fermerChat()"
             class="close-chat"
         >
@@ -714,11 +500,16 @@
             id="admin-message"
             type="text"
             placeholder="Écrire une réponse..."
-            maxlength="2000"
+            autocomplete="off"
+            onkeydown="
+                if(event.key === 'Enter')
+                    envoyerMessageAdmin()
+            "
         >
 
 
         <button
+            type="button"
             onclick="envoyerMessageAdmin()"
         >
             ➤
@@ -729,13 +520,22 @@
 </div>
 
 
+
 <!-- =====================================================
-     JAVASCRIPT — PARTIE 1
+     NOTIFICATION
 ===================================================== -->
+
+<div
+    id="notification"
+    class="admin-notification"
+></div>
+
+
 
 <script>
 
 let commandeChatActuelle = null;
+
 
 
 // =====================================================
@@ -756,8 +556,10 @@ function notify(message) {
     box.classList.add("show");
 
     setTimeout(
-        () => {
+        function() {
+
             box.classList.remove("show");
+
         },
         3000
     );
@@ -765,279 +567,47 @@ function notify(message) {
 }
 
 
+
 // =====================================================
-// DASHBOARD
+// ÉCHAPPEMENT HTML
 // =====================================================
 
-async function chargerDashboard() {
+function escapeHtml(value) {
 
-    try {
+    const div =
+        document.createElement("div");
 
-        const response =
-            await fetch(
-                "/api/admin/dashboard",
-                {
-                    credentials: "same-origin"
-                }
-            );
+    div.textContent =
+        value == null
+            ? ""
+            : String(value);
 
-        if (!response.ok) return;
-
-        const data =
-            await response.json();
-
-        if (!data.ok) return;
-
-        const stats = data.stats;
-
-
-        document.getElementById(
-            "stat-commandes"
-        ).textContent =
-            stats.commandes;
-
-
-        document.getElementById(
-            "stat-clients"
-        ).textContent =
-            stats.clients;
-
-
-        document.getElementById(
-            "stat-revenus"
-        ).textContent =
-            Number(
-                stats.revenus
-            ).toLocaleString(
-                "fr-FR"
-            ) + " FCFA";
-
-
-        document.getElementById(
-            "stat-livraisons"
-        ).textContent =
-            stats.livraisons;
-
-
-        document.getElementById(
-            "stat-nouvelles"
-        ).textContent =
-            stats.nouvelles;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Dashboard:",
-            error
-        );
-
-    }
+    return div.innerHTML;
 
 }
 
 
+
 // =====================================================
-// APERÇU IMAGE / VIDÉO
+// ÉCHAPPEMENT JAVASCRIPT
 // =====================================================
 
-document
-    .getElementById("produit-media")
-    .addEventListener(
-        "change",
-        function () {
+function escapeJs(value) {
 
-            const file =
-                this.files[0];
+    return String(
+        value || ""
+    )
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n");
 
-            const preview =
-                document.getElementById(
-                    "media-preview"
-                );
+}
 
-            preview.innerHTML = "";
-
-            if (!file) return;
-
-
-            const url =
-                URL.createObjectURL(file);
-
-
-            if (
-                file.type.startsWith(
-                    "image/"
-                )
-            ) {
-
-                preview.innerHTML = `
-
-                    <div class="preview-card">
-
-                        <span>
-                            🖼️ Aperçu de l'image
-                        </span>
-
-                        <img
-                            src="${url}"
-                            alt="Aperçu"
-                        >
-
-                    </div>
-
-                `;
-
-            }
-
-            else if (
-                file.type.startsWith(
-                    "video/"
-                )
-            ) {
-
-                preview.innerHTML = `
-
-                    <div class="preview-card">
-
-                        <span>
-                            🎥 Aperçu de la vidéo
-                        </span>
-
-                        <video
-                            src="${url}"
-                            controls
-                            muted
-                            playsinline
-                        ></video>
-
-                    </div>
-
-                `;
-
-            }
-
-            else {
-
-                preview.innerHTML = `
-
-                    <p class="error">
-                        Format non supporté.
-                    </p>
-
-                `;
-
-            }
-
-        }
-    );
 
 
 // =====================================================
-// AJOUT PRODUIT
-// =====================================================
-
-document
-    .getElementById("produit-form")
-    .addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const form = this;
-
-            const button =
-                form.querySelector(
-                    "button[type='submit']"
-                );
-
-
-            const formData =
-                new FormData(form);
-
-
-            button.disabled = true;
-
-            button.textContent =
-                "⏳ Envoi en cours...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/admin/produit",
-                        {
-                            method: "POST",
-                            body: formData,
-                            credentials:
-                                "same-origin"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    notify(
-                        data.message ||
-                        "Erreur lors de l'ajout."
-                    );
-
-                    return;
-
-                }
-
-
-                notify(
-                    "✅ Produit ajouté."
-                );
-
-
-                form.reset();
-
-
-                document.getElementById(
-                    "media-preview"
-                ).innerHTML = "";
-
-
-                await chargerProduits();
-
-                await chargerDashboard();
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                notify(
-                    "❌ Erreur de connexion."
-                );
-
-            }
-
-            finally {
-
-                button.disabled = false;
-
-                button.textContent =
-                    "➕ Ajouter le produit";
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// PRODUITS
+// CHARGER LES PRODUITS
 // =====================================================
 
 async function chargerProduits() {
@@ -1046,6 +616,12 @@ async function chargerProduits() {
         document.getElementById(
             "products"
         );
+
+    if (!container) return;
+
+
+    container.innerHTML =
+        '<div class="loading">Chargement...</div>';
 
 
     try {
@@ -1062,12 +638,9 @@ async function chargerProduits() {
 
         if (!response.ok) {
 
-            container.innerHTML =
-                `<p class="error">
-                    Impossible de charger les produits.
-                </p>`;
-
-            return;
+            throw new Error(
+                "Impossible de charger les produits."
+            );
 
         }
 
@@ -1076,26 +649,21 @@ async function chargerProduits() {
             await response.json();
 
 
-        if (!produits.length) {
+        if (!Array.isArray(produits)) {
+
+            throw new Error(
+                "Réponse invalide."
+            );
+
+        }
+
+
+        if (produits.length === 0) {
 
             container.innerHTML = `
-
                 <div class="empty-state">
-
-                    <div>
-                        🛍️
-                    </div>
-
-                    <h3>
-                        Aucun produit
-                    </h3>
-
-                    <p>
-                        Ajoutez votre premier produit.
-                    </p>
-
+                    Aucun produit disponible.
                 </div>
-
             `;
 
             return;
@@ -1105,212 +673,124 @@ async function chargerProduits() {
 
         container.innerHTML =
             produits.map(
-                produit => `
+                function(produit) {
 
-                <article class="admin-product">
+                    let media = "";
 
-                    <div class="admin-product-image">
 
-                        ${
-                            produit.media_type === "video"
+                    if (
+                        produit.media_type ===
+                        "video" &&
+                        produit.video
+                    ) {
 
-                            ?
-
-                            `<video
-                                src="${escapeHtml(
-                                    produit.image
-                                )}"
+                        media = `
+                            <video
+                                src="${escapeHtml(produit.video)}"
                                 controls
                                 muted
                                 playsinline
-                            ></video>`
+                            ></video>
+                        `;
 
-  <script>
+                    }
 
-// =====================================================
-// COMMANDES
-// =====================================================
+                    else if (
+                        produit.image
+                    ) {
 
-async function chargerCommandes() {
+                        media = `
+                            <img
+                                src="${escapeHtml(produit.image)}"
+                                alt="${escapeHtml(produit.nom)}"
+                                loading="lazy"
+                            >
+                        `;
 
-    const container =
-        document.getElementById("orders");
+                    }
 
-    container.innerHTML =
-        '<div class="loading">Chargement des commandes...</div>';
+                    else {
 
-    try {
+                        media = `
+                            <div class="image-vide">
+                                🛍️
+                            </div>
+                        `;
 
-        const response = await fetch(
-            "/api/admin/commandes",
-            {
-                credentials: "same-origin"
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Erreur serveur");
-        }
-
-        const commandes = await response.json();
-
-        if (!commandes.length) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div>📦</div>
-                    <h3>Aucune commande</h3>
-                    <p>Les nouvelles commandes apparaîtront ici.</p>
-                </div>
-            `;
-
-            return;
-        }
-
-        container.innerHTML = commandes.map(
-            commande => `
-
-            <article class="order-card">
-
-                <div class="order-top">
-
-                    <div>
-
-                        <span class="order-number">
-                            Commande #${commande.id}
-                        </span>
-
-                        <h3>
-                            ${escapeHtml(commande.client_nom)}
-                        </h3>
-
-                    </div>
-
-                    <span class="status status-${escapeHtml(
-                        commande.statut
-                    )}">
-                        ${escapeHtml(commande.statut)}
-                    </span>
-
-                </div>
+                    }
 
 
-                <div class="order-info">
+                    return `
 
-                    <p>
-                        📞
-                        <strong>Téléphone :</strong>
-                        ${escapeHtml(commande.telephone)}
-                    </p>
-
-                    <p>
-                        📍
-                        <strong>Adresse :</strong>
-                        ${escapeHtml(
-                            commande.adresse || "Non indiquée"
-                        )}
-                    </p>
-
-                    <p>
-                        🕐
-                        <strong>Date :</strong>
-                        ${escapeHtml(commande.date)}
-                    </p>
-
-                    <p>
-                        💰
-                        <strong>Total :</strong>
-                        ${Number(
-                            commande.total
-                        ).toLocaleString("fr-FR")}
-                        FCFA
-                    </p>
-
-                </div>
-
-
-                <div class="order-actions">
-
-                    <select
-                        onchange="
-                            changerStatut(
-                                ${commande.id},
-                                this.value
-                            )
-                        "
-                    >
-
-                        <option
-                            value="Nouvelle"
-                            ${commande.statut === "Nouvelle" ? "selected" : ""}
+                        <article
+                            class="admin-product"
                         >
-                            Nouvelle
-                        </option>
 
-                        <option
-                            value="Confirmée"
-                            ${commande.statut === "Confirmée" ? "selected" : ""}
-                        >
-                            Confirmée
-                        </option>
-
-                        <option
-                            value="En livraison"
-                            ${commande.statut === "En livraison" ? "selected" : ""}
-                        >
-                            En livraison
-                        </option>
-
-                        <option
-                            value="Terminée"
-                            ${commande.statut === "Terminée" ? "selected" : ""}
-                        >
-                            Terminée
-                        </option>
-
-                        <option
-                            value="Annulée"
-                            ${commande.statut === "Annulée" ? "selected" : ""}
-                        >
-                            Annulée
-                        </option>
-
-                    </select>
+                            <div
+                                class="admin-product-image"
+                            >
+                                ${media}
+                            </div>
 
 
-                    <button
-                        class="chat-button"
-                        onclick="
-                            ouvrirChat(
-                                ${commande.id},
-                                '${escapeJs(
-                                    commande.client_nom
-                                )}'
-                            )
-                        "
-                    >
-                        💬 Message
-                    </button>
+                            <div
+                                class="admin-product-content"
+                            >
 
-                </div>
+                                <h3>
+                                    ${escapeHtml(
+                                        produit.nom
+                                    )}
+                                </h3>
 
-            </article>
 
-        `
-        ).join("");
+                                <p>
+                                    ${escapeHtml(
+                                        produit.description || ""
+                                    )}
+                                </p>
+
+
+                                <strong>
+                                    ${Number(
+                                        produit.prix
+                                    ).toLocaleString(
+                                        "fr-FR"
+                                    )}
+                                    FCFA
+                                </strong>
+
+
+                                <button
+                                    type="button"
+                                    class="delete-button"
+                                    onclick="
+                                        supprimerProduit(
+                                            ${produit.id}
+                                        )
+                                    "
+                                >
+                                    🗑️ Supprimer
+                                </button>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            ).join("");
 
     }
 
     catch (error) {
 
-        console.error(
-            "Commandes :",
-            error
-        );
+        console.error(error);
 
         container.innerHTML = `
             <div class="error">
-                ❌ Impossible de charger les commandes.
+                ❌ Erreur de chargement des produits.
             </div>
         `;
 
@@ -1319,59 +799,314 @@ async function chargerCommandes() {
 }
 
 
+
 // =====================================================
-// CHANGER STATUT
+// SUPPRIMER PRODUIT
 // =====================================================
 
-async function changerStatut(
-    commandeId,
-    statut
-) {
+async function supprimerProduit(id) {
+
+    if (
+        !confirm(
+            "Voulez-vous vraiment supprimer ce produit ?"
+        )
+    ) {
+
+        return;
+
+    }
+
 
     try {
 
-        const response = await fetch(
-            `/api/admin/commande/${commandeId}/statut`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                credentials:
-                    "same-origin",
-
-                body: JSON.stringify({
-                    statut: statut
-                })
-            }
-        );
+        const response =
+            await fetch(
+                `/api/admin/produit/${id}`,
+                {
+                    method: "DELETE",
+                    credentials:
+                        "same-origin"
+                }
+            );
 
 
         const data =
             await response.json();
 
 
-        if (!data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
-            notify(
+            throw new Error(
                 data.message ||
-                "Impossible de modifier le statut."
+                "Erreur lors de la suppression."
             );
+
+        }
+
+
+        notify(
+            "✅ Produit supprimé."
+        );
+
+
+        await chargerProduits();
+
+        await chargerDashboard();
+
+    }
+
+    catch (error) {
+
+        notify(
+            "❌ " +
+            (
+                error.message ||
+                "Erreur de connexion."
+            )
+        );
+
+    }
+
+}
+
+
+
+// =====================================================
+// CHARGER LES COMMANDES
+// =====================================================
+
+async function chargerCommandes() {
+
+    const container =
+        document.getElementById(
+            "orders"
+        );
+
+    if (!container) return;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/commandes",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erreur commandes."
+            );
+
+        }
+
+
+        const commandes =
+            await response.json();
+
+
+        if (
+            !Array.isArray(commandes) ||
+            commandes.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    Aucune commande.
+                </div>
+            `;
 
             return;
 
         }
 
 
-        notify(
-            "✅ Statut mis à jour."
+        container.innerHTML =
+            commandes.map(
+                function(cmd) {
+
+                    return `
+
+                        <article
+                            class="order-card"
+                        >
+
+                            <h3>
+                                Commande #${cmd.id}
+                            </h3>
+
+
+                            <p>
+                                👤
+                                ${escapeHtml(
+                                    cmd.client_nom
+                                )}
+                            </p>
+
+
+                            <p>
+                                📞
+                                ${escapeHtml(
+                                    cmd.telephone
+                                )}
+                            </p>
+
+
+                            <p>
+                                📍
+                                ${escapeHtml(
+                                    cmd.adresse || ""
+                                )}
+                            </p>
+
+
+                            <p>
+                                💰
+                                <strong>
+                                    ${Number(
+                                        cmd.total
+                                    ).toLocaleString(
+                                        "fr-FR"
+                                    )}
+                                    FCFA
+                                </strong>
+                            </p>
+
+
+                            <select
+                                onchange="
+                                    changerStatut(
+                                        ${cmd.id},
+                                        this.value
+                                    )
+                                "
+                            >
+
+                                ${[
+                                    "Nouvelle",
+                                    "Confirmée",
+                                    "En livraison",
+                                    "Terminée",
+                                    "Annulée"
+                                ].map(
+                                    function(statut) {
+
+                                        return `
+                                            <option
+                                                value="${statut}"
+                                                ${
+                                                    cmd.statut ===
+                                                    statut
+                                                        ? "selected"
+                                                        : ""
+                                                }
+                                            >
+                                                ${statut}
+                                            </option>
+                                        `;
+
+                                    }
+                                ).join("")}
+
+                            </select>
+
+
+                            <button
+                                type="button"
+                                class="secondary-button"
+                                onclick="
+                                    ouvrirChat(
+                                        ${cmd.id},
+                                        '${escapeJs(
+                                            cmd.client_nom
+                                        )}'
+                                    )
+                                "
+                            >
+                                💬 Message
+                            </button>
+
+                        </article>
+
+                    `;
+
+                }
+            ).join("");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="error">
+                ❌ Erreur de chargement des commandes.
+            </div>
+        `;
+
+    }
+
+}
+
+            </script>
+            <script>
+
+// =====================================================
+// CHANGER LE STATUT D'UNE COMMANDE
+// =====================================================
+
+async function changerStatut(id, statut) {
+
+    try {
+
+        const response = await fetch(
+            `/api/admin/commande/${id}/statut`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    statut: statut
+                }),
+
+                credentials: "same-origin"
+            }
         );
 
 
-        chargerDashboard();
+        const data = await response.json();
+
+
+        if (!response.ok || !data.ok) {
+
+            throw new Error(
+                data.message ||
+                "Impossible de modifier le statut."
+            );
+
+        }
+
+
+        notify(
+            "✅ Statut de la commande mis à jour."
+        );
+
+
+        await chargerCommandes();
+
+        await chargerDashboard();
 
     }
 
@@ -1380,7 +1115,11 @@ async function changerStatut(
         console.error(error);
 
         notify(
-            "❌ Erreur de connexion."
+            "❌ " +
+            (
+                error.message ||
+                "Erreur de connexion."
+            )
         );
 
     }
@@ -1388,67 +1127,87 @@ async function changerStatut(
 }
 
 
+
 // =====================================================
-// OUVRIR CHAT
+// OUVRIR LE CHAT D'UNE COMMANDE
 // =====================================================
 
 async function ouvrirChat(
-    commandeId,
+    id,
     clientNom
 ) {
 
-    commandeChatActuelle =
-        commandeId;
+    commandeChatActuelle = id;
 
 
-    const box =
-        document.getElementById(
-            "chat-box"
-        );
-
-
-    const title =
+    const titre =
         document.getElementById(
             "chat-title"
         );
 
 
-    title.textContent =
-        "💬 " + clientNom;
+    if (titre) {
+
+        titre.textContent =
+            "💬 " +
+            clientNom;
+
+    }
 
 
-    box.classList.add("open");
+    const chatBox =
+        document.getElementById(
+            "chat-box"
+        );
 
 
-    await chargerChat(
-        commandeId
-    );
+    if (chatBox) {
+
+        chatBox.classList.add(
+            "open"
+        );
+
+    }
+
+
+    await chargerChat(id);
 
 }
 
 
+
 // =====================================================
-// FERMER CHAT
+// FERMER LE CHAT
 // =====================================================
 
 function fermerChat() {
 
     commandeChatActuelle = null;
 
-    document
-        .getElementById("chat-box")
-        .classList.remove("open");
+
+    const chatBox =
+        document.getElementById(
+            "chat-box"
+        );
+
+
+    if (chatBox) {
+
+        chatBox.classList.remove(
+            "open"
+        );
+
+    }
 
 }
 
 
+
 // =====================================================
-// CHARGER CHAT ADMIN
+// CHARGER LE CHAT
 // =====================================================
 
-async function chargerChat(
-    commandeId
-) {
+async function chargerChat(id) {
 
     const container =
         document.getElementById(
@@ -1456,15 +1215,14 @@ async function chargerChat(
         );
 
 
-    container.innerHTML =
-        '<div class="loading">Chargement...</div>';
+    if (!container) return;
 
 
     try {
 
         const response =
             await fetch(
-                `/api/admin/chat/${commandeId}`,
+                `/api/admin/chat/${id}`,
                 {
                     credentials:
                         "same-origin"
@@ -1476,30 +1234,27 @@ async function chargerChat(
             await response.json();
 
 
-        if (!data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
-            container.innerHTML =
-                `<div class="error">
-                    ${escapeHtml(
-                        data.message ||
-                        "Erreur"
-                    )}
-                </div>`;
-
-            return;
+            throw new Error(
+                data.message ||
+                "Impossible de charger le chat."
+            );
 
         }
 
 
-        const messages =
-            data.messages || [];
-
-
-        if (!messages.length) {
+        if (
+            !data.messages ||
+            data.messages.length === 0
+        ) {
 
             container.innerHTML = `
-                <div class="empty-chat">
-                    Aucun message pour le moment.
+                <div class="empty-state">
+                    Aucun message pour cette commande.
                 </div>
             `;
 
@@ -1509,50 +1264,58 @@ async function chargerChat(
 
 
         container.innerHTML =
-            messages.map(
-                message => `
+            data.messages.map(
+                function(message) {
 
-                <div class="
-                    message-bubble
-                    ${
-                        message.auteur === "Admin"
-                        ? "message-admin"
-                        : "message-client"
-                    }
-                ">
+                    const admin =
+                        message.auteur ===
+                        "Admin";
 
-                    <div class="message-author">
 
-                        ${
-                            message.auteur === "Admin"
-                            ? "Vous"
-                            : escapeHtml(
-                                message.client_nom ||
-                                "Client"
-                            )
-                        }
+                    return `
 
-                    </div>
+                        <div
+                            class="
+                                message-bubble
+                                ${
+                                    admin
+                                        ? "message-admin"
+                                        : "message-client"
+                                }
+                            "
+                        >
 
-                    <div class="message-text">
+                            <strong>
+                                ${
+                                    admin
+                                        ? "Vous"
+                                        : escapeHtml(
+                                            message.client_nom ||
+                                            "Client"
+                                        )
+                                }
+                            </strong>
 
-                        ${escapeHtml(
-                            message.message
-                        )}
 
-                    </div>
+                            <p>
+                                ${escapeHtml(
+                                    message.message
+                                )}
+                            </p>
 
-                    <small>
 
-                        ${escapeHtml(
-                            message.date
-                        )}
+                            <small>
+                                ${escapeHtml(
+                                    message.date ||
+                                    ""
+                                )}
+                            </small>
 
-                    </small>
+                        </div>
 
-                </div>
+                    `;
 
-            `
+                }
             ).join("");
 
 
@@ -1563,29 +1326,30 @@ async function chargerChat(
 
     catch (error) {
 
-        console.error(
-            "Chat :",
-            error
-        );
+        console.error(error);
 
-        container.innerHTML =
-            `<div class="error">
-                ❌ Erreur de chargement.
-            </div>`;
+        container.innerHTML = `
+            <div class="error">
+                ❌ Erreur de chargement du chat.
+            </div>
+        `;
 
     }
 
 }
 
 
+
 // =====================================================
-// ENVOYER RÉPONSE ADMIN
+// ENVOYER MESSAGE ADMIN
 // =====================================================
 
 async function envoyerMessageAdmin() {
 
     if (!commandeChatActuelle) {
+
         return;
+
     }
 
 
@@ -1595,12 +1359,17 @@ async function envoyerMessageAdmin() {
         );
 
 
+    if (!input) return;
+
+
     const message =
         input.value.trim();
 
 
     if (!message) {
+
         return;
+
     }
 
 
@@ -1620,12 +1389,12 @@ async function envoyerMessageAdmin() {
                             "application/json"
                     },
 
-                    credentials:
-                        "same-origin",
-
                     body: JSON.stringify({
                         message: message
-                    })
+                    }),
+
+                    credentials:
+                        "same-origin"
                 }
             );
 
@@ -1634,14 +1403,15 @@ async function envoyerMessageAdmin() {
             await response.json();
 
 
-        if (!data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
 
-            notify(
+            throw new Error(
                 data.message ||
-                "Impossible d'envoyer."
+                "Impossible d'envoyer le message."
             );
-
-            return;
 
         }
 
@@ -1660,7 +1430,11 @@ async function envoyerMessageAdmin() {
         console.error(error);
 
         notify(
-            "❌ Erreur d'envoi."
+            "❌ " +
+            (
+                error.message ||
+                "Erreur d'envoi."
+            )
         );
 
     }
@@ -1676,126 +1450,6 @@ async function envoyerMessageAdmin() {
 }
 
 
-// =====================================================
-// ENTRÉE CLAVIER DU CHAT
-// =====================================================
-
-document
-    .getElementById("admin-message")
-    .addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                envoyerMessageAdmin();
-
-            }
-
-        }
-    );
-
-
-// =====================================================
-// PUBLICITÉ
-// =====================================================
-
-document
-    .getElementById("pub-form")
-    .addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const form = this;
-
-            const button =
-                form.querySelector(
-                    "button[type='submit']"
-                );
-
-
-            const formData =
-                new FormData(form);
-
-
-            button.disabled = true;
-
-            button.textContent =
-                "⏳ Enregistrement...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        "/api/admin/publicite",
-                        {
-                            method: "POST",
-
-                            body: formData,
-
-                            credentials:
-                                "same-origin"
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok || !data.ok) {
-
-                    notify(
-                        data.message ||
-                        "Erreur publicitaire."
-                    );
-
-                    return;
-
-                }
-
-
-                notify(
-                    "✅ Publicité enregistrée."
-                );
-
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "Publicité :",
-                    error
-                );
-
-                notify(
-                    "❌ Erreur de connexion."
-                );
-
-            }
-
-            finally {
-
-                button.disabled = false;
-
-                button.textContent =
-                    "📢 Enregistrer la publicité";
-
-            }
-
-        }
-    );
-
 
 // =====================================================
 // CHARGER LES MESSAGES GÉNÉRAUX
@@ -1807,6 +1461,9 @@ async function chargerMessagesGeneraux() {
         document.getElementById(
             "general-messages"
         );
+
+
+    if (!container) return;
 
 
     try {
@@ -1823,16 +1480,9 @@ async function chargerMessagesGeneraux() {
 
         if (!response.ok) {
 
-            container.innerHTML = `
-                <div class="empty-state">
-                    <p>
-                        Les messages généraux ne sont
-                        pas disponibles avec cette route.
-                    </p>
-                </div>
-            `;
-
-            return;
+            throw new Error(
+                "Erreur de chargement."
+            );
 
         }
 
@@ -1842,27 +1492,24 @@ async function chargerMessagesGeneraux() {
 
 
         const messages =
-            data.messages ||
-            data ||
-            [];
+            Array.isArray(data)
+                ? data
+                : (
+                    Array.isArray(
+                        data.messages
+                    )
+                        ? data.messages
+                        : []
+                );
 
 
-        if (!messages.length) {
+        if (
+            messages.length === 0
+        ) {
 
             container.innerHTML = `
                 <div class="empty-state">
-
-                    <div>💬</div>
-
-                    <h3>
-                        Aucun message
-                    </h3>
-
-                    <p>
-                        Les nouveaux messages
-                        apparaîtront ici.
-                    </p>
-
+                    Aucun message général.
                 </div>
             `;
 
@@ -1873,72 +1520,306 @@ async function chargerMessagesGeneraux() {
 
         container.innerHTML =
             messages.map(
-                message => `
+                function(item) {
 
-                <article
-                    class="general-message"
-                >
+                    return `
 
-                    <div>
+                        <article
+                            class="general-message"
+                        >
 
-                        <strong>
-                            ${escapeHtml(
-                                message.client_nom ||
-                                "Client"
-                            )}
-                        </strong>
+                            <h3>
+                                💬
+                                ${escapeHtml(
+                                    item.client_nom ||
+                                    "Client"
+                                )}
+                            </h3>
 
-                        <small>
-                            ${escapeHtml(
-                                message.date ||
-                                ""
-                            )}
-                        </small>
-
-                    </div>
-
-
-                    <p>
-                        ${escapeHtml(
-                            message.message ||
-                            ""
-                        )}
-                    </p>
-
-
-                    ${
-                        message.reponse
-                        ?
-                        `
-                        <div class="admin-response">
-
-                            <strong>
-                                Votre réponse
-                            </strong>
 
                             <p>
                                 ${escapeHtml(
-                                    message.reponse
+                                    item.message ||
+                                    ""
                                 )}
                             </p>
 
-                        </div>
-                        `
-                        :
-                        ""
-                    }
 
-                </article>
+                            ${
+                                item.reponse
+                                    ? `
+                                        <div
+                                            class="
+                                                admin-response
+                                            "
+                                        >
+                                            <strong>
+                                                Réponse :
+                                            </strong>
 
-            `
+                                            <p>
+                                                ${escapeHtml(
+                                                    item.reponse
+                                                )}
+                                            </p>
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+
+                            <small>
+                                ${escapeHtml(
+                                    item.date ||
+                                    ""
+                                )}
+                            </small>
+
+                        </article>
+
+                    `;
+
+                }
             ).join("");
 
     }
 
     catch (error) {
 
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="error">
+                ❌ Impossible de charger les messages.
+            </div>
+        `;
+
+    }
+
+}
+
+
+
+// =====================================================
+// ENREGISTRER LA PUBLICITÉ
+// =====================================================
+
+document
+    .getElementById("pub-form")
+    ?.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const form =
+                this;
+
+
+            const button =
+                form.querySelector(
+                    "button[type='submit']"
+                );
+
+
+            if (button) {
+
+                button.disabled = true;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/admin/publicite",
+                        {
+                            method: "POST",
+
+                            body:
+                                new FormData(form),
+
+                            credentials:
+                                "same-origin"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Impossible d'enregistrer la publicité."
+                    );
+
+                }
+
+
+                notify(
+                    "✅ Publicité enregistrée."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                notify(
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Erreur de connexion."
+                    )
+                );
+
+            }
+
+            finally {
+
+                if (button) {
+
+                    button.disabled = false;
+
+                }
+
+            }
+
+        }
+    );
+
+
+
+// =====================================================
+// CHARGER LE DASHBOARD
+// =====================================================
+
+async function chargerDashboard() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/dashboard",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.ok) {
+
+            return;
+
+        }
+
+
+        const stats =
+            data.stats ||
+            {};
+
+
+        const commandes =
+            document.getElementById(
+                "stat-commandes"
+            );
+
+
+        const clients =
+            document.getElementById(
+                "stat-clients"
+            );
+
+
+        const revenus =
+            document.getElementById(
+                "stat-revenus"
+            );
+
+
+        const livraisons =
+            document.getElementById(
+                "stat-livraisons"
+            );
+
+
+        const nouvelles =
+            document.getElementById(
+                "stat-nouvelles"
+            );
+
+
+        if (commandes) {
+
+            commandes.textContent =
+                stats.commandes || 0;
+
+        }
+
+
+        if (clients) {
+
+            clients.textContent =
+                stats.clients || 0;
+
+        }
+
+
+        if (revenus) {
+
+            revenus.textContent =
+                Number(
+                    stats.revenus || 0
+                ).toLocaleString(
+                    "fr-FR"
+                ) +
+                " FCFA";
+
+        }
+
+
+        if (livraisons) {
+
+            livraisons.textContent =
+                stats.livraisons || 0;
+
+        }
+
+
+        if (nouvelles) {
+
+            nouvelles.textContent =
+                stats.nouvelles || 0;
+
+        }
+
+    }
+
+    catch (error) {
+
         console.error(
-            "Messages généraux :",
+            "Dashboard:",
             error
         );
 
@@ -1946,31 +1827,6 @@ async function chargerMessagesGeneraux() {
 
 }
 
-
-// =====================================================
-// RAFRAÎCHISSEMENT AUTOMATIQUE
-// =====================================================
-
-async function actualiserTout() {
-
-    await chargerDashboard();
-
-    await chargerProduits();
-
-    await chargerCommandes();
-
-    await chargerMessagesGeneraux();
-
-
-    if (commandeChatActuelle) {
-
-        await chargerChat(
-            commandeChatActuelle
-        );
-
-    }
-
-}
 
 
 // =====================================================
@@ -1993,6 +1849,7 @@ document.addEventListener(
 );
 
 
+
 // =====================================================
 // ACTUALISATION AUTOMATIQUE
 // =====================================================
@@ -2007,7 +1864,9 @@ setInterval(
         chargerMessagesGeneraux();
 
 
-        if (commandeChatActuelle) {
+        if (
+            commandeChatActuelle
+        ) {
 
             chargerChat(
                 commandeChatActuelle
@@ -2021,6 +1880,8 @@ setInterval(
 
 </script>
 
+</main>
+
 </body>
 
-</html>
+    </html>
