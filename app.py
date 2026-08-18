@@ -64,7 +64,9 @@ def db():
 
 
 def maintenant():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 def init_db():
@@ -195,7 +197,9 @@ def admin_required(f):
 
 def obtenir_client_token():
 
-    token = request.cookies.get("client_token")
+    token = request.cookies.get(
+        "client_token"
+    )
 
     if not token:
         token = secrets.token_urlsafe(32)
@@ -207,17 +211,27 @@ def obtenir_client_token():
 # CONNEXION ADMIN
 # =========================================================
 
-@app.route("/admin/login", methods=["GET", "POST"])
+@app.route(
+    "/admin/login",
+    methods=["GET", "POST"]
+)
 def admin_login():
 
     if request.method == "GET":
 
         if admin_connecte():
-            return redirect(url_for("admin"))
+            return redirect(
+                url_for("admin")
+            )
 
-        return render_template("login.html")
+        return render_template(
+            "login.html"
+        )
 
-    data = request.get_json(silent=True) or request.form
+    data = (
+        request.get_json(silent=True)
+        or request.form
+    )
 
     code = str(
         data.get("code", "")
@@ -248,7 +262,10 @@ def admin_login():
 @app.route("/admin/logout")
 def admin_logout():
 
-    session.pop("admin", None)
+    session.pop(
+        "admin",
+        None
+    )
 
     return redirect(
         url_for("admin_login")
@@ -308,7 +325,6 @@ def index():
         )
     )
 
-    # Évite que le navigateur garde une ancienne boutique.
     response.headers["Cache-Control"] = (
         "no-store, no-cache, must-revalidate, max-age=0"
     )
@@ -415,6 +431,7 @@ def ajouter_produit():
         if mime.startswith("image/"):
 
             try:
+
                 resultat = cloudinary.uploader.upload(
                     media,
                     folder="yemalin-aura/produits",
@@ -443,6 +460,7 @@ def ajouter_produit():
         elif mime.startswith("video/"):
 
             try:
+
                 resultat = cloudinary.uploader.upload(
                     media,
                     folder="yemalin-aura/produits",
@@ -476,6 +494,7 @@ def ajouter_produit():
             }), 400
 
     conn = db()
+
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -529,7 +548,9 @@ def supprimer_produit(produit_id):
         SELECT id
         FROM produits
         WHERE id = ?
-    """, (produit_id,)).fetchone()
+    """, (
+        produit_id,
+    )).fetchone()
 
     if not produit:
 
@@ -543,7 +564,9 @@ def supprimer_produit(produit_id):
     conn.execute("""
         DELETE FROM produits
         WHERE id = ?
-    """, (produit_id,))
+    """, (
+        produit_id,
+    ))
 
     conn.commit()
     conn.close()
@@ -552,7 +575,9 @@ def supprimer_produit(produit_id):
         "ok": True,
         "message": "Produit supprimé."
     })
-    # =========================================================
+
+
+# =========================================================
 # COMMANDES — CLIENT
 # =========================================================
 
@@ -596,11 +621,13 @@ def passer_commande():
             "message": "Votre numéro est obligatoire."
         }), 400
 
-    if not isinstance(
-        produits_panier,
-        list
-    ) or not produits_panier:
-
+    if (
+        not isinstance(
+            produits_panier,
+            list
+        )
+        or not produits_panier
+    ):
         return jsonify({
             "ok": False,
             "message": "Votre panier est vide."
@@ -624,7 +651,10 @@ def passer_commande():
 
             try:
                 quantite = int(
-                    item.get("quantite", 1)
+                    item.get(
+                        "quantite",
+                        1
+                    )
                 )
             except Exception:
                 quantite = 1
@@ -656,7 +686,9 @@ def passer_commande():
             lignes.append({
                 "id": produit["id"],
                 "nom": produit["nom"],
-                "prix": float(produit["prix"]),
+                "prix": float(
+                    produit["prix"]
+                ),
                 "quantite": quantite
             })
 
@@ -670,9 +702,6 @@ def passer_commande():
             }), 400
 
         client_token = obtenir_client_token()
-
-        # Une ancienne commande peut avoir le même token.
-        # On conserve le token du client pour retrouver ses commandes.
 
         conn.execute("""
             INSERT INTO commandes
@@ -754,9 +783,7 @@ def passer_commande():
             "ok": False,
             "message": "Impossible d'enregistrer la commande."
         }), 500
-
-
-# =========================================================
+        # =========================================================
 # COMMANDES DU CLIENT
 # =========================================================
 
@@ -768,7 +795,6 @@ def mes_commandes():
     )
 
     if not token:
-
         return jsonify([])
 
     conn = db()
@@ -995,7 +1021,9 @@ def admin_dashboard():
         "stats": {
             "commandes": commandes,
             "clients": clients,
-            "revenus": float(revenus or 0),
+            "revenus": float(
+                revenus or 0
+            ),
             "livraisons": livraisons,
             "nouvelles": nouvelles
         }
@@ -1067,12 +1095,15 @@ def chat_client(commande_id):
 
     return jsonify({
         "ok": True,
-        "commande": dict(commande),
+        "commande": dict(
+            commande
+        ),
         "messages": [
             dict(m)
             for m in messages
         ]
     })
+
 
 # =========================================================
 # CHAT CLIENT — ENVOYER
@@ -1166,7 +1197,10 @@ def envoyer_chat_client(commande_id):
     return jsonify({
         "ok": True,
         "message": "Message envoyé."
-    })=================================
+    })
+
+
+# =========================================================
 # CHAT ADMIN — LIRE
 # =========================================================
 
@@ -1216,7 +1250,9 @@ def chat_admin(commande_id):
 
     return jsonify({
         "ok": True,
-        "commande": dict(commande),
+        "commande": dict(
+            commande
+        ),
         "messages": [
             dict(m)
             for m in messages
@@ -1229,7 +1265,7 @@ def chat_admin(commande_id):
 # =========================================================
 
 @app.route(
-    "/api/chat/<int:commande_id>",
+    "/api/admin/chat/<int:commande_id>",
     methods=["POST"]
 )
 @admin_required
@@ -1389,13 +1425,13 @@ def message_general():
     )
 
     return response
-
-
-# =========================================================
+    # =========================================================
 # ADMIN — MESSAGES GÉNÉRAUX
 # =========================================================
 
-@app.route("/api/admin/messages-generaux")
+@app.route(
+    "/api/admin/messages-generaux"
+)
 @admin_required
 def admin_messages_generaux():
 
@@ -1591,12 +1627,17 @@ def enregistrer_publicite():
         position,
     )).fetchone()
 
-    # Si aucun nouveau média n'est envoyé,
-    # on conserve celui qui existe déjà.
     if not media_url and ancienne:
 
-        media_url = ancienne["media_url"] or ""
-        media_type = ancienne["media_type"] or ""
+        media_url = (
+            ancienne["media_url"]
+            or ""
+        )
+
+        media_type = (
+            ancienne["media_type"]
+            or ""
+        )
 
     conn.execute("""
         INSERT INTO publicites
@@ -1609,7 +1650,6 @@ def enregistrer_publicite():
             texte
         )
         VALUES (?, ?, ?, ?, ?, ?)
-
         ON CONFLICT(position)
         DO UPDATE SET
             titre = excluded.titre,
@@ -1694,6 +1734,7 @@ def api_publicite():
     conn.close()
 
     if not pub:
+
         return jsonify({
             "ok": True,
             "publicite": None
@@ -1794,4 +1835,3 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
-    })
