@@ -2,37 +2,19 @@
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Yemalin Aura — Le raffinement qui nous distingue</title>
 
-    <title>
-        Yemalin Aura — Le raffinement qui nous distingue
-    </title>
+    <meta name="description"
+          content="Yemalin Aura — Le raffinement qui nous distingue.">
 
-    <meta
-        name="description"
-        content="Yemalin Aura — Le raffinement qui nous distingue."
-    >
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-
 <body>
-
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
 
 <header class="site-header">
 
@@ -44,7 +26,7 @@
             class="logo"
         >
 
-        <div>
+        <div class="brand-text">
 
             <div class="brand-name">
                 Yemalin Aura
@@ -57,7 +39,6 @@
         </div>
 
     </div>
-
 
     <nav>
 
@@ -83,10 +64,6 @@
 </header>
 
 
-<!-- =====================================================
-     CONTENU
-===================================================== -->
-
 <main>
 
 
@@ -100,9 +77,7 @@
 >
 
 
-    <!-- =================================================
-         HERO
-    ================================================== -->
+    <!-- HERO -->
 
     <section class="hero">
 
@@ -125,31 +100,15 @@
 
             <p>
                 Découvrez notre sélection
-                et passez votre commande
-                simplement.
+                et passez votre commande simplement.
             </p>
 
-
-            <div class="hero-actions">
-
-                <button
-                    class="hero-button"
-                    onclick="allerProduits()"
-                >
-                    Découvrir nos produits
-                </button>
-
-
-                <!-- APPEL -->
-
-                <a
-                    class="call-button"
-                    href="tel:+2290193456835"
-                >
-                    📞 Appeler Yemalin Aura
-                </a>
-
-            </div>
+            <button
+                class="hero-button"
+                onclick="allerProduits()"
+            >
+                Découvrir nos produits
+            </button>
 
         </div>
 
@@ -160,12 +119,14 @@
          PRODUITS
     ================================================== -->
 
-    <section class="products-section">
+    <section
+        class="products-section"
+        id="section-produits"
+    >
 
         <h2 class="section-title">
             Nos produits
         </h2>
-
 
         <div
             id="produits"
@@ -200,7 +161,6 @@
                         {{ produit.nom }}
                     </h3>
 
-
                     {% if produit.description %}
 
                     <p>
@@ -208,7 +168,6 @@
                     </p>
 
                     {% endif %}
-
 
                     <div class="prix">
 
@@ -224,7 +183,8 @@
                         onclick='ajouterPanier({
                             "id": {{ produit.id }},
                             "nom": {{ produit.nom|tojson }},
-                            "prix": {{ produit.prix }}
+                            "prix": {{ produit.prix }},
+                            "quantite": 1
                         })'
                     >
 
@@ -240,8 +200,13 @@
 
             <div class="empty-products">
 
-                Aucun produit disponible
-                pour le moment.
+                <h3>
+                    Aucun produit pour le moment.
+                </h3>
+
+                <p>
+                    Nos nouveautés arrivent bientôt.
+                </p>
 
             </div>
 
@@ -264,22 +229,19 @@
 
         <p>
 
-            <span id="compteur-rapide">
+            <strong id="compteur-rapide">
                 0
-            </span>
+            </strong>
 
             article(s) dans votre panier.
 
         </p>
 
-
         <button
             class="btn"
             onclick="ouvrirPanier()"
         >
-
             Voir mon panier
-
         </button>
 
     </section>
@@ -296,154 +258,102 @@
         </h2>
 
         <p>
-            Une question concernant
-            un produit ou une commande ?
+            Une question concernant un produit
+            ou votre commande ?
         </p>
-
-
-        <div class="contact-actions">
-
-            <button
-                class="btn"
-                onclick="ouvrirPage('messages')"
-            >
-                💬 Nous écrire
-            </button>
-
-
-            <a
-                class="btn call-link"
-                href="tel:+2290193456835"
-            >
-                📞 Appeler
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         NOTIFICATIONS
-    ================================================== -->
-
-    <section class="notification-section">
-
-        <h2>
-            🔔 Rester informé
-        </h2>
-
-        <p>
-            Recevez une notification lorsque
-            votre commande est mise à jour
-            ou lorsque l'administration vous répond.
-        </p>
-
 
         <button
             class="btn"
-            onclick="demanderNotifications()"
+            onclick="ouvrirPage('messages')"
         >
-
-            🔔 Activer les notifications
-
+            Nous écrire
         </button>
 
     </section>
 
 
     <!-- =================================================
-         PUBLICITÉ UNIQUE — EN BAS
-    ================================================== -->
+         PUBLICITÉ UNIQUE
+         EN BAS DE LA PAGE
+===================================================== -->
 
-    {% if pubs %}
+    {% if pubs and pubs[0].media_url %}
 
-        {% set pub = pubs[0] %}
+    <section class="publicite-section">
 
-        {% if pub.media_url %}
+        <div class="publicite-label">
+            PUBLICITÉ
+        </div>
 
-        <section class="publicite-section">
+        <a
+            class="publicite"
+            href="{{ pubs[0].lien or '#' }}"
 
-            <div class="publicite-label">
-                PUBLICITÉ
-            </div>
+            {% if pubs[0].lien %}
+            target="_blank"
+            rel="noopener noreferrer"
+            {% endif %}
+        >
 
+            {% if pubs[0].media_type == "image" %}
 
-            <a
-                class="publicite"
-                href="{{ pub.lien or '#' }}"
-
-                {% if pub.lien %}
-
-                    target="_blank"
-                    rel="noopener noreferrer"
-
-                {% endif %}
+            <img
+                src="{{ pubs[0].media_url }}"
+                alt="{{ pubs[0].titre or 'Publicité' }}"
+                loading="lazy"
             >
 
+            {% elif pubs[0].media_type == "video" %}
 
-                {% if pub.media_type == "image" %}
+            <video
+                src="{{ pubs[0].media_url }}"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+            ></video>
 
-                <img
-                    src="{{ pub.media_url }}"
-                    alt="{{ pub.titre or 'Publicité' }}"
-                    loading="lazy"
-                >
+            {% endif %}
 
 
-                {% elif pub.media_type == "video" %}
+            {% if pubs[0].titre or pubs[0].texte %}
 
-                <video
-                    src="{{ pub.media_url }}"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    preload="metadata"
-                ></video>
+            <div class="publicite-overlay">
+
+                {% if pubs[0].titre %}
+
+                <h3>
+                    {{ pubs[0].titre }}
+                </h3>
+
+                {% endif %}
+
+
+                {% if pubs[0].texte %}
+
+                <p>
+                    {{ pubs[0].texte }}
+                </p>
 
                 {% endif %}
 
 
-                {% if pub.titre or pub.texte %}
+                {% if pubs[0].lien %}
 
-                <div class="publicite-overlay">
-
-                    {% if pub.titre %}
-
-                    <h3>
-                        {{ pub.titre }}
-                    </h3>
-
-                    {% endif %}
-
-
-                    {% if pub.texte %}
-
-                    <p>
-                        {{ pub.texte }}
-                    </p>
-
-                    {% endif %}
-
-
-                    {% if pub.lien %}
-
-                    <span>
-                        Découvrir →
-                    </span>
-
-                    {% endif %}
-
-                </div>
+                <span>
+                    Découvrir →
+                </span>
 
                 {% endif %}
 
-            </a>
+            </div>
 
-        </section>
+            {% endif %}
 
-        {% endif %}
+        </a>
+
+    </section>
 
     {% endif %}
 
@@ -464,7 +374,6 @@
         📦 Mes commandes
     </h2>
 
-
     <div id="liste-commandes">
 
         <p>
@@ -477,7 +386,7 @@
 
 
 <!-- =====================================================
-     MESSAGES
+     MESSAGES GÉNÉRAUX
 ===================================================== -->
 
 <section
@@ -489,6 +398,10 @@
         💬 Nous contacter
     </h2>
 
+    <p>
+        Votre message sera envoyé
+        directement à Yemalin Aura.
+    </p>
 
     <div class="card">
 
@@ -496,22 +409,20 @@
             id="message-nom"
             type="text"
             placeholder="Votre nom"
+            maxlength="100"
         >
-
 
         <textarea
             id="message-general"
             placeholder="Écrivez votre message..."
+            maxlength="2000"
         ></textarea>
-
 
         <button
             class="btn"
             onclick="envoyerMessageGeneral()"
         >
-
-            Envoyer le message
-
+            📤 Envoyer le message
         </button>
 
     </div>
@@ -531,7 +442,6 @@
     <h2>
         🛒 Mon panier
     </h2>
-
 
     <div id="contenu-panier"></div>
 
@@ -559,34 +469,31 @@
             Informations de livraison
         </h3>
 
-
         <input
             id="client-nom"
             type="text"
             placeholder="Votre nom"
+            maxlength="100"
         >
-
 
         <input
             id="telephone"
             type="tel"
             placeholder="Numéro de téléphone"
+            maxlength="30"
         >
-
 
         <textarea
             id="adresse"
             placeholder="Lieu ou adresse de livraison"
+            maxlength="500"
         ></textarea>
-
 
         <button
             class="btn"
             onclick="passerCommande()"
         >
-
             ✅ Passer la commande
-
         </button>
 
     </div>
@@ -595,7 +502,7 @@
 
 
 <!-- =====================================================
-     CHAT
+     CHAT PRIVÉ
 ===================================================== -->
 
 <section
@@ -606,7 +513,6 @@
     <h2>
         💬 Chat de ma commande
     </h2>
-
 
     <div
         id="chat-info"
@@ -626,19 +532,15 @@
             id="chat-message"
             type="text"
             placeholder="Écrire un message..."
+            maxlength="2000"
             onkeydown="
                 if(event.key === 'Enter')
                     envoyerChat()
             "
         >
 
-
-        <button
-            onclick="envoyerChat()"
-        >
-
+        <button onclick="envoyerChat()">
             Envoyer
-
         </button>
 
     </div>
@@ -650,7 +552,7 @@
 
 
 <!-- =====================================================
-     NOTIFICATION
+     NOTIFICATION VISUELLE
 ===================================================== -->
 
 <div
@@ -671,48 +573,47 @@
         class="footer-logo"
     >
 
-
     <h3>
         Yemalin Aura
     </h3>
-
 
     <p>
         Le raffinement qui nous distingue
     </p>
 
-
     <div class="footer-line"></div>
 
-
     <small>
-        © 2026 Yemalin Aura
-        — Tous droits réservés.
+        © 2026 Yemalin Aura — Tous droits réservés.
     </small>
 
 </footer>
 
 
 <!-- =====================================================
-     VAPID + PUSH
+     VAPID
 ===================================================== -->
 
 <script>
 
     window.VAPID_PUBLIC_KEY =
-        "{{ vapid_public_key }}";
+        {{ vapid_public_key|default('')|tojson }};
 
 </script>
 
 
-<script
-    src="{{ url_for('static', filename='push.js') }}"
-></script>
+<!-- =====================================================
+     SERVICE WORKER / PUSH
+===================================================== -->
+
+<script src="{{ url_for('static', filename='push.js') }}"></script>
 
 
-<script
-    src="{{ url_for('static', filename='script.js') }}"
-></script>
+<!-- =====================================================
+     SCRIPT PRINCIPAL
+===================================================== -->
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 
 <!-- =====================================================
@@ -723,33 +624,24 @@
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    function () {
 
         const element =
             document.getElementById(
                 "slogan-animation"
             );
 
-
         if (!element) {
             return;
         }
 
-
         const mots = [
-
             "Le",
-
             "raffinement",
-
             "qui",
-
             "nous",
-
             "distingue"
-
         ];
-
 
         let index = 0;
 
@@ -760,32 +652,22 @@ document.addEventListener(
                 return;
             }
 
-
             const mot =
-                document.createElement(
-                    "span"
-                );
-
+                document.createElement("span");
 
             mot.className =
                 "slogan-word";
 
-
             mot.textContent =
                 mots[index];
 
-
-            element.appendChild(
-                mot
-            );
+            element.appendChild(mot);
 
 
             setTimeout(
-                function() {
+                function () {
 
-                    mot.classList.add(
-                        "show"
-                    );
+                    mot.classList.add("show");
 
                 },
                 50
@@ -799,7 +681,6 @@ document.addEventListener(
                 afficherMot,
                 650
             );
-
         }
 
 
@@ -816,17 +697,15 @@ document.addEventListener(
 function allerProduits() {
 
     const section =
-        document.querySelector(
-            ".products-section"
+        document.getElementById(
+            "section-produits"
         );
-
 
     if (section) {
 
         section.scrollIntoView({
-
-            behavior: "smooth"
-
+            behavior: "smooth",
+            block: "start"
         });
 
     }
@@ -838,4 +717,4 @@ function allerProduits() {
 
 </body>
 
-</html>
+            </html>
