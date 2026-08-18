@@ -96,7 +96,6 @@ def maintenant():
 def init_db():
 
     conn = db()
-
     c = conn.cursor()
 
     # -----------------------------------------------------
@@ -115,6 +114,31 @@ def init_db():
             date TEXT NOT NULL
         )
     """)
+
+    # -----------------------------------------------------
+    # MIGRATION ANCIENNE TABLE PRODUITS
+    # -----------------------------------------------------
+
+    colonnes = [
+        row["name"]
+        for row in c.execute(
+            "PRAGMA table_info(produits)"
+        ).fetchall()
+    ]
+
+    if "video" not in colonnes:
+
+        c.execute("""
+            ALTER TABLE produits
+            ADD COLUMN video TEXT
+        """)
+
+    if "media_type" not in colonnes:
+
+        c.execute("""
+            ALTER TABLE produits
+            ADD COLUMN media_type TEXT
+        """)
 
     # -----------------------------------------------------
     # COMMANDES
@@ -149,7 +173,7 @@ def init_db():
     """)
 
     # -----------------------------------------------------
-    # MESSAGES PRIVÉS
+    # MESSAGES
     # -----------------------------------------------------
 
     c.execute("""
@@ -197,7 +221,7 @@ def init_db():
     """)
 
     # -----------------------------------------------------
-    # PUSH
+    # NOTIFICATIONS PUSH
     # -----------------------------------------------------
 
     c.execute("""
@@ -212,7 +236,7 @@ def init_db():
     """)
 
     # -----------------------------------------------------
-    # PUB 1
+    # UNE SEULE PUBLICITÉ
     # -----------------------------------------------------
 
     c.execute("""
@@ -236,7 +260,6 @@ def init_db():
     """)
 
     conn.commit()
-
     conn.close()
 
 
@@ -248,7 +271,7 @@ init_db()
 
 
 # =========================================================
-# CONTEXTE TEMPLATE
+# VARIABLES POUR LES TEMPLATES
 # =========================================================
 
 @app.context_processor
@@ -315,7 +338,6 @@ def admin_login():
         }), 401
 
     session.clear()
-
     session["admin"] = True
 
     return jsonify({
@@ -368,7 +390,8 @@ def index():
     pubs = conn.execute("""
         SELECT *
         FROM publicites
-        ORDER BY position
+        WHERE position = 1
+        LIMIT 1
     """).fetchall()
 
     conn.close()
@@ -405,7 +428,7 @@ def api_produits():
 
 
 # =========================================================
-# ADMIN — AJOUT PRODUIT
+# ADMIN — AJOUTER PRODUIT
 # IMAGE OU VIDÉO
 # =========================================================
 
@@ -426,9 +449,7 @@ def ajouter_produit():
         or ""
     ).strip()
 
-    prix = request.form.get(
-        "prix"
-    )
+    prix = request.form.get("prix")
 
     if not nom or not prix:
 
@@ -441,7 +462,7 @@ def ajouter_produit():
 
         prix = float(prix)
 
-    except ValueError:
+    except (ValueError, TypeError):
 
         return jsonify({
             "ok": False,
@@ -449,18 +470,14 @@ def ajouter_produit():
         }), 400
 
     image_url = ""
-
     video_url = ""
-
     media_type = ""
 
     # -----------------------------------------------------
     # IMAGE
     # -----------------------------------------------------
 
-    image = request.files.get(
-        "image"
-    )
+    image = request.files.get("image")
 
     if image and image.filename:
 
@@ -491,9 +508,7 @@ def ajouter_produit():
     # VIDÉO
     # -----------------------------------------------------
 
-    video = request.files.get(
-        "video"
-    )
+    video = request.files.get("video")
 
     if video and video.filename:
 
@@ -520,7 +535,9 @@ def ajouter_produit():
                 "error": str(e)
             }), 500
 
-    date = maintenant()
+    # -----------------------------------------------------
+    # ENREGISTREMENT
+    # -----------------------------------------------------
 
     conn = db()
 
@@ -545,13 +562,12 @@ def ajouter_produit():
         image_url,
         video_url,
         media_type,
-        date
+        maintenant()
     ))
 
     produit_id = cursor.lastrowid
 
     conn.commit()
-
     conn.close()
 
     # -----------------------------------------------------
@@ -579,9 +595,7 @@ def ajouter_produit():
     methods=["DELETE"]
 )
 @admin_required
-def supprimer_produit(
-    produit_id
-):
+def supprimer_produit(produit_id):
 
     conn = db()
 
@@ -593,7 +607,6 @@ def supprimer_produit(
     ))
 
     conn.commit()
-
     conn.close()
 
     return jsonify({
@@ -603,7 +616,7 @@ def supprimer_produit(
 
 
 # =========================================================
-# COMMANDES
+# CRÉER UNE COMMANDE
 # =========================================================
 
 @app.route(
@@ -631,9 +644,7 @@ def creer_commande():
         or ""
     ).strip()
 
-    panier = data.get(
-        "panier"
-    ) or []
+    panier = data.get("panier") or []
 
     if not client_nom or not telephone:
 
@@ -653,8 +664,7 @@ def creer_commande():
 
         total = sum(
             float(p.get("prix", 0))
-            *
-            int(p.get("quantite", 0))
+            * int(p.get("quantite", 0))
             for p in panier
         )
 
@@ -665,14 +675,9 @@ def creer_commande():
             "message": "Panier invalide."
         }), 400
 
-    client_token = secrets.token_urlsafe(
-        32
-    )
-
-    date = maintenant()
+    client_token = secrets.token_urlsafe(32)
 
     conn = db()
-
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -694,7 +699,7 @@ def creer_commande():
         total,
         "Nouvelle",
         client_token,
-        date
+        maintenant()
     ))
 
     commande_id = cursor.lastrowid
@@ -720,34 +725,25 @@ def creer_commande():
         ))
 
     conn.commit()
-
     conn.close()
 
     session["client_token"] = client_token
-
-    # Notification admin : les notifications push
-    # de l'admin peuvent être ajoutées ici plus tard.
 
     return jsonify({
         "ok": True,
         "commande_id": commande_id,
         "client_token": client_token
     })
-
-
-# =========================================================
+    # =========================================================
 # MES COMMANDES
 # =========================================================
 
 @app.route("/api/mes-commandes")
 def mes_commandes():
 
-    token = session.get(
-        "client_token"
-    )
+    token = session.get("client_token")
 
     if not token:
-
         return jsonify({
             "ok": True,
             "commandes": []
@@ -760,35 +756,24 @@ def mes_commandes():
         FROM commandes
         WHERE client_token = ?
         ORDER BY id DESC
-    """, (
-        token,
-    )).fetchall()
+    """, (token,)).fetchall()
 
     conn.close()
 
     return jsonify({
         "ok": True,
-        "commandes": [
-            dict(row)
-            for row in rows
-        ]
+        "commandes": [dict(row) for row in rows]
     })
 
 
 # =========================================================
-# DÉTAIL COMMANDE
+# DÉTAIL D'UNE COMMANDE
 # =========================================================
 
-@app.route(
-    "/api/commande/<int:commande_id>"
-)
-def detail_commande(
-    commande_id
-):
+@app.route("/api/commande/<int:commande_id>")
+def detail_commande(commande_id):
 
-    token = session.get(
-        "client_token"
-    )
+    token = session.get("client_token")
 
     conn = db()
 
@@ -796,9 +781,7 @@ def detail_commande(
         SELECT *
         FROM commandes
         WHERE id = ?
-    """, (
-        commande_id,
-    )).fetchone()
+    """, (commande_id,)).fetchone()
 
     if not commande:
 
@@ -809,6 +792,7 @@ def detail_commande(
             "message": "Commande introuvable."
         }), 404
 
+    # Le client ne peut voir que sa propre commande.
     if not session.get("admin"):
 
         if commande["client_token"] != token:
@@ -824,10 +808,8 @@ def detail_commande(
         SELECT *
         FROM commande_produits
         WHERE commande_id = ?
-        ORDER BY id
-    """, (
-        commande_id,
-    )).fetchall()
+        ORDER BY id ASC
+    """, (commande_id,)).fetchall()
 
     messages = conn.execute("""
         SELECT
@@ -840,9 +822,7 @@ def detail_commande(
         FROM messages
         WHERE commande_id = ?
         ORDER BY id ASC
-    """, (
-        commande_id,
-    )).fetchall()
+    """, (commande_id,)).fetchall()
 
     conn.close()
 
@@ -850,12 +830,10 @@ def detail_commande(
         "ok": True,
         "commande": dict(commande),
         "produits": [
-            dict(x)
-            for x in produits
+            dict(x) for x in produits
         ],
         "messages": [
-            dict(x)
-            for x in messages
+            dict(x) for x in messages
         ]
     })
 
@@ -868,9 +846,7 @@ def detail_commande(
     "/api/chat/<int:commande_id>",
     methods=["POST"]
 )
-def envoyer_chat(
-    commande_id
-):
+def envoyer_chat(commande_id):
 
     data = request.get_json(
         silent=True
@@ -888,9 +864,7 @@ def envoyer_chat(
             "message": "Message vide."
         }), 400
 
-    token = session.get(
-        "client_token"
-    )
+    token = session.get("client_token")
 
     conn = db()
 
@@ -898,9 +872,7 @@ def envoyer_chat(
         SELECT *
         FROM commandes
         WHERE id = ?
-    """, (
-        commande_id,
-    )).fetchone()
+    """, (commande_id,)).fetchone()
 
     if not commande:
 
@@ -911,7 +883,10 @@ def envoyer_chat(
             "message": "Commande introuvable."
         }), 404
 
-    # Client = uniquement sa commande
+    # -----------------------------------------------------
+    # SÉCURITÉ CLIENT
+    # -----------------------------------------------------
+
     if not session.get("admin"):
 
         if commande["client_token"] != token:
@@ -950,11 +925,10 @@ def envoyer_chat(
     ))
 
     conn.commit()
-
     conn.close()
 
     # -----------------------------------------------------
-    # NOTIFICATION AU CLIENT SI ADMIN RÉPOND
+    # NOTIFICATION SI L'ADMIN RÉPOND
     # -----------------------------------------------------
 
     if session.get("admin"):
@@ -962,16 +936,17 @@ def envoyer_chat(
         envoyer_notification_client(
             commande["client_token"],
             "Nouvelle réponse 💬",
-            "L'administrateur a répondu à votre message."
+            "L'administrateur a répondu à votre commande."
         )
 
     return jsonify({
-        "ok": True
+        "ok": True,
+        "message": "Message envoyé."
     })
 
 
 # =========================================================
-# ADMIN — COMMANDES
+# ADMIN — LISTE DES COMMANDES
 # =========================================================
 
 @app.route("/api/admin/commandes")
@@ -989,22 +964,20 @@ def admin_commandes():
     conn.close()
 
     return jsonify([
-        dict(x)
-        for x in rows
+        dict(row)
+        for row in rows
     ])
 
 
 # =========================================================
-# ADMIN — CHAT
+# ADMIN — CHAT D'UNE COMMANDE
 # =========================================================
 
 @app.route(
     "/api/admin/chat/<int:commande_id>"
 )
 @admin_required
-def admin_chat(
-    commande_id
-):
+def admin_chat(commande_id):
 
     conn = db()
 
@@ -1012,9 +985,7 @@ def admin_chat(
         SELECT *
         FROM commandes
         WHERE id = ?
-    """, (
-        commande_id,
-    )).fetchone()
+    """, (commande_id,)).fetchone()
 
     if not commande:
 
@@ -1025,14 +996,12 @@ def admin_chat(
             "message": "Commande introuvable."
         }), 404
 
-messages = conn.execute("""
+    messages = conn.execute("""
         SELECT *
         FROM messages
         WHERE commande_id = ?
         ORDER BY id ASC
-    """, (
-        commande_id,
-    )).fetchall()
+    """, (commande_id,)).fetchall()
 
     conn.close()
 
@@ -1044,8 +1013,10 @@ messages = conn.execute("""
             for x in messages
         ]
     })
+
+
 # =========================================================
-# ADMIN — STATUT COMMANDE
+# ADMIN — CHANGER LE STATUT
 # =========================================================
 
 @app.route(
@@ -1053,9 +1024,7 @@ messages = conn.execute("""
     methods=["POST"]
 )
 @admin_required
-def changer_statut(
-    commande_id
-):
+def changer_statut(commande_id):
 
     data = request.get_json(
         silent=True
@@ -1087,9 +1056,7 @@ def changer_statut(
         SELECT client_token
         FROM commandes
         WHERE id = ?
-    """, (
-        commande_id,
-    )).fetchone()
+    """, (commande_id,)).fetchone()
 
     if not commande:
 
@@ -1110,7 +1077,6 @@ def changer_statut(
     ))
 
     conn.commit()
-
     conn.close()
 
     envoyer_notification_client(
@@ -1120,7 +1086,8 @@ def changer_statut(
     )
 
     return jsonify({
-        "ok": True
+        "ok": True,
+        "message": "Statut mis à jour."
     })
 
 
@@ -1128,9 +1095,7 @@ def changer_statut(
 # ADMIN — DASHBOARD
 # =========================================================
 
-@app.route(
-    "/api/admin/dashboard"
-)
+@app.route("/api/admin/dashboard")
 @admin_required
 def dashboard():
 
@@ -1170,6 +1135,11 @@ def dashboard():
         WHERE auteur = 'Client'
     """).fetchone()[0]
 
+    messages_generaux = conn.execute("""
+        SELECT COUNT(*)
+        FROM messages_generaux
+    """).fetchone()[0]
+
     conn.close()
 
     return jsonify({
@@ -1180,7 +1150,8 @@ def dashboard():
             "revenus": revenus,
             "livraisons": livraisons,
             "nouvelles": nouvelles,
-            "messages": messages
+            "messages": messages,
+            "messages_generaux": messages_generaux
         }
     })
 
@@ -1216,15 +1187,11 @@ def message_general():
             "message": "Nom et message obligatoires."
         }), 400
 
-    token = session.get(
-        "client_token"
-    )
+    token = session.get("client_token")
 
     if not token:
 
-        token = secrets.token_urlsafe(
-            32
-        )
+        token = secrets.token_urlsafe(32)
 
         session["client_token"] = token
 
@@ -1253,11 +1220,7 @@ def message_general():
     message_id = cursor.lastrowid
 
     conn.commit()
-
     conn.close()
-
-    # Notification à l'admin non envoyée ici :
-    # le tableau admin récupère les nouveaux messages.
 
     return jsonify({
         "ok": True,
@@ -1269,14 +1232,10 @@ def message_general():
 # MESSAGES DU CLIENT
 # =========================================================
 
-@app.route(
-    "/api/mes-messages"
-)
+@app.route("/api/mes-messages")
 def mes_messages():
 
-    token = session.get(
-        "client_token"
-    )
+    token = session.get("client_token")
 
     if not token:
 
@@ -1292,9 +1251,7 @@ def mes_messages():
         FROM messages_generaux
         WHERE client_token = ?
         ORDER BY id DESC
-    """, (
-        token,
-    )).fetchall()
+    """, (token,)).fetchall()
 
     conn.close()
 
@@ -1311,9 +1268,7 @@ def mes_messages():
 # ADMIN — MESSAGES GÉNÉRAUX
 # =========================================================
 
-@app.route(
-    "/api/admin/messages"
-)
+@app.route("/api/admin/messages")
 @admin_required
 def admin_messages():
 
@@ -1334,7 +1289,7 @@ def admin_messages():
 
 
 # =========================================================
-# ADMIN — RÉPONDRE À UN MESSAGE GÉNÉRAL
+# ADMIN — RÉPONDRE À UN MESSAGE
 # =========================================================
 
 @app.route(
@@ -1342,9 +1297,7 @@ def admin_messages():
     methods=["POST"]
 )
 @admin_required
-def repondre_message_general(
-    message_id
-):
+def repondre_message_general(message_id):
 
     data = request.get_json(
         silent=True
@@ -1368,9 +1321,7 @@ def repondre_message_general(
         SELECT *
         FROM messages_generaux
         WHERE id = ?
-    """, (
-        message_id,
-    )).fetchone()
+    """, (message_id,)).fetchone()
 
     if not message:
 
@@ -1394,10 +1345,9 @@ def repondre_message_general(
     ))
 
     conn.commit()
-
     conn.close()
 
-    # Notification push au client
+    # Notification au client
     envoyer_notification_client(
         message["client_token"],
         "Nouvelle réponse 💬",
@@ -1405,17 +1355,13 @@ def repondre_message_general(
     )
 
     return jsonify({
-        "ok": True
-    })
-
-
-# =========================================================
+        "ok": True,
+        "message": "Réponse envoyée."
+        # =========================================================
 # PUBLICITÉS
 # =========================================================
 
-@app.route(
-    "/api/publicites"
-)
+@app.route("/api/publicites")
 def publicites():
 
     conn = db()
@@ -1423,7 +1369,8 @@ def publicites():
     rows = conn.execute("""
         SELECT *
         FROM publicites
-        ORDER BY position
+        WHERE position = 1
+        LIMIT 1
     """).fetchall()
 
     conn.close()
@@ -1435,7 +1382,8 @@ def publicites():
 
 
 # =========================================================
-# ADMIN — PUBLICITÉ
+# ADMIN — MODIFIER LA PUBLICITÉ
+# IMAGE OU VIDÉO
 # =========================================================
 
 @app.route(
@@ -1449,6 +1397,13 @@ def modifier_publicite():
         "position",
         type=int
     )
+
+    if position != 1:
+
+        return jsonify({
+            "ok": False,
+            "message": "L'emplacement doit être 1."
+        }), 400
 
     titre = (
         request.form.get("titre")
@@ -1465,20 +1420,14 @@ def modifier_publicite():
         or ""
     ).strip()
 
-    if position != 1:
-
-        return jsonify({
-            "ok": False,
-            "message": "Utilisez l'emplacement 1."
-        }), 400
-
     media_url = ""
-
     media_type = ""
 
-    fichier = request.files.get(
-        "media"
-    )
+    fichier = request.files.get("media")
+
+    # -----------------------------------------------------
+    # UPLOAD CLOUDINARY
+    # -----------------------------------------------------
 
     if fichier and fichier.filename:
 
@@ -1491,18 +1440,14 @@ def modifier_publicite():
             ".m4v"
         )
 
-        if nom.endswith(
-            extensions_video
-        ):
+        if nom.endswith(extensions_video):
 
             resource_type = "video"
-
             media_type = "video"
 
         else:
 
             resource_type = "image"
-
             media_type = "image"
 
         try:
@@ -1526,10 +1471,11 @@ def modifier_publicite():
                 "error": str(e)
             }), 500
 
-    conn = db()
+    # -----------------------------------------------------
+    # CONSERVER L'ANCIEN MÉDIA
+    # -----------------------------------------------------
 
-    # Si aucun nouveau fichier n'est envoyé,
-    # on garde l'ancien média.
+    conn = db()
 
     ancien = conn.execute("""
         SELECT media_url, media_type
@@ -1539,9 +1485,19 @@ def modifier_publicite():
 
     if not media_url and ancien:
 
-        media_url = ancien["media_url"] or ""
+        media_url = (
+            ancien["media_url"]
+            or ""
+        )
 
-        media_type = ancien["media_type"] or ""
+        media_type = (
+            ancien["media_type"]
+            or ""
+        )
+
+    # -----------------------------------------------------
+    # ENREGISTRER
+    # -----------------------------------------------------
 
     conn.execute("""
         INSERT INTO publicites
@@ -1572,7 +1528,6 @@ def modifier_publicite():
     ))
 
     conn.commit()
-
     conn.close()
 
     return jsonify({
@@ -1582,7 +1537,7 @@ def modifier_publicite():
 
 
 # =========================================================
-# SUPPRIMER PUBLICITÉ
+# ADMIN — SUPPRIMER LA PUBLICITÉ
 # =========================================================
 
 @app.route(
@@ -1606,7 +1561,6 @@ def supprimer_publicite():
     """)
 
     conn.commit()
-
     conn.close()
 
     return jsonify({
@@ -1616,9 +1570,13 @@ def supprimer_publicite():
 
 
 # =========================================================
-# PUSH — ENREGISTRER LE NAVIGATEUR
+# PUSH — ABONNER UN CLIENT
 # =========================================================
 
+@app.route(
+    "/api/push/subscribe",
+    methods=["POST"]
+)
 @app.route(
     "/api/push/abonner",
     methods=["POST"]
@@ -1629,14 +1587,25 @@ def push_abonner():
         silent=True
     ) or {}
 
+    # Accepte aussi bien :
+    # {endpoint, keys}
+    # que :
+    # {subscription: {endpoint, keys}}
+
+    subscription = data.get(
+        "subscription"
+    )
+
+    if isinstance(subscription, dict):
+
+        data = subscription
+
     endpoint = (
         data.get("endpoint")
         or ""
     ).strip()
 
-    keys = data.get(
-        "keys"
-    ) or {}
+    keys = data.get("keys") or {}
 
     p256dh = (
         keys.get("p256dh")
@@ -1658,6 +1627,16 @@ def push_abonner():
     token = session.get(
         "client_token"
     )
+
+    # -----------------------------------------------------
+    # Si le client n'a pas encore de token
+    # -----------------------------------------------------
+
+    if not token:
+
+        token = secrets.token_urlsafe(32)
+
+        session["client_token"] = token
 
     conn = db()
 
@@ -1687,18 +1666,22 @@ def push_abonner():
     ))
 
     conn.commit()
-
     conn.close()
 
     return jsonify({
-        "ok": True
+        "ok": True,
+        "message": "Notifications activées."
     })
 
 
 # =========================================================
-# PUSH — SUPPRIMER UN ABONNEMENT
+# PUSH — DÉSABONNER
 # =========================================================
 
+@app.route(
+    "/api/push/unsubscribe",
+    methods=["POST"]
+)
 @app.route(
     "/api/push/desabonner",
     methods=["POST"]
@@ -1717,7 +1700,8 @@ def push_desabonner():
     if not endpoint:
 
         return jsonify({
-            "ok": False
+            "ok": False,
+            "message": "Endpoint manquant."
         }), 400
 
     conn = db()
@@ -1730,7 +1714,6 @@ def push_desabonner():
     ))
 
     conn.commit()
-
     conn.close()
 
     return jsonify({
@@ -1739,7 +1722,7 @@ def push_desabonner():
 
 
 # =========================================================
-# FONCTION PUSH
+# FONCTION ENVOI PUSH
 # =========================================================
 
 def envoyer_push(
@@ -1747,14 +1730,6 @@ def envoyer_push(
     titre,
     message
 ):
-
-    if not VAPID_PRIVATE_KEY:
-
-        print(
-            "VAPID_PRIVATE_KEY absente."
-        )
-
-        return False
 
     if not VAPID_PUBLIC_KEY:
 
@@ -1764,12 +1739,17 @@ def envoyer_push(
 
         return False
 
+    if not VAPID_PRIVATE_KEY:
+
+        print(
+            "VAPID_PRIVATE_KEY absente."
+        )
+
+        return False
+
     try:
 
-        from pywebpush import (
-            webpush,
-            WebPushException
-        )
+        from pywebpush import webpush
 
         abonnement = {
             "endpoint": subscription["endpoint"],
@@ -1781,7 +1761,13 @@ def envoyer_push(
 
         webpush(
             subscription_info=abonnement,
-            data=f"{titre}\n{message}",
+            data=(
+                f'{{'
+                f'"title": {titre!r}, '
+                f'"body": {message!r}, '
+                f'"url": "/"'
+                f'}}'
+            ),
             vapid_private_key=VAPID_PRIVATE_KEY,
             vapid_claims={
                 "sub": VAPID_EMAIL
@@ -1793,7 +1779,7 @@ def envoyer_push(
     except Exception as e:
 
         print(
-            "Erreur notification push:",
+            "Erreur push :",
             e
         )
 
@@ -1801,7 +1787,7 @@ def envoyer_push(
 
 
 # =========================================================
-# PUSH — CLIENT PARTICULIER
+# NOTIFICATION — CLIENT PARTICULIER
 # =========================================================
 
 def envoyer_notification_client(
@@ -1828,22 +1814,15 @@ def envoyer_notification_client(
 
     for subscription in subscriptions:
 
-        ok = envoyer_push(
+        envoyer_push(
             subscription,
             titre,
             message
         )
 
-        if not ok:
-
-            # On ne supprime pas immédiatement
-            # l'abonnement pour éviter une suppression
-            # accidentelle lors d'une panne temporaire.
-            pass
-
 
 # =========================================================
-# PUSH — TOUS LES CLIENTS
+# NOTIFICATION — TOUS LES CLIENTS
 # =========================================================
 
 def envoyer_notification_tous(
@@ -1870,7 +1849,7 @@ def envoyer_notification_tous(
 
 
 # =========================================================
-# SANTÉ
+# SANTÉ DU SERVEUR
 # =========================================================
 
 @app.route("/health")
@@ -1878,7 +1857,8 @@ def health():
 
     return jsonify({
         "ok": True,
-        "service": "Yemalin Aura"
+        "service": "Yemalin Aura",
+        "status": "online"
     })
 
 
@@ -1899,6 +1879,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         debug=False
-    )
-
-    
+)
+    })
