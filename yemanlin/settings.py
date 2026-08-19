@@ -13,6 +13,10 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
+# =========================
+# APPLICATIONS
+# =========================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -24,6 +28,10 @@ INSTALLED_APPS = [
 ]
 
 
+# =========================
+# MIDDLEWARE
+# =========================
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -34,8 +42,18 @@ MIDDLEWARE = [
 ]
 
 
+# =========================
+# CONFIGURATION
+# =========================
+
 ROOT_URLCONF = "yemanlin.urls"
 
+WSGI_APPLICATION = "yemanlin.wsgi.application"
+
+
+# =========================
+# TEMPLATES
+# =========================
 
 TEMPLATES = [
     {
@@ -53,8 +71,9 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = "yemanlin.wsgi.application"
-
+# =========================
+# BASE DE DONNÉES
+# =========================
 
 DATABASES = {
     "default": {
@@ -64,8 +83,16 @@ DATABASES = {
 }
 
 
+# =========================
+# AUTHENTIFICATION
+# =========================
+
 AUTH_PASSWORD_VALIDATORS = []
 
+
+# =========================
+# LANGUE / HEURE
+# =========================
 
 LANGUAGE_CODE = "fr-fr"
 
@@ -98,7 +125,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# =========================
+# AUTRES
+# =========================
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/admin/login/"
