@@ -1,0 +1,30 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yemanlin Aura</title>
+<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+<header>
+  <a class="brand" href="/">
+    <img src="{% static 'logo.png' %}" alt="Yemanlin Aura" onerror="this.style.display='none'">
+    <span>Yemanlin Aura</span>
+  </a>
+  <nav>
+    <a href="/">Accueil</a><a href="/produits/">Produits</a>
+    <a href="/partenariat/">Partenariat</a>
+  </nav>
+</header>
+<main>
+{% if messages %}{% for m in messages %}<div class="notice">{{m}}</div>{% endfor %}{% endif %}
+{% block content %}{% endblock %}
+</main>
+<footer>
+  <strong>Yemanlin Aura</strong><br>
+  Le raffinement qui nous distingue<br>
+  <small>Yemanlin Aura en collaboration avec Nova Gaming · Fait par Franck</small>
+</footer>
+</body>
+</html>

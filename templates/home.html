@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="hero">
+
+  <div class="hero-logo-wrap">
+
+    <img
+      class="hero-logo-image"
+      src="{% static 'logo.png' %}"
+      alt="Logo Yemanlin Aura"
+      onerror="this.style.display='none'"
+    >
+
+    <h1
+      id="brandAnimation"
+      class="animated-brand"
+      aria-label="Yemanlin Aura">
+    </h1>
+
+    <p
+      id="sloganAnimation"
+      class="animated-slogan"
+      aria-label="Le raffinement qui nous distingue">
+    </p>
+
+  </div>
+
+  <p class="hero-description">
+    Découvrez l'univers Yemanlin Aura.
+  </p>
+
+  <a class="btn" href="/produits/">
+    Voir les produits
+  </a>
+
+</section>
+
+<section>
+
+  <h2>Produits</h2>
+
+  <div class="grid">
+
+    {% for p in products %}
+
+    <article class="card">
+
+      {% if p.image %}
+        <img
+          src="{{ p.image.url }}"
+          alt="{{ p.name }}"
+        >
+      {% endif %}
+
+      <h3>{{ p.name }}</h3>
+
+      <p>{{ p.price }} FCFA</p>
+
+      <a
+        class="btn"
+        href="/produit/{{ p.id }}/">
+        Découvrir
+      </a>
+
+    </article>
+
+    {% empty %}
+
+    <p class="empty">
+      Aucun produit disponible pour le moment.
+    </p>
+
+    {% endfor %}
+
+  </div>
+
+</section>
+
+<section class="partner">
+
+  <h2>Une collaboration ?</h2>
+
+  <a class="btn" href="/partenariat/">
+    ??? Faire un partenariat avec Yemanlin Aura
+  </a>
+
+</section>
+
+<script>
+(function() {
+
+  const brand = "Yemanlin Aura";
+  const slogan = "Le raffinement qui nous distingue";
+
+  const brandEl = document.getElementById("brandAnimation");
+  const sloganEl = document.getElementById("sloganAnimation");
+
+  let i = 0;
+  let j = 0;
+
+  function typeBrand() {
+
+    if (i <= brand.length) {
+
+      brandEl.textContent = brand.slice(0, i++);
+
+      setTimeout(typeBrand, 120);
+
+    } else {
+
+      setTimeout(typeSlogan, 500);
+
+    }
+
+  }
+
+  function typeSlogan() {
+
+    if (j <= slogan.length) {
+
+      sloganEl.textContent = slogan.slice(0, j++);
+
+      setTimeout(typeSlogan, 65);
+
+    }
+
+  }
+
+  typeBrand();
+
+})();
+</script>
+
+{% endblock %}

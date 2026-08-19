@@ -1,0 +1,1 @@
+{% extends "base.html" %}{% block content %}<h1>Discussion avec Yemanlin Aura</h1><div class="chat">{% for m in conversation.messages.all %}<div class="msg {{m.sender}}"><b>{{m.sender}}</b><p>{{m.body}}</p></div>{% empty %}<p>Aucun message.</p>{% endfor %}</div><form method="post">{% csrf_token %}{{form.as_p}}<button class="btn">Envoyer</button></form>{% endblock %}
