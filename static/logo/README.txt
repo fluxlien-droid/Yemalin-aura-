@@ -1,0 +1,1 @@
+Place ton logo ici sous le nom logo.png (ou adapte le chemin dans base.html).
