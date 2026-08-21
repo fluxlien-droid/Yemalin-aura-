@@ -1,0 +1,791 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Yemanlin Aura - Tableau de bord</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'style.css' %}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f4ef;
+            color: #222;
+        }
+
+        header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .topbar {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            text-decoration: none;
+            color: #222;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 11px;
+            font-weight: normal;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .logout {
+            border: none;
+            background: transparent;
+            color: #555;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .logout:hover {
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 22px 15px 50px;
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.05);
+        }
+
+        .welcome small {
+            color: #999;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+        }
+
+        .welcome h1 {
+            margin: 8px 0;
+            font-size: 30px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.05);
+        }
+
+        .stat span {
+            display: block;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .stat strong {
+            font-size: 23px;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            background: #222;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            opacity: .9;
+        }
+
+        .order {
+            padding: 16px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order:last-child {
+            border-bottom: none;
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .order strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .order small {
+            display: block;
+            color: #777;
+            margin-top: 3px;
+        }
+
+        .price {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-form {
+            margin-top: 10px;
+        }
+
+        .status-form select {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            background: white;
+            color: #222;
+            font-size: 14px;
+        }
+
+        .status-form select option {
+            color: #222;
+            background: white;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #222;
+            background: #f7f4ef;
+            padding: 20px 15px;
+            border-radius: 14px;
+            font-weight: bold;
+            text-align: center;
+            transition: .2s;
+        }
+
+        .menu a:hover {
+            transform: translateY(-2px);
+            background: #eeeae3;
+        }
+
+        /* ==============================
+           PRODUITS
+        ============================== */
+
+        .product {
+            padding: 16px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product:last-child {
+            border-bottom: none;
+        }
+
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .product-details {
+            color: #777;
+            font-size: 13px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .edit-btn {
+            background: #222;
+            color: white;
+            text-decoration: none;
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .delete-btn {
+            background: #b42318;
+            color: white;
+            border: none;
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            opacity: .85;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+
+        footer {
+            text-align: center;
+            color: #888;
+            padding: 30px 15px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 750px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .welcome h1 {
+                font-size: 26px;
+            }
+
+            .order-top,
+            .product-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .price {
+                white-space: normal;
+            }
+
+        }
+
+        @media (max-width: 430px) {
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .menu {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .topbar {
+                gap: 10px;
+            }
+
+            .brand {
+                font-size: 16px;
+            }
+
+            .welcome {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .stat {
+                padding: 15px;
+            }
+
+            .stat strong {
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="topbar">
+
+        <a
+            class="brand"
+            href="{% url 'admin_dashboard' %}"
+        >
+            Yemanlin Aura
+
+            <span>
+                Tableau de bord
+            </span>
+        </a>
+
+        <form
+            method="post"
+            action="{% url 'admin_logout' %}"
+            style="display:inline;"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="logout"
+            >
+                Déconnexion
+            </button>
+
+        </form>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- BIENVENUE -->
+
+    <section class="welcome">
+
+        <small>
+            ESPACE GESTION
+        </small>
+
+        <h1>
+            Bonjour 👋
+        </h1>
+
+        <p>
+            Gérez facilement les commandes,
+            les produits et les clients.
+        </p>
+
+    </section>
+
+
+    <!-- STATISTIQUES -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <span>
+                Commandes
+            </span>
+
+            <strong>
+                {{ counts.orders }}
+            </strong>
+
+        </div>
+
+        <div class="stat">
+
+            <span>
+                Produits
+            </span>
+
+            <strong>
+                {{ counts.products }}
+            </strong>
+
+        </div>
+
+        <div class="stat">
+
+            <span>
+                Clients
+            </span>
+
+            <strong>
+                {{ counts.customers }}
+            </strong>
+
+        </div>
+
+        <div class="stat">
+
+            <span>
+                Revenus livrés
+            </span>
+
+            <strong>
+                {{ revenue }} FCFA
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMMANDES -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                🛒 Mes commandes
+            </h2>
+
+            <a
+                class="btn"
+                href="{% url 'dashboard_orders' %}"
+            >
+                Voir toutes
+            </a>
+
+        </div>
+
+
+        {% for o in orders %}
+
+        <div class="order">
+
+            <div class="order-top">
+
+                <div>
+
+                    <strong>
+                        #{{ o.id }} · {{ o.product.name }}
+                    </strong>
+
+                    <small>
+                        Client : {{ o.customer.name }}
+                    </small>
+
+                    <small>
+                        Téléphone : {{ o.customer.phone }}
+                    </small>
+
+                    <small>
+                        {{ o.created_at|date:"d/m/Y à H:i" }}
+                    </small>
+
+                </div>
+
+                <div class="price">
+
+                    {{ o.total }} FCFA
+
+                </div>
+
+            </div>
+
+
+            <form
+                class="status-form"
+                method="post"
+                action="{% url 'update_order_status' o.id %}"
+            >
+
+                {% csrf_token %}
+
+                <select
+                    name="status"
+                    onchange="this.form.submit()"
+                >
+
+                    {% for value,label in o.STATUS %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if o.status == value %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </form>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            Aucune commande pour le moment.
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+    <!-- PRODUITS -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                📦 Gestion des produits
+            </h2>
+
+            <a
+                class="btn"
+                href="{% url 'dashboard_product_add' %}"
+            >
+                + Ajouter
+            </a>
+
+        </div>
+
+
+        {% for product in products %}
+
+        <div class="product">
+
+            <div class="product-info">
+
+                <div>
+
+                    <div class="product-name">
+                        {{ product.name }}
+                    </div>
+
+                    <div class="product-details">
+
+                        Prix :
+                        {{ product.price }} FCFA
+
+                        <br>
+
+                        Catégorie :
+                        {{ product.category|default:"Non définie" }}
+
+                        <br>
+
+                        Stock :
+                        {{ product.stock }}
+
+                        <br>
+
+                        {% if product.active %}
+                            Statut : Actif
+                        {% else %}
+                            Statut : Inactif
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="product-actions">
+
+                <a
+                    class="edit-btn"
+                    href="{% url 'dashboard_product_edit' product.id %}"
+                >
+                    ✏️ Modifier
+                </a>
+
+
+                <form
+                    method="post"
+                    action="{% url 'delete_product' product.id %}"
+                    onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');"
+                    style="display:inline;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="delete-btn"
+                    >
+                        🗑️ Supprimer
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+
+            Aucun produit pour le moment.
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+    <!-- GESTION DE LA BOUTIQUE -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <h2>
+                Gestion de la boutique
+            </h2>
+
+        </div>
+
+        <div class="menu">
+
+            <a
+                href="{% url 'dashboard_orders' %}"
+            >
+                🛒
+                <br>
+                Mes commandes
+            </a>
+
+            <a
+                href="{% url 'dashboard_products' %}"
+            >
+                📦
+                <br>
+                Mes produits
+            </a>
+
+            <a
+                href="{% url 'dashboard_customers' %}"
+            >
+                👥
+                <br>
+                Mes clients
+            </a>
+
+            <a
+                href="{% url 'dashboard_product_add' %}"
+            >
+                ➕
+                <br>
+                Ajouter un produit
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <strong>
+        Yemanlin Aura
+    </strong>
+
+    <br>
+
+    Le raffinement qui nous distingue
+
+    <br>
+
+    <small>
+        Yemanlin Aura en collaboration avec Nova Gaming · Fait par Franck
+    </small>
+
+</footer>
+
+</body>
+
+</html>

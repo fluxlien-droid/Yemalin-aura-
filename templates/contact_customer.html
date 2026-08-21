@@ -1,0 +1,246 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Contacter {{ customer.name }} — Yemanlin Aura</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f4ef;
+            color: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: white;
+            padding: 18px;
+            border-bottom: 1px solid #e5e1db;
+        }
+
+        header a {
+            color: #222;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 600px;
+            margin: auto;
+            padding: 25px 15px;
+        }
+
+        .box {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+
+            box-shadow: 0 4px 18px rgba(0,0,0,.06);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .customer {
+            background: #f7f4ef;
+            border-radius: 14px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .customer p {
+            margin: 7px 0;
+            color: #555;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action {
+            display: block;
+            text-align: center;
+
+            padding: 15px;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .sms {
+            background: #222;
+            color: white;
+        }
+
+        .call {
+            background: #eee;
+            color: #222;
+        }
+
+        .whatsapp {
+            background: #eaf8ed;
+            color: #176b2c;
+            border: 1px solid #b9dfc2;
+        }
+
+        .back {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <a href="{% url 'dashboard_customers' %}">
+        ← Retour aux clients
+    </a>
+
+</header>
+
+
+<main>
+
+
+<div class="box">
+
+    <h1>
+        Contacter le client
+    </h1>
+
+
+    <div class="customer">
+
+        <strong>
+            {{ customer.name }}
+        </strong>
+
+        <p>
+            📞 {{ customer.phone }}
+        </p>
+
+        {% if customer.whatsapp %}
+
+        <p>
+            💬 WhatsApp :
+            {{ customer.whatsapp }}
+        </p>
+
+        {% endif %}
+
+        <p>
+            📍 {{ customer.city }}
+        </p>
+
+        <p>
+            {{ customer.district }}
+        </p>
+
+        <p>
+            {{ customer.address }}
+        </p>
+
+    </div>
+
+
+    <div class="actions">
+
+
+        <!-- SMS -->
+
+        <a
+            class="action sms"
+            href="sms:{{ customer.phone }}"
+        >
+            💬 Envoyer un SMS
+        </a>
+
+
+        <!-- APPEL -->
+
+        <a
+            class="action call"
+            href="tel:{{ customer.phone }}"
+        >
+            📞 Appeler
+        </a>
+
+
+        <!-- WHATSAPP -->
+
+        {% if customer.whatsapp %}
+
+        <a
+            class="action whatsapp"
+            href="https://wa.me/{{ customer.whatsapp|cut:'+'|cut:' '|cut:'-' }}"
+            target="_blank"
+            rel="noopener"
+        >
+            🟢 Ouvrir WhatsApp
+        </a>
+
+        {% else %}
+
+        <a
+            class="action whatsapp"
+            href="https://wa.me/{{ customer.phone|cut:'+'|cut:' '|cut:'-' }}"
+            target="_blank"
+            rel="noopener"
+        >
+            🟢 Ouvrir WhatsApp
+        </a>
+
+        {% endif %}
+
+
+    </div>
+
+
+    <a
+        class="back"
+        href="{% url 'dashboard_customers' %}"
+    >
+        ← Retour à la liste des clients
+    </a>
+
+
+</div>
+
+
+</main>
+
+
+</body>
+
+</html>

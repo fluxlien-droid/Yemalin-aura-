@@ -1,0 +1,462 @@
+{% load static %}
+
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>Mes produits - Yemanlin Aura</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #f7f4ef;
+        font-family: Arial, sans-serif;
+        color: #222;
+    }
+
+    header {
+        background: white;
+        padding: 18px 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .header-inner {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    header a {
+        color: #222;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .add-btn {
+        background: #222;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    main {
+        max-width: 1100px;
+        margin: auto;
+        padding: 25px 15px 50px;
+    }
+
+    .title-box {
+        background: white;
+        padding: 25px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 15px rgba(0,0,0,.05);
+    }
+
+    h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+    }
+
+    .subtitle {
+        margin: 0;
+        color: #777;
+    }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .product {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 220px;
+        background: #eeeae3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image {
+        color: #999;
+        font-size: 14px;
+    }
+
+    .product-content {
+        padding: 18px;
+    }
+
+    .product-name {
+        margin: 0 0 7px;
+        font-size: 19px;
+    }
+
+    .description {
+        color: #777;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 42px;
+    }
+
+    .info {
+        margin-top: 12px;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .info strong {
+        color: #222;
+    }
+
+    .active {
+        color: #187a3d;
+        font-weight: bold;
+    }
+
+    .inactive {
+        color: #b42318;
+        font-weight: bold;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        border: none;
+        padding: 11px 10px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        font-family: Arial, sans-serif;
+    }
+
+    .edit-btn {
+        background: #222;
+        color: white;
+    }
+
+    .edit-btn:hover {
+        opacity: .9;
+    }
+
+    .delete-btn {
+        background: #f3e1df;
+        color: #a1261c;
+    }
+
+    .delete-btn:hover {
+        background: #ead1ce;
+    }
+
+    .empty {
+        background: white;
+        border-radius: 18px;
+        padding: 40px 20px;
+        text-align: center;
+        color: #777;
+        box-shadow: 0 3px 15px rgba(0,0,0,.05);
+    }
+
+    .empty a {
+        display: inline-block;
+        margin-top: 15px;
+        background: #222;
+        color: white;
+        padding: 11px 15px;
+        border-radius: 10px;
+        text-decoration: none;
+    }
+
+    .bottom-links {
+        margin-top: 25px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .bottom-links a {
+        text-decoration: none;
+        color: #555;
+        font-weight: bold;
+    }
+
+    @media (max-width: 850px) {
+
+        .products {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .header-inner {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        main {
+            padding: 15px 10px 40px;
+        }
+
+        .title-box {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .products {
+            grid-template-columns: 1fr;
+        }
+
+        .product-image {
+            height: 230px;
+        }
+
+    }
+
+</style>
+
+</head><body><header><div class="header-inner">
+
+    <a href="{% url 'admin_dashboard' %}">
+        ← Yemanlin Aura · Dashboard
+    </a>
+
+    <a
+        class="add-btn"
+        href="{% url 'dashboard_product_add' %}"
+    >
+        ➕ Ajouter un produit
+    </a>
+
+</div>
+
+</header><main><div class="title-box">
+
+    <h1>
+        📦 Mes produits
+    </h1>
+
+    <p class="subtitle">
+        Gérez vos produits, leurs informations et leurs médias.
+    </p>
+
+</div>
+
+
+{% if products %}
+
+    <div class="products">
+
+        {% for product in products %}
+
+            <article class="product">
+
+
+                <!-- IMAGE -->
+
+                <div class="product-image">
+
+                    {% if product.image %}
+
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    {% else %}
+
+                        <span class="no-image">
+                            Aucune image
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- INFORMATIONS -->
+
+                <div class="product-content">
+
+                    <h2 class="product-name">
+                        {{ product.name }}
+                    </h2>
+
+                    <div class="description">
+
+                        {% if product.description %}
+
+                            {{ product.description|truncatechars:100 }}
+
+                        {% else %}
+
+                            Aucune description.
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <div>
+                            <strong>Prix :</strong>
+                            {{ product.price }} FCFA
+                        </div>
+
+                        <div>
+                            <strong>Stock :</strong>
+                            {{ product.stock }}
+                        </div>
+
+                        <div>
+                            <strong>Catégorie :</strong>
+                            {{ product.category|default:"Non définie" }}
+                        </div>
+
+                        <div>
+
+                            <strong>Statut :</strong>
+
+                            {% if product.active %}
+
+                                <span class="active">
+                                    Actif
+                                </span>
+
+                            {% else %}
+
+                                <span class="inactive">
+                                    Inactif
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+
+                        <!-- MODIFIER -->
+
+                        <a
+                            class="edit-btn"
+                            href="{% url 'dashboard_product_edit' product.id %}"
+                        >
+                            ✏️ Modifier
+                        </a>
+
+
+                        <!-- SUPPRIMER -->
+
+                        <form
+                            method="post"
+                            action="{% url 'delete_product' product.id %}"
+                            onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="delete-btn"
+                            >
+                                🗑️ Supprimer
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+
+{% else %}
+
+
+    <div class="empty">
+
+        <div style="font-size:40px;">
+            📦
+        </div>
+
+        <p>
+            Aucun produit n'a encore été ajouté.
+        </p>
+
+        <a href="{% url 'dashboard_product_add' %}">
+            ➕ Ajouter le premier produit
+        </a>
+
+    </div>
+
+
+{% endif %}
+
+
+<div class="bottom-links">
+
+    <a href="{% url 'admin_dashboard' %}">
+        ← Retour au dashboard
+    </a>
+
+    <a href="{% url 'dashboard_product_add' %}">
+        ➕ Ajouter un produit
+    </a>
+
+</div>
+
+</main></body></html>

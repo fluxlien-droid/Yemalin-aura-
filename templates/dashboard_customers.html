@@ -1,0 +1,277 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Clients — Yemanlin Aura</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'style.css' %}"
+    >
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #f7f4ef;
+            color: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: white;
+            padding: 18px;
+            border-bottom: 1px solid #e5e1db;
+        }
+
+        .brand {
+            color: #222;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav {
+            margin-top: 12px;
+        }
+
+        nav a {
+            color: #555;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 15px 50px;
+        }
+
+        .admin-hero {
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #8a7a68;
+        }
+
+        .admin-hero h1 {
+            margin: 5px 0;
+        }
+
+        .admin-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .customer-row {
+            background: white;
+            border: 1px solid #e5e1db;
+            border-radius: 16px;
+            padding: 18px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            box-shadow: 0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .customer-info {
+            min-width: 0;
+        }
+
+        .customer-info h3 {
+            margin: 0 0 8px;
+        }
+
+        .customer-info p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .contact-button {
+            display: inline-block;
+            background: #222;
+            color: white;
+            text-decoration: none;
+
+            padding: 11px 16px;
+            border-radius: 10px;
+
+            font-weight: bold;
+            font-size: 14px;
+
+            white-space: nowrap;
+        }
+
+        .contact-button:hover {
+            opacity: .85;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+        }
+
+        @media (max-width: 650px) {
+
+            .customer-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .contact-button {
+                text-align: center;
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <a
+        class="brand"
+        href="{% url 'admin_dashboard' %}"
+    >
+        Yemanlin Aura · Dashboard
+    </a>
+
+    <nav>
+
+        <a href="{% url 'admin_dashboard' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'dashboard_orders' %}">
+            Commandes
+        </a>
+
+        <a href="{% url 'dashboard_products' %}">
+            Produits
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+
+<section class="admin-hero">
+
+    <p class="eyebrow">
+        CLIENTS
+    </p>
+
+    <h1>
+        Clients
+    </h1>
+
+    <p>
+        Consultez les informations et contactez vos clients.
+    </p>
+
+</section>
+
+
+<section class="admin-section">
+
+
+{% for customer in customers %}
+
+<div class="customer-row">
+
+
+    <div class="customer-info">
+
+        <h3>
+            {{ customer.name }}
+        </h3>
+
+        <p>
+            📞 {{ customer.phone }}
+        </p>
+
+        {% if customer.whatsapp %}
+
+        <p>
+            💬 WhatsApp :
+            {{ customer.whatsapp }}
+        </p>
+
+        {% endif %}
+
+        <p>
+            📍 {{ customer.city }} · {{ customer.district }}
+        </p>
+
+        <p>
+            {{ customer.address }}
+        </p>
+
+    </div>
+
+
+    <div>
+
+        <a
+            class="contact-button"
+            href="{% url 'contact_customer' customer.id %}"
+        >
+            📞 Contacter
+        </a>
+
+    </div>
+
+
+</div>
+
+
+{% empty %}
+
+<div class="empty">
+
+    Aucun client pour le moment.
+
+</div>
+
+{% endfor %}
+
+
+</section>
+
+
+</main>
+
+
+</body>
+
+</html>

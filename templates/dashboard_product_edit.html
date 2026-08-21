@@ -1,0 +1,492 @@
+{% load static %}
+
+<!doctype html>
+
+<html lang="fr"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><title>Modifier le produit — Yemanlin Aura</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #f7f4ef;
+        font-family: Arial, sans-serif;
+        color: #222;
+    }
+
+    header {
+        background: white;
+        padding: 18px;
+        border-bottom: 1px solid #eee;
+    }
+
+    header a {
+        color: #222;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    main {
+        max-width: 750px;
+        margin: auto;
+        padding: 25px 15px 50px;
+    }
+
+    .box {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 3px 18px rgba(0,0,0,.06);
+    }
+
+    h1 {
+        margin: 0 0 8px;
+        font-size: 27px;
+    }
+
+    .subtitle {
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    label {
+        display: block;
+        margin-top: 17px;
+        margin-bottom: 7px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #ddd;
+        border-radius: 11px;
+        font-size: 15px;
+        background: #fff;
+        color: #222;
+        outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #999;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #222;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .current-media {
+        margin-top: 8px;
+        padding: 12px;
+        background: #f8f7f4;
+        border-radius: 12px;
+        color: #555;
+    }
+
+    .current-media img,
+    .current-media video {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        max-height: 250px;
+        object-fit: contain;
+        margin-top: 10px;
+        border-radius: 10px;
+        background: #eee;
+    }
+
+    .file-box {
+        border: 1px dashed #ccc;
+        border-radius: 12px;
+        padding: 14px;
+        background: #fafafa;
+    }
+
+    .file-box input {
+        border: none;
+        padding: 5px 0;
+        background: transparent;
+    }
+
+    .preview {
+        display: none;
+        margin-top: 12px;
+    }
+
+    .preview img,
+    .preview video {
+        display: block;
+        max-width: 100%;
+        max-height: 280px;
+        margin: auto;
+        border-radius: 12px;
+    }
+
+    .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-top: 20px;
+        font-weight: normal;
+    }
+
+    .checkbox input {
+        width: 18px;
+        height: 18px;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    button,
+    .cancel {
+        padding: 14px;
+        border: none;
+        border-radius: 11px;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .save {
+        background: #222;
+        color: white;
+    }
+
+    .cancel {
+        background: #eee;
+        color: #333;
+    }
+
+    .danger-zone {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .delete-button {
+        display: block;
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 11px;
+        background: #8b0000;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+
+        main {
+            padding: 15px 10px 40px;
+        }
+
+        .box {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 23px;
+        }
+
+        .row,
+        .buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+</head><body><header>
+    <a href="{% url 'dashboard_products' %}">
+        ← Yemanlin Aura · Mes produits
+    </a>
+</header><main><div class="box"><h1>✏️ Modifier le produit</h1>
+
+<p class="subtitle">
+    Modification de « {{ product.name }} »
+</p>
+
+<form method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <label for="name">
+        Nom du produit *
+    </label>
+
+    <input
+        id="name"
+        type="text"
+        name="name"
+        value="{{ product.name|default:'' }}"
+        required
+    >
+
+    <label for="description">
+        Description
+    </label>
+
+    <textarea
+        id="description"
+        name="description"
+    >{{ product.description|default:'' }}</textarea>
+
+    <div class="row">
+
+        <div>
+            <label for="price">
+                Prix (FCFA) *
+            </label>
+
+            <input
+                id="price"
+                type="number"
+                name="price"
+                value="{{ product.price|default:'' }}"
+                step="0.01"
+                min="0"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="stock">
+                Stock
+            </label>
+
+            <input
+                id="stock"
+                type="number"
+                name="stock"
+                value="{{ product.stock|default:'0' }}"
+                min="0"
+            >
+        </div>
+
+    </div>
+
+    <label for="category">
+        Catégorie
+    </label>
+
+    <input
+        id="category"
+        type="text"
+        name="category"
+        value="{{ product.category|default:'' }}"
+    >
+
+    <label>
+        Image actuelle
+    </label>
+
+    <div class="current-media">
+
+        {% if product.image %}
+            <span>Image actuellement utilisée :</span>
+
+            <img
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+            >
+        {% else %}
+            <span>Aucune image actuellement.</span>
+        {% endif %}
+
+    </div>
+
+    <label for="image">
+        Remplacer l'image
+    </label>
+
+    <div class="file-box">
+
+        <input
+            id="image"
+            type="file"
+            name="image"
+            accept="image/*"
+            onchange="previewImage(event)"
+        >
+
+        <div id="imagePreview" class="preview">
+            <img
+                id="previewImage"
+                alt="Nouvelle image"
+            >
+        </div>
+
+    </div>
+
+    <label>
+        Vidéo actuelle
+    </label>
+
+    <div class="current-media">
+
+        {% if product.video %}
+            <span>Vidéo actuellement utilisée :</span>
+
+            <video
+                controls
+                src="{{ product.video.url }}"
+            ></video>
+        {% else %}
+            <span>Aucune vidéo actuellement.</span>
+        {% endif %}
+
+    </div>
+
+    <label for="video">
+        Remplacer la vidéo
+    </label>
+
+    <div class="file-box">
+
+        <input
+            id="video"
+            type="file"
+            name="video"
+            accept="video/*"
+            onchange="previewVideo(event)"
+        >
+
+        <div id="videoPreview" class="preview">
+            <video
+                id="previewVideo"
+                controls
+            ></video>
+        </div>
+
+    </div>
+
+    <label for="external_link">
+        Lien externe
+    </label>
+
+    <input
+        id="external_link"
+        type="url"
+        name="external_link"
+        value="{{ product.external_link|default:'' }}"
+        placeholder="https://..."
+    >
+
+    <label class="checkbox">
+
+        <input
+            type="checkbox"
+            name="active"
+            {% if product.active %}checked{% endif %}
+        >
+
+        Produit actif
+
+    </label>
+
+    <div class="buttons">
+
+        <a
+            class="cancel"
+            href="{% url 'dashboard_products' %}"
+        >
+            Annuler
+        </a>
+
+        <button
+            class="save"
+            type="submit"
+        >
+            💾 Enregistrer les modifications
+        </button>
+
+    </div>
+
+</form>
+
+<div class="danger-zone">
+
+    <form
+        method="post"
+        action="{% url 'delete_product' product.id %}"
+        onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ? Cette action est définitive.');"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="delete-button"
+        >
+            🗑️ Supprimer définitivement le produit
+        </button>
+
+    </form>
+
+</div>
+
+</div></main><script>
+
+function previewImage(event) {
+
+    const file = event.target.files[0];
+    const preview = document.getElementById("imagePreview");
+    const image = document.getElementById("previewImage");
+
+    if (!file) {
+        preview.style.display = "none";
+        return;
+    }
+
+    image.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+}
+
+
+function previewVideo(event) {
+
+    const file = event.target.files[0];
+    const preview = document.getElementById("videoPreview");
+    const video = document.getElementById("previewVideo");
+
+    if (!file) {
+        preview.style.display = "none";
+        video.removeAttribute("src");
+        return;
+    }
+
+    video.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+}
+
+</script></body>
+</html>

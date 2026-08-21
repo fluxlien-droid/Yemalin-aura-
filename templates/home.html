@@ -4,132 +4,138 @@
 {% block content %}
 
 <section class="hero">
+    <div class="hero-logo-wrap">
 
-  <div class="hero-logo-wrap">
+        <img
+            class="hero-logo-image"
+            src="{% static 'logo.png' %}"
+            alt=""
+            onerror="this.style.display='none'"
+        >
 
-    <img
-      class="hero-logo-image"
-      src="{% static 'logo.png' %}"
-      alt="Logo Yemanlin Aura"
-      onerror="this.style.display='none'"
-    >
+        <h1 id="brandAnimation" class="animated-brand"></h1>
 
-    <h1
-      id="brandAnimation"
-      class="animated-brand"
-      aria-label="Yemanlin Aura">
-    </h1>
+        <p id="sloganAnimation" class="animated-slogan"></p>
 
-    <p
-      id="sloganAnimation"
-      class="animated-slogan"
-      aria-label="Le raffinement qui nous distingue">
+    </div>
+
+    <p class="hero-description">
+        Découvrez l'univers Yemanlin Aura.
     </p>
 
-  </div>
-
-  <p class="hero-description">
-    Découvrez l'univers Yemanlin Aura.
-  </p>
-
-  <a class="btn" href="/produits/">
-    Voir les produits
-  </a>
-
+    <a class="btn" href="/produits/">
+        Voir les produits
+    </a>
 </section>
+
 
 <section>
+    <h2>Produits</h2>
 
-  <h2>Produits</h2>
+    <div class="grid">
 
-  <div class="grid">
+        {% for p in products %}
 
-    {% for p in products %}
+        <article class="card">
 
-    <article class="card">
+            {% if p.image %}
+                <img
+                    src="{{ p.image.url }}"
+                    alt="{{ p.name }}"
+                >
+            {% endif %}
 
-      {% if p.image %}
-        <img
-          src="{{ p.image.url }}"
-          alt="{{ p.name }}"
-        >
-      {% endif %}
+            <h3>{{ p.name }}</h3>
 
-      <h3>{{ p.name }}</h3>
+            <p>{{ p.price }} FCFA</p>
 
-      <p>{{ p.price }} FCFA</p>
+            <a
+                class="btn"
+                href="/produit/{{ p.id }}/"
+            >
+                Découvrir
+            </a>
 
-      <a
-        class="btn"
-        href="/produit/{{ p.id }}/">
-        Découvrir
-      </a>
+        </article>
 
-    </article>
+        {% empty %}
 
-    {% empty %}
+        <p class="empty">
+            Aucun produit disponible pour le moment.
+        </p>
 
-    <p class="empty">
-      Aucun produit disponible pour le moment.
-    </p>
+        {% endfor %}
 
-    {% endfor %}
-
-  </div>
-
+    </div>
 </section>
+
 
 <section class="partner">
 
-  <h2>Une collaboration ?</h2>
+    <h2>Besoin d'aide ?</h2>
 
-  <a class="btn" href="/partenariat/">
-    ??? Faire un partenariat avec Yemanlin Aura
-  </a>
+    <p>
+        Après votre commande, contactez-nous pour la finaliser.
+    </p>
+
+    <a
+        class="btn"
+        href="tel:+2290193456835"
+    >
+        📞 Nous appeler
+    </a>
+
+    <a
+        class="btn"
+        href="https://wa.me/22994236550"
+        target="_blank"
+        rel="noopener"
+    >
+        🟢 WhatsApp
+    </a>
 
 </section>
 
+
 <script>
-(function() {
+(function () {
 
-  const brand = "Yemanlin Aura";
-  const slogan = "Le raffinement qui nous distingue";
+    const b = 'Yemanlin Aura';
+    const s = 'Le raffinement qui nous distingue';
 
-  const brandEl = document.getElementById("brandAnimation");
-  const sloganEl = document.getElementById("sloganAnimation");
+    const be = document.getElementById('brandAnimation');
+    const se = document.getElementById('sloganAnimation');
 
-  let i = 0;
-  let j = 0;
+    let i = 0;
+    let j = 0;
 
-  function typeBrand() {
+    function tb() {
 
-    if (i <= brand.length) {
+        if (i <= b.length) {
 
-      brandEl.textContent = brand.slice(0, i++);
+            be.textContent = b.slice(0, i++);
 
-      setTimeout(typeBrand, 120);
+            setTimeout(tb, 120);
 
-    } else {
+        } else {
 
-      setTimeout(typeSlogan, 500);
+            setTimeout(ts, 500);
 
+        }
     }
 
-  }
+    function ts() {
 
-  function typeSlogan() {
+        if (j <= s.length) {
 
-    if (j <= slogan.length) {
+            se.textContent = s.slice(0, j++);
 
-      sloganEl.textContent = slogan.slice(0, j++);
+            setTimeout(ts, 65);
 
-      setTimeout(typeSlogan, 65);
-
+        }
     }
 
-  }
-
-  typeBrand();
+    tb();
 
 })();
 </script>

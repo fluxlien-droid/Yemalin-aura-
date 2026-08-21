@@ -1,0 +1,244 @@
+{% load static %}
+
+<!doctype html>
+
+<html lang="fr"><head><meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>Mes produits — Yemanlin Aura</title>
+
+<link
+    rel="stylesheet"
+    href="{% static 'style.css' %}"
+>
+
+<style>
+
+    .product-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+
+    .edit-button,
+    .delete-button {
+        display: inline-block;
+        padding: 9px 13px;
+        border-radius: 9px;
+        border: none;
+        font-size: 13px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .edit-button {
+        background: #222;
+        color: white;
+    }
+
+    .edit-button:hover {
+        opacity: .85;
+    }
+
+    .delete-button {
+        background: #f3dfdd;
+        color: #a32117;
+    }
+
+    .delete-button:hover {
+        background: #ead0cd;
+    }
+
+    .delete-form {
+        margin: 0;
+    }
+
+    .add-product {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 11px 15px;
+        background: #222;
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .product-info {
+        width: 100%;
+    }
+
+    .product-price {
+        margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+
+        .product-actions {
+            flex-direction: column;
+        }
+
+        .edit-button,
+        .delete-button {
+            width: 100%;
+            text-align: center;
+        }
+
+    }
+
+</style>
+
+</head><body class="admin-body"><header><a
+    class="brand"
+    href="{% url 'admin_dashboard' %}"
+>
+
+    <span>
+        Yemanlin Aura · Dashboard
+    </span>
+
+</a>
+
+
+<nav>
+
+    <a href="{% url 'admin_dashboard' %}">
+        Dashboard
+    </a>
+
+</nav>
+
+</header><main><section class="admin-hero"><p class="eyebrow">
+    BOUTIQUE
+</p>
+
+<h1>
+    Mes produits
+</h1>
+
+<p>
+    Produits actuellement enregistrés dans la boutique.
+</p>
+
+
+<a
+    class="add-product"
+    href="{% url 'dashboard_product_add' %}"
+>
+    ➕ Ajouter un produit
+</a>
+
+</section><section class="admin-section">{% for product in products %}
+
+<div class="admin-row"><!-- INFORMATIONS PRODUIT -->
+
+<div class="product-info">
+
+    <b>
+        {{ product.name }}
+    </b>
+
+
+    <small>
+        Catégorie :
+        {{ product.category|default:"Divers" }}
+    </small>
+
+
+    <small>
+        Stock :
+        {{ product.stock }}
+    </small>
+
+
+    <div class="product-price">
+
+        <b>
+            {{ product.price }} FCFA
+        </b>
+
+    </div>
+
+
+    {% if product.active %}
+
+        <small>
+            Produit actif
+        </small>
+
+    {% else %}
+
+        <small>
+            Produit désactivé
+        </small>
+
+    {% endif %}
+
+
+    <!-- =========================
+         BOUTONS
+    ========================== -->
+
+    <div class="product-actions">
+
+
+        <!-- MODIFIER -->
+
+        <a
+            class="edit-button"
+            href="{% url 'dashboard_product_edit' product.id %}"
+        >
+            ✏️ Modifier
+        </a>
+
+
+        <!-- SUPPRIMER -->
+
+        <form
+            class="delete-form"
+            method="post"
+            action="{% url 'delete_product' product.id %}"
+            onsubmit="return confirm('Voulez-vous vraiment supprimer le produit « {{ product.name|escapejs }} » ?');"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="delete-button"
+            >
+                🗑️ Supprimer
+            </button>
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+</div>{% empty %}
+
+<p class="empty">Aucun produit.
+
+<br>
+
+<a
+    class="add-product"
+    href="{% url 'dashboard_product_add' %}"
+>
+    ➕ Ajouter un produit
+</a>
+
+</p>{% endfor %}
+
+</section></main></body></html>

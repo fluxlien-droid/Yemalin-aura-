@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<section class="page-head"><h1>Mes commandes</h1><p>Vos commandes passées depuis cet appareil.</p></section>
+<div class="orders-list">{% for o in orders %}<article class="order-card">
+<div><span class="order-number">Commande #{{o.id}}</span><h2>{{o.product.name}}</h2></div>
+<p><strong>{{o.total}} FCFA</strong> · Quantité : {{o.quantity}}</p>
+<span class="status status-{{o.status}}">{{o.get_status_display}}</span>
+{% if o.status == "delivered" %}<p class="success">Livraison faite.</p>{% elif o.status == "cancelled" %}<p class="danger">Commande annulée.</p>{% else %}<p class="muted">L'Admin vous contactera pour finaliser la commande.</p>{% endif %}
+</article>{% empty %}<div class="empty-box"><h2>Aucune commande</h2><a class="btn" href="/produits/">Voir les produits</a></div>{% endfor %}</div>
+{% endblock %}

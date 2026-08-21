@@ -1,0 +1,582 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Commandes — Yemanlin Aura</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'style.css' %}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body.admin-body {
+            margin: 0;
+            background: #f7f4ef;
+            color: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e1db;
+            padding: 16px 20px;
+        }
+
+        .brand {
+            color: #222 !important;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            color: #555 !important;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 15px 50px;
+        }
+
+        .admin-hero {
+            margin-bottom: 25px;
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #8a7a68;
+        }
+
+        .admin-hero h1 {
+            margin: 5px 0;
+            color: #222;
+        }
+
+        .admin-hero p {
+            color: #666;
+        }
+
+        .admin-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .admin-row {
+            background: #ffffff;
+            border: 1px solid #e5e1db;
+            border-radius: 16px;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 18px;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .order-info {
+            min-width: 0;
+        }
+
+        .order-id {
+            display: block;
+            color: #222;
+            font-size: 16px;
+            margin-bottom: 7px;
+        }
+
+        .order-info small {
+            display: block;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .order-price {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .order-price b {
+            display: block;
+            color: #222;
+            font-size: 16px;
+        }
+
+        .order-price small {
+            display: block;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        /* =========================
+           STATUT
+        ========================= */
+
+        .status-form {
+            min-width: 180px;
+        }
+
+        .status-form label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .status-select {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 38px 10px 12px;
+
+            background-color: #ffffff !important;
+            color: #222222 !important;
+
+            border: 1px solid #cfc8bf;
+            border-radius: 10px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            outline: none;
+            cursor: pointer;
+        }
+
+        .status-select:focus {
+            border-color: #222;
+            box-shadow: 0 0 0 3px rgba(34,34,34,.08);
+        }
+
+        /*
+         * Important pour éviter le texte blanc sur fond blanc
+         * dans le menu du select.
+         */
+        .status-select option {
+            background-color: #ffffff !important;
+            color: #222222 !important;
+            font-size: 14px;
+        }
+
+        .status-select option:checked {
+            background-color: #eeeeee !important;
+            color: #111111 !important;
+            font-weight: 700;
+        }
+
+        /* =========================
+           COULEURS DES STATUTS
+        ========================= */
+
+        .status-new {
+            border-color: #d6c6a8;
+            background-color: #fffaf0 !important;
+        }
+
+        .status-confirmed {
+            border-color: #a9c7e8;
+            background-color: #f3f8ff !important;
+        }
+
+        .status-delivery {
+            border-color: #d5b36a;
+            background-color: #fff9e8 !important;
+        }
+
+        .status-delivered {
+            border-color: #9fc9a8;
+            background-color: #f2faf3 !important;
+        }
+
+        .status-cancelled {
+            border-color: #dfaaaa;
+            background-color: #fff5f5 !important;
+        }
+
+        /* =========================
+           SUPPRESSION
+        ========================= */
+
+        .delete-form {
+            margin-top: 10px;
+        }
+
+        .delete-button {
+            border: 1px solid #d9aaaa;
+            background: #fff5f5;
+            color: #9b2929;
+
+            padding: 8px 12px;
+            border-radius: 8px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background: #ffe5e5;
+        }
+
+        .empty {
+            background: #fff;
+            border: 1px solid #e5e1db;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            main {
+                padding: 20px 12px 40px;
+            }
+
+            .admin-row {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                padding: 16px;
+            }
+
+            .order-price {
+                text-align: left;
+            }
+
+            .status-form {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .status-select {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body class="admin-body">
+
+
+<header>
+
+    <a
+        class="brand"
+        href="{% url 'admin_dashboard' %}"
+    >
+        Yemanlin Aura · Dashboard
+    </a>
+
+    <nav>
+
+        <a href="{% url 'admin_dashboard' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'dashboard_products' %}">
+            Produits
+        </a>
+
+        <a href="{% url 'dashboard_customers' %}">
+            Clients
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+
+<section class="admin-hero">
+
+    <p class="eyebrow">
+        GESTION
+    </p>
+
+    <h1>
+        Commandes
+    </h1>
+
+    <p>
+        Gérez les commandes et leur statut depuis cette page.
+    </p>
+
+</section>
+
+
+<section class="admin-section">
+
+
+{% for o in orders %}
+
+<div class="admin-row">
+
+
+    <!-- INFORMATIONS COMMANDE -->
+
+    <div class="order-info">
+
+        <span class="order-id">
+
+            <b>
+                Commande #{{ o.id }}
+            </b>
+
+        </span>
+
+
+        <small>
+            Produit :
+            <strong>
+                {{ o.product.name }}
+            </strong>
+        </small>
+
+
+        <small>
+            Quantité :
+            {{ o.quantity }}
+        </small>
+
+
+        <small>
+            Client :
+            {{ o.customer.name }}
+        </small>
+
+
+        <small>
+            Téléphone :
+            {{ o.customer.phone }}
+        </small>
+
+
+        {% if o.customer.whatsapp %}
+
+        <small>
+            WhatsApp :
+            {{ o.customer.whatsapp }}
+        </small>
+
+        {% endif %}
+
+
+        {% if o.customer.city %}
+
+        <small>
+            Ville :
+            {{ o.customer.city }}
+        </small>
+
+        {% endif %}
+
+
+        {% if o.customer.district %}
+
+        <small>
+            Quartier :
+            {{ o.customer.district }}
+        </small>
+
+        {% endif %}
+
+
+        {% if o.customer.address %}
+
+        <small>
+            Adresse :
+            {{ o.customer.address }}
+        </small>
+
+        {% endif %}
+
+
+        {% if o.extra_info %}
+
+        <small>
+            Informations :
+            {{ o.extra_info }}
+        </small>
+
+        {% endif %}
+
+
+        <!-- SUPPRIMER LA COMMANDE -->
+
+        <form
+            method="post"
+            action="{% url 'delete_order' o.id %}"
+            class="delete-form"
+            onsubmit="return confirm('Supprimer définitivement cette commande ?');"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="delete-button"
+            >
+                🗑 Supprimer
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- TOTAL -->
+
+    <div class="order-price">
+
+        <b>
+            {{ o.total }} FCFA
+        </b>
+
+        <small>
+            {{ o.created_at|date:"d/m/Y H:i" }}
+        </small>
+
+        {% if o.delivered_at %}
+
+        <small>
+            Livrée le
+            {{ o.delivered_at|date:"d/m/Y H:i" }}
+        </small>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- STATUT -->
+
+    <form
+        method="post"
+        action="{% url 'update_order_status' o.id %}"
+        class="status-form"
+    >
+
+        {% csrf_token %}
+
+        <label for="status-{{ o.id }}">
+            Statut de la commande
+        </label>
+
+
+        <select
+            id="status-{{ o.id }}"
+            name="status"
+            class="status-select
+            {% if o.status == 'new' %}
+                status-new
+            {% elif o.status == 'confirmed' %}
+                status-confirmed
+            {% elif o.status == 'delivery' %}
+                status-delivery
+            {% elif o.status == 'delivered' %}
+                status-delivered
+            {% elif o.status == 'cancelled' %}
+                status-cancelled
+            {% endif %}
+            "
+            onchange="this.form.submit()"
+        >
+
+            <option
+                value="new"
+                {% if o.status == "new" %}selected{% endif %}
+            >
+                Nouvelle
+            </option>
+
+            <option
+                value="confirmed"
+                {% if o.status == "confirmed" %}selected{% endif %}
+            >
+                Confirmée
+            </option>
+
+            <option
+                value="delivery"
+                {% if o.status == "delivery" %}selected{% endif %}
+            >
+                En livraison
+            </option>
+
+            <option
+                value="delivered"
+                {% if o.status == "delivered" %}selected{% endif %}
+            >
+                Livraison faite
+            </option>
+
+            <option
+                value="cancelled"
+                {% if o.status == "cancelled" %}selected{% endif %}
+            >
+                Annulée
+            </option>
+
+        </select>
+
+    </form>
+
+
+</div>
+
+
+{% empty %}
+
+<div class="empty">
+
+    <p>
+        Aucune commande pour le moment.
+    </p>
+
+</div>
+
+{% endfor %}
+
+
+</section>
+
+
+</main>
+
+
+</body>
+</html>
