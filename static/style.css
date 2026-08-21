@@ -67,7 +67,19 @@ header{
     background:#15151d;
 }
 
-/* Logo principal dans le hero */
+/* =========================
+   HERO LOGO
+========================= */
+
+.hero-logo-wrap{
+    position:relative;
+    min-height:230px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
 
 .hero-logo-image{
     position:absolute;
@@ -75,10 +87,11 @@ header{
     width:50%;
     height:80%;
     object-fit:contain;
+    display:block;
     filter:blur(10px) brightness(.45);
     opacity:.32;
     z-index:0;
-    display:block;
+    pointer-events:none;
 }
 
 /* =========================
@@ -116,6 +129,7 @@ main{
 ========================= */
 
 .hero{
+    position:relative;
     text-align:center;
     padding:80px 20px;
     border-radius:30px;
@@ -126,15 +140,6 @@ main{
     );
     box-shadow:0 20px 80px #0009;
     overflow:hidden;
-}
-
-.hero-logo-wrap{
-    position:relative;
-    min-height:230px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
 }
 
 .animated-brand,
@@ -221,6 +226,7 @@ main{
     height:210px;
     object-fit:cover;
     border-radius:16px;
+    display:block;
 }
 
 /* =========================
@@ -268,6 +274,7 @@ button:hover{
     border-radius:24px;
     max-height:600px;
     object-fit:cover;
+    display:block;
 }
 
 .detail video{
@@ -521,7 +528,7 @@ footer{
 }
 
 /* =========================
-   MOBILE TABLET
+   TABLET
 ========================= */
 
 @media(max-width:800px){
@@ -614,4 +621,10 @@ footer{
     .brand{
         font-size:15px;
     }
-}
+
+    .brand img{
+        width:38px;
+        height:38px;
+        min-width:38px;
+    }
+    }
