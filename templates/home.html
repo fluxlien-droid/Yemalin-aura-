@@ -3,149 +3,458 @@
 
 {% block content %}
 
+<div class="home-page">
+
+    <!-- =========================
+         FOND AVEC LOGO
+    ========================== -->
+
+    <div class="home-background"></div>
+
+
+    <!-- =========================
+         PETIT LOGO EN HAUT
+    ========================== -->
+
+    <div class="home-top">
+
+        <img
+            class="home-top-logo"
+            src="{% static 'logo.png' %}"
+            alt="Yemanlin Aura"
+        >
+
+    </div>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section class="hero">
+
+        <div class="hero-logo-wrap">
+
+            <!-- Logo en arrière-plan du hero -->
+
+            <img
+                class="hero-logo-image"
+                src="{% static 'logo.png' %}"
+                alt=""
+            >
+
+            <!-- Nom animé -->
+
+            <h1
+                id="brandAnimation"
+                class="animated-brand"
+            ></h1>
+
+            <!-- Slogan animé -->
+
+            <p
+                id="sloganAnimation"
+                class="animated-slogan"
+            ></p>
+
+        </div>
+
+
+        <p class="hero-description">
+            Découvrez l'univers Yemanlin Aura,
+            où élégance, raffinement et qualité
+            se rencontrent.
+        </p>
+
+
+        <a
+            class="btn"
+            href="/produits/"
+        >
+            Voir les produits
+        </a>
+
+
+        <!-- =========================
+             LOGO EN BAS DU HERO
+        ========================== -->
+
+        <img
+            class="hero-bottom-logo"
+            src="{% static 'logo.png' %}"
+            alt="Yemanlin Aura"
+        >
+
+    </section>
+
+
+    <!-- =========================
+         PRODUITS
+    ========================== -->
+
+    <section class="products-section">
+
+        <h2>
+            Nos produits
+        </h2>
+
+
+        <div class="grid">
+
+            {% for p in products %}
+
+            <article class="card">
+
+                {% if p.image %}
+
+                <img
+                    src="{{ p.image.url }}"
+                    alt="{{ p.name }}"
+                >
+
+                {% endif %}
+
+
+                <h3>
+                    {{ p.name }}
+                </h3>
+
+
+                <p>
+                    {{ p.price }} FCFA
+                </p>
+
+
+                <a
+                    class="btn"
+                    href="/produit/{{ p.id }}/"
+                >
+                    Découvrir
+                </a>
+
+            </article>
+
+            {% empty %}
+
+            <div class="empty-box">
+
+                <p class="empty">
+                    Aucun produit disponible pour le moment.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         AIDE / CONTACT
+    ========================== -->
+
+    <section class="partner">
+
+        <h2>
+            Besoin d'aide ?
+        </h2>
+
+
+        <p class="contact-note">
+            Après votre commande, contactez-nous
+            pour la finaliser.
+        </p>
+
+
+        <div class="contact-actions">
+
+            <a
+                class="btn"
+                href="tel:+2290193456835"
+            >
+                📞 Nous appeler
+            </a>
+
+
+            <a
+                class="btn"
+                href="https://wa.me/22994236550"
+                target="_blank"
+                rel="noopener"
+            >
+                🟢 WhatsApp
+            </a>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================
+     ANIMATION DU HERO
+========================= -->
+
+<script>
+
+(function () {
+
+    const brand = "Yemanlin Aura";
+
+    const slogan =
+        "Le raffinement qui nous distingue";
+
+
+    const brandElement =
+        document.getElementById("brandAnimation");
+
+    const sloganElement =
+        document.getElementById("sloganAnimation");
+
+
+    if (!brandElement || !sloganElement) {
+        return;
+    }
+
+
+    let brandIndex = 0;
+
+    let sloganIndex = 0;
+
+
+    function typeBrand() {
+
+        if (brandIndex <= brand.length) {
+
+            brandElement.textContent =
+                brand.slice(0, brandIndex);
+
+            brandIndex++;
+
+            setTimeout(typeBrand, 120);
+
+        } else {
+
+            setTimeout(typeSlogan, 500);
+
+        }
+
+    }
+
+
+    function typeSlogan() {
+
+        if (sloganIndex <= slogan.length) {
+
+            sloganElement.textContent =
+                slogan.slice(0, sloganIndex);
+
+            sloganIndex++;
+
+            setTimeout(typeSlogan, 65);
+
+        }
+
+    }
+
+
+    typeBrand();
+
+})();
+
+</script>
+
+
 <style>
+
+/* =========================
+   PAGE ACCUEIL
+   Les couleurs principales
+   viennent de style.css
+========================= */
 
 .home-page {
     position: relative;
-    min-height: 100vh;
     overflow: hidden;
 }
 
+
 /* =========================
-   IMAGE DE FOND
+   FOND
 ========================= */
 
 .home-background {
+
     position: absolute;
+
     inset: 0;
+
     z-index: -1;
 
     background-image:
         linear-gradient(
-            rgba(247, 244, 239, 0.45),
-            rgba(247, 244, 239, 0.65)
+            rgba(8,8,13,.82),
+            rgba(8,8,13,.94)
         ),
         url("{% static 'logo.png' %}");
 
     background-size: cover;
+
     background-position: center;
+
     background-repeat: no-repeat;
-    background-attachment: fixed;
+
+    opacity: .55;
+
+    pointer-events: none;
 }
 
+
 /* =========================
-   PETIT LOGO EN HAUT
+   LOGO DU HAUT
 ========================= */
 
 .home-top {
+
     text-align: center;
-    padding: 18px 15px 10px;
+
+    padding: 20px 15px 5px;
 }
+
 
 .home-top-logo {
+
     width: 55px;
+
     height: 55px;
+
     object-fit: contain;
+
     display: inline-block;
 
-    background: rgba(255,255,255,.92);
-    padding: 6px;
-    border-radius: 14px;
+    border-radius: 50%;
 
-    box-shadow: 0 4px 15px rgba(0,0,0,.18);
+    background: #15151d;
+
+    padding: 5px;
+
+    box-shadow:
+        0 5px 25px #0008;
+
+    border: 1px solid #d8b56a44;
 }
+
 
 /* =========================
    HERO
 ========================= */
 
-.hero {
-    text-align: center;
-    padding: 35px 20px 45px;
+.home-page .hero {
+
+    position: relative;
+
+    z-index: 1;
+
+    margin-top: 10px;
 }
 
-.hero-logo-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.hero-logo-image {
-    display: none;
-}
-
-.animated-brand {
-    min-height: 50px;
-    margin: 0;
-
-    font-size: 42px;
-    font-weight: bold;
-
-    color: #222;
-
-    text-shadow:
-        0 2px 8px rgba(255,255,255,.8);
-}
-
-.animated-slogan {
-    min-height: 30px;
-    margin: 8px 0 15px;
-
-    color: #333;
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.hero-description {
-    max-width: 600px;
-    margin: 15px auto 20px;
-
-    color: #444;
-    line-height: 1.6;
-}
 
 /* =========================
-   LOGO EN BAS DU HERO
+   LOGO DU BAS
 ========================= */
 
 .hero-bottom-logo {
+
     width: 95px;
+
     height: 95px;
 
     object-fit: contain;
 
-    margin-top: 30px;
+    display: block;
 
-    filter: drop-shadow(
-        0 5px 12px rgba(0,0,0,.25)
-    );
+    margin: 35px auto 0;
+
+    border-radius: 50%;
+
+    filter:
+        drop-shadow(0 8px 20px #000);
+
+    border: 1px solid #d8b56a55;
+
+    background: #15151d;
+
+    padding: 6px;
 }
 
+
 /* =========================
-   PRODUITS
+   SECTION PRODUITS
 ========================= */
 
 .products-section {
-    background: rgba(255,255,255,.90);
+
+    position: relative;
+
+    z-index: 1;
 
     margin-top: 25px;
-    padding: 25px 15px;
 
-    border-radius: 24px 24px 0 0;
+    padding: 25px;
+
+    border-radius: 24px;
+
+    background: #111118dd;
+
+    border: 1px solid #fff1;
+
+    box-shadow:
+        0 15px 50px #0006;
 }
+
+
+.products-section h2 {
+
+    color: var(--accent);
+
+    margin-top: 0;
+}
+
 
 /* =========================
    AIDE
 ========================= */
 
-.partner {
-    background: rgba(255,255,255,.90);
+.home-page .partner {
 
-    padding: 25px 15px;
-    margin-top: 15px;
+    position: relative;
 
-    border-radius: 20px;
+    z-index: 1;
+
+    background: #111118dd;
+
+    border: 1px solid #fff1;
+
+    border-radius: 24px;
+
+    margin-top: 20px;
+
+    padding: 35px 20px;
+
+    box-shadow:
+        0 15px 50px #0006;
 }
+
+
+.home-page .partner h2 {
+
+    color: var(--accent);
+
+}
+
 
 /* =========================
    MOBILE
@@ -154,257 +463,68 @@
 @media (max-width: 600px) {
 
     .home-top {
-        padding-top: 12px;
+
+        padding-top: 15px;
+
     }
+
 
     .home-top-logo {
-        width: 45px;
-        height: 45px;
+
+        width: 48px;
+
+        height: 48px;
+
     }
 
-    .hero {
-        padding: 25px 15px 35px;
+
+    .home-page .hero {
+
+        padding: 50px 15px;
+
     }
+
 
     .animated-brand {
-        font-size: 30px;
+
+        font-size: 32px;
+
+        letter-spacing: 1px;
+
     }
+
 
     .animated-slogan {
-        font-size: 15px;
+
+        font-size: 16px;
+
     }
+
 
     .hero-description {
+
         font-size: 14px;
+
     }
 
+
     .hero-bottom-logo {
+
         width: 75px;
+
         height: 75px;
+
+    }
+
+
+    .products-section {
+
+        padding: 18px 12px;
+
     }
 
 }
 
-</style><div class="home-page"><!-- =========================
-     MÊME LOGO EN ARRIÈRE-PLAN
-========================== -->
+</style>
 
-<div class="home-background"></div>
-
-
-<!-- =========================
-     PETIT LOGO EN HAUT
-========================== -->
-
-<div class="home-top">
-
-    <img
-        class="home-top-logo"
-        src="{% static 'logo.png' %}"
-        alt="Yemanlin Aura"
-    >
-
-</div>
-
-
-<!-- =========================
-     HERO
-========================== -->
-
-<section class="hero">
-
-    <div class="hero-logo-wrap">
-
-        <h1
-            id="brandAnimation"
-            class="animated-brand"
-        ></h1>
-
-        <p
-            id="sloganAnimation"
-            class="animated-slogan"
-        ></p>
-
-    </div>
-
-
-    <p class="hero-description">
-        Découvrez l'univers Yemanlin Aura.
-    </p>
-
-
-    <a
-        class="btn"
-        href="/produits/"
-    >
-        Voir les produits
-    </a>
-
-
-    <!-- MÊME LOGO EN BAS -->
-
-    <img
-        class="hero-bottom-logo"
-        src="{% static 'logo.png' %}"
-        alt="Yemanlin Aura"
-    >
-
-</section>
-
-
-<!-- =========================
-     PRODUITS
-========================== -->
-
-<section class="products-section">
-
-    <h2>
-        Produits
-    </h2>
-
-
-    <div class="grid">
-
-        {% for p in products %}
-
-        <article class="card">
-
-            {% if p.image %}
-
-            <img
-                src="{{ p.image.url }}"
-                alt="{{ p.name }}"
-            >
-
-            {% endif %}
-
-
-            <h3>
-                {{ p.name }}
-            </h3>
-
-
-            <p>
-                {{ p.price }} FCFA
-            </p>
-
-
-            <a
-                class="btn"
-                href="/produit/{{ p.id }}/"
-            >
-                Découvrir
-            </a>
-
-        </article>
-
-
-        {% empty %}
-
-        <p class="empty">
-            Aucun produit disponible pour le moment.
-        </p>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     AIDE
-========================== -->
-
-<section class="partner">
-
-    <h2>
-        Besoin d'aide ?
-    </h2>
-
-
-    <p>
-        Après votre commande, contactez-nous pour la finaliser.
-    </p>
-
-
-    <a
-        class="btn"
-        href="tel:+2290193456835"
-    >
-        📞 Nous appeler
-    </a>
-
-
-    <a
-        class="btn"
-        href="https://wa.me/22994236550"
-        target="_blank"
-        rel="noopener"
-    >
-        🟢 WhatsApp
-    </a>
-
-</section>
-
-</div><!-- =========================
-     ANIMATION
-========================= --><script>
-
-(function () {
-
-    const b = 'Yemanlin Aura';
-
-    const s =
-        'Le raffinement qui nous distingue';
-
-
-    const be =
-        document.getElementById('brandAnimation');
-
-    const se =
-        document.getElementById('sloganAnimation');
-
-
-    let i = 0;
-
-    let j = 0;
-
-
-    function tb() {
-
-        if (i <= b.length) {
-
-            be.textContent =
-                b.slice(0, i++);
-
-            setTimeout(tb, 120);
-
-        } else {
-
-            setTimeout(ts, 500);
-
-        }
-
-    }
-
-
-    function ts() {
-
-        if (j <= s.length) {
-
-            se.textContent =
-                s.slice(0, j++);
-
-            setTimeout(ts, 65);
-
-        }
-
-    }
-
-
-    tb();
-
-})();
-
-</script>{% endblock %}
+{% endblock %}
