@@ -50,7 +50,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # Sert les fichiers statiques sur Railway
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -154,12 +153,11 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Dossier créé par collectstatic
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # =========================================================
-# STOCKAGE DES FICHIERS STATIQUES
+# STOCKAGE DJANGO
 # =========================================================
 
 STORAGES = {
