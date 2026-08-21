@@ -14,7 +14,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "CHANGE-ME-IN-PRODUCTION"
 
-# En développement local
 DEBUG = True
 
 ALLOWED_HOSTS = [
@@ -50,6 +49,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # Sert les fichiers statiques sur Railway
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
 
@@ -152,18 +154,12 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-
-# =========================================================
-# FICHIERS MÉDIA
-# =========================================================
-
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = Path.home() / "yemalin_media"
+# Dossier créé par collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # =========================================================
-# STOCKAGE DJANGO
+# STOCKAGE DES FICHIERS STATIQUES
 # =========================================================
 
 STORAGES = {
@@ -172,9 +168,18 @@ STORAGES = {
     },
 
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+
+# =========================================================
+# FICHIERS MÉDIA
+# =========================================================
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = Path.home() / "yemalin_media"
 
 
 # =========================================================
