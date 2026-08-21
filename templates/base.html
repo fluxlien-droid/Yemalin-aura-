@@ -12,7 +12,12 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Yemanlin Aura</title>
+    <title>{% block title %}Yemanlin Aura{% endblock %}</title>
+
+    <meta
+        name="description"
+        content="Yemanlin Aura - Le raffinement qui nous distingue."
+    >
 
     <link
         rel="stylesheet"
@@ -21,18 +26,26 @@
 
 </head>
 
+
 <body>
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <header>
 
     <a
         class="brand"
         href="/"
+        aria-label="Yemanlin Aura - Accueil"
     >
 
         <img
             src="{% static 'logo.png' %}"
-            alt="Yemanlin Aura"
+            alt="Logo Yemanlin Aura"
+            width="44"
+            height="44"
         >
 
         <span>
@@ -41,7 +54,8 @@
 
     </a>
 
-    <nav>
+
+    <nav aria-label="Navigation principale">
 
         <a href="/">
             Accueil
@@ -67,6 +81,10 @@
 </header>
 
 
+<!-- =========================
+     CONTENU
+========================= -->
+
 <main>
 
     {% if messages %}
@@ -88,6 +106,10 @@
 </main>
 
 
+<!-- =========================
+     FOOTER
+========================= -->
+
 <footer id="contact">
 
     <strong>
@@ -100,25 +122,25 @@
 
     <br>
 
-    <a
-        class="footer-link"
-        href="tel:+2290193456835"
-    >
-        📞 0193456835
-    </a>
+    <div class="contact-actions">
 
-    ·
+        <a
+            class="footer-link"
+            href="tel:+2290193456835"
+        >
+            📞 0193456835
+        </a>
 
-    <a
-        class="footer-link"
-        href="https://wa.me/22994236550"
-        target="_blank"
-        rel="noopener"
-    >
-        🟢 WhatsApp 94236550
-    </a>
+        <a
+            class="footer-link"
+            href="https://wa.me/22994236550"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            🟢 WhatsApp 94236550
+        </a>
 
-    <br>
+    </div>
 
     <small>
         Yemanlin Aura en collaboration avec Nova Gaming · Fait par Franck
@@ -126,6 +148,7 @@
 
 </footer>
 
+
 </body>
 
-</html>
+    </html>
