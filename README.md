@@ -27,3 +27,11 @@ Ajoute ton propre fichier `logo.png` directement dans `static/` :
 
 La page d'accueil utilise ce logo en arrière-plan flou et l'animation affiche d'abord
 « Yemanlin Aura » lettre par lettre, puis « Le raffinement qui nous distingue » lettre par lettre.
+
+## Contact pour finaliser une commande
+Appel : 0193456835
+WhatsApp : 94236550
+Après une commande, ces boutons permettent au client de contacter directement Yemanlin Aura.
+
+## Admin simplifié
+L'Admin conserve uniquement : Produits, Commandes, Clients et Discussions.
