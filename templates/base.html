@@ -4,6 +4,7 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="utf-8">
 
     <meta
@@ -13,13 +14,229 @@
 
     <title>Yemanlin Aura</title>
 
-    <link
-        rel="stylesheet"
-        href="{% static 'style.css' %}"
-    >
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f4ef;
+            color: #222;
+            font-family: Arial, sans-serif;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: rgba(255,255,255,.97);
+            border-bottom: 1px solid #eee;
+            padding: 12px 18px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* =========================
+           LOGO
+        ========================= */
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+            color: #222;
+            font-weight: bold;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        .brand img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            display: block;
+            border-radius: 50%;
+        }
+
+        .brand span {
+            display: block;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #444;
+            font-size: 13px;
+            padding: 9px 11px;
+            border-radius: 9px;
+            transition: .2s;
+        }
+
+        nav a:hover {
+            background: #f1eee8;
+            color: #111;
+        }
+
+        .contact-btn {
+            background: #222;
+            color: white !important;
+        }
+
+        .contact-btn:hover {
+            background: #444 !important;
+        }
+
+        /* =========================
+           CONTENU
+        ========================= */
+
+        main {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px 15px 50px;
+        }
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        .notice {
+            background: white;
+            border-radius: 12px;
+            padding: 13px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            text-align: center;
+            background: white;
+            border-top: 1px solid #eee;
+            color: #777;
+            padding: 35px 15px;
+            line-height: 1.8;
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: #222;
+            font-size: 16px;
+        }
+
+        .footer-link {
+            color: #444;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        footer small {
+            color: #999;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 10px 12px;
+                align-items: flex-start;
+            }
+
+            .brand {
+                font-size: 15px;
+            }
+
+            .brand img {
+                width: 36px;
+                height: 36px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 3px;
+            }
+
+            nav a {
+                font-size: 12px;
+                padding: 7px 8px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .brand {
+                justify-content: center;
+            }
+
+            nav {
+                justify-content: center;
+                width: 100%;
+            }
+
+            nav a {
+                font-size: 12px;
+            }
+
+            main {
+                padding: 15px 10px 40px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
+
 <body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <header>
 
@@ -31,7 +248,6 @@
         <img
             src="{% static 'logo.png' %}"
             alt="Yemanlin Aura"
-            onerror="this.style.display='none'"
         >
 
         <span>
@@ -67,6 +283,10 @@
 </header>
 
 
+<!-- =========================
+     CONTENU
+========================= -->
+
 <main>
 
     {% if messages %}
@@ -87,6 +307,10 @@
 
 </main>
 
+
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer id="contact">
 
@@ -126,5 +350,7 @@
 
 </footer>
 
+
 </body>
-</html>
+
+    </html>
