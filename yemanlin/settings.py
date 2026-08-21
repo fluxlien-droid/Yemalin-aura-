@@ -20,6 +20,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
+    "yemalinaurastore.up.railway.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://yemalinaurastore.up.railway.app",
 ]
 
 
@@ -154,15 +159,11 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = "/media/"
 
-# Stockage dans l'espace privé de Termux.
-# Évite le problème de verrouillage rencontré
-# avec /storage/emulated/0/1/media.
-
 MEDIA_ROOT = Path.home() / "yemalin_media"
 
 
 # =========================================================
-# STOCKAGE DJANGO 6
+# STOCKAGE DJANGO
 # =========================================================
 
 STORAGES = {
